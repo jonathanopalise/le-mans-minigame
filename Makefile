@@ -32,7 +32,7 @@ src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
-src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/hardware_playfield.h
+src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/hardware_playfield.h src/blitter.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h
