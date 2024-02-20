@@ -1,0 +1,959 @@
+F00:0001       *------------------------------------------------------------------------------*
+F00:0002       *	BrownELF GCC startup: dml/2017
+F00:0003       *------------------------------------------------------------------------------*
+F00:0004               
+F00:0005               xdef    ___cxa_pure_virtual
+F00:0006       	xdef	__ZSt17__throw_bad_allocv
+F00:0007       
+F00:0008       	xdef	_memcpy
+F00:0009       	xdef	_memset
+F00:0010       
+F00:0011       	xref	_main
+F00:0012       	xref	_exit
+F00:0013       	xdef	__exit
+F00:0014       	xdef	___cxa_guard_acquire
+F00:0015       	xdef	___cxa_guard_release
+F00:0016       
+F00:0017       	xref	___libc_csu_init
+F00:0018       
+F00:0019       *------------------------------------------------------------------------------*
+F00:0020       
+F00:0021       BASEPAGE_SIZE		=		$100
+F00:0022       USPS			=		$100*4
+F00:0023       
+F00:0024       			ifd		ELF_CONFIG_STACK
+F00:0025       SSPS			=		(ELF_CONFIG_STACK)
+F00:0026       			else
+F00:0027       SSPS			=		$4000
+F00:0028       			endc
+F00:0029       
+F00:0030       bbreak	macro
+F00:0033       
+F00:0034       
+F00:0035       *------------------------------------------------------------------------------*
+F00:0036       __crt_entrypoint:	xdef		__crt_entrypoint
+F00:0037       _start:			xdef		_start
+F00:0038       *------------------------------------------------------------------------------*
+F00:0039       	move.l		4(sp),a5
+               S01:00000000:  2A 6F 00 04
+F00:0040       *-------------------------------------------------------*
+F00:0041       *	command info
+F00:0042       *-------------------------------------------------------*
+F00:0043       ;	lea		128(a5),a4
+F00:0044       ;	move.l		a4,cli
+F00:0045       *-------------------------------------------------------*
+F00:0046       *	Mshrink
+F00:0047       *-------------------------------------------------------*
+F00:0048       	move.l		12(a5),d0			; text segment
+               S01:00000004:  20 2D 00 0C
+F00:0049       	add.l		20(a5),d0			; data segment
+               S01:00000008:  D0 AD 00 14
+F00:0050       	add.l		28(a5),d0			; bss segment
+               S01:0000000C:  D0 AD 00 1C
+F00:0051       	add.l		#BASEPAGE_SIZE+USPS,d0		; base page
+               S01:00000010:  D0 BC 00 00 05 00
+F00:0052       *-------------------------------------------------------*
+F00:0053       	move.l		a5,d1				; address to basepage
+               S01:00000016:  22 0D
+F00:0054       	add.l		d0,d1				; end of program
+               S01:00000018:  D2 80
+F00:0055       	and.w		#-16,d1				; align stack
+               S01:0000001A:  C2 7C FF F0
+F00:0056       	move.l		sp,d2
+               S01:0000001E:  24 0F
+F00:0057       	move.l		d1,sp				; temporary USP stackspace
+               S01:00000020:  2E 41
+F00:0058       	move.l		d2,-(sp)	
+               S01:00000022:  2F 02
+F00:0059       *-------------------------------------------------------*
+F00:0060       	move.l		d0,-(sp)
+               S01:00000024:  2F 00
+F00:0061       	move.l		a5,-(sp)
+               S01:00000026:  2F 0D
+F00:0062       	clr.w		-(sp)
+               S01:00000028:  42 67
+F00:0063       	move.w		#$4a,-(sp)
+               S01:0000002A:  3F 3C 00 4A
+F00:0064       	trap		#1				; Mshrink
+               S01:0000002E:  4E 41
+F00:0065       	lea		12(sp),sp	
+               S01:00000030:  4F EF 00 0C
+F00:0066       *-------------------------------------------------------*
+F00:0067       *	Program
+F00:0068       *-------------------------------------------------------*
+F00:0069       	bsr		user_start
+               S01:00000034:  61 04
+F00:0070       *-------------------------------------------------------*
+F00:0071       *	Begone
+F00:0072       *-------------------------------------------------------*
+F00:0073       	clr.w		-(sp)				; Pterm0
+               S01:00000036:  42 67
+F00:0074       	trap		#1
+               S01:00000038:  4E 41
+F00:0075       
+F00:0076       user_start:
+F00:0077       			
+F00:0078       	; clear bss segment
+F00:0079       					
+F00:0080       	move.l		$18(a5),a0
+               S01:0000003A:  20 6D 00 18
+F00:0081       	move.l		$1c(a5),d0				;length of bss segment
+               S01:0000003E:  20 2D 00 1C
+F00:0082       	move.l		d0,-(sp)
+               S01:00000042:  2F 00
+F00:0083       	pea		0.w
+               S01:00000044:  48 78 00 00
+F00:0084       	move.l		a0,-(sp)
+               S01:00000048:  2F 08
+F00:0085       	jsr		_memset
+               S01:0000004A:  61 00 01 86
+F00:0086       	lea		12(sp),sp
+               S01:0000004E:  4F EF 00 0C
+F00:0087       
+F00:0088       ;	if (REDIRECT_OUTPUT_TO_SERIAL==1)  
+F00:0089       ;	; redirect to serial
+F00:0090       ;	
+F00:0091       ;	move.w		#2,-(sp)
+F00:0092       ;	move.w		#1,-(sp)
+F00:0093       ;	move.w		#$46,-(sp)
+F00:0094       ;	trap		#1
+F00:0095       ;	addq.l		#6,sp
+F00:0096       ;
+F00:0097       ;	endif
+F00:0098       	
+F00:0099       	pea		super_start
+               S01:00000052:  48 7A 00 0C
+F00:0100       	move.w		#38,-(sp)
+               S01:00000056:  3F 3C 00 26
+F00:0101       	trap		#14
+               S01:0000005A:  4E 4E
+F00:0102       	addq.l		#6,sp
+               S01:0000005C:  5C 8F
+F00:0103       
+F00:0104       	rts
+               S01:0000005E:  4E 75
+F00:0105       
+F00:0106       ; --------------------------------------------------------------
+F00:0107       super_start:
+F00:0108       ; --------------------------------------------------------------
+F00:0109       	lea		new_ssp,a0
+               S01:00000060:  41 F9 00 00 40 00 [R]
+F00:0110       	move.l		a0,d0
+               S01:00000066:  20 08
+F00:0111       	subq.l		#4,d0	
+               S01:00000068:  59 80
+F00:0112       	and.w		#-16,d0
+               S01:0000006A:  C0 7C FF F0
+F00:0113       	move.l		d0,a0
+               S01:0000006E:  20 40
+F00:0114       	move.l		sp,-(a0)
+               S01:00000070:  21 0F
+F00:0115       	move.l		usp,a1
+               S01:00000072:  4E 69
+F00:0116       	move.l		a1,-(a0)
+               S01:00000074:  21 09
+F00:0117       	move.l		a0,sp
+               S01:00000076:  2E 48
+F00:0118       	
+F00:0119       ;	__libc_csu_init(int argc, char **argv, char **envp);
+F00:0120       
+F00:0121       	move.l		#0,-(sp)
+               S01:00000078:  2F 3C 00 00 00 00
+F00:0122       	pea		dummy_argv
+               S01:0000007E:  48 79 00 00 00 00 [R]
+F00:0123       	pea		dummy_envp
+               S01:00000084:  48 79 00 00 00 00 [R]
+F00:0124       	jsr		___libc_csu_init
+               S01:0000008A:  4E B9 00 00 00 00 [R]
+F00:0125       	lea		12(sp),sp
+               S01:00000090:  4F EF 00 0C
+F00:0126       
+F00:0127       	move.l		sp,entrypoint_ssp	
+               S01:00000094:  23 CF 00 00 40 04 [R]
+F00:0128       
+F00:0129       	jsr		_main
+               S01:0000009A:  4E B9 00 00 00 00 [R]
+F00:0130       	
+F00:0131       ;	link to high level exit(0) function on return
+F00:0132       	pea		0.w
+               S01:000000A0:  48 78 00 00
+F00:0133       	jmp		_exit
+               S01:000000A4:  4E F9 00 00 00 00 [R]
+F00:0134       	
+F00:0135       __exit:
+F00:0136       
+F00:0137       ;	level SSP, because exit() is a subroutine
+F00:0138       
+F00:0139       	move.l		entrypoint_ssp,sp
+               S01:000000AA:  2E 79 00 00 40 04 [R]
+F00:0140       
+F00:0141       	move.l		(sp)+,a0
+               S01:000000B0:  20 5F
+F00:0142       	move.l		a0,usp
+               S01:000000B2:  4E 60
+F00:0143       	move.l		(sp)+,sp
+               S01:000000B4:  2E 5F
+F00:0144       	rts
+               S01:000000B6:  4E 75
+F00:0145       	
+F00:0146       ; --------------------------------------------------------------
+F00:0147       _memcpy:	
+F00:0148       ; --------------------------------------------------------------
+F00:0149       			rsreset
+F00:0150       ; --------------------------------------------------------------
+F00:0151       .sp_return:		rs.l	1
+F00:0152       .sp_pdst:		rs.l	1
+F00:0153       .sp_psrc:		rs.l	1
+F00:0154       .sp_size:		rs.l	1
+F00:0155       ; --------------------------------------------------------------
+F00:0156       ;	move.l		.sp_pdst(sp),a0
+F00:0157       ;	move.l		.sp_psrc(sp),a1
+F00:0158       	move.l		.sp_pdst(sp),d0
+               S01:000000B8:  20 2F 00 04
+F00:0159       	move.l		d0,a0
+               S01:000000BC:  20 40
+F00:0160       	move.l		.sp_psrc(sp),d1
+               S01:000000BE:  22 2F 00 08
+F00:0161       	move.l		d1,a1
+               S01:000000C2:  22 41
+F00:0162       	or.w		d0,d1
+               S01:000000C4:  82 40
+F00:0163       	btst		#0,d1
+               S01:000000C6:  08 01 00 00
+F00:0164       	bne.s		.memcpy_misaligned
+               S01:000000CA:  66 44
+F00:0165       	
+F00:0166       	move.l		.sp_size(sp),d1
+               S01:000000CC:  22 2F 00 0C
+F00:0167       	
+F00:0168       	lsr.l		#4,d1					; num 16-byte blocks total
+               S01:000000D0:  E8 89
+F00:0169       	move.l		d1,d0
+               S01:000000D2:  20 01
+F00:0170       	swap		d0					; num 1mb blocks (64k * 16bytes)
+               S01:000000D4:  48 40
+F00:0171       	subq.w		#1,d1					; num 16-byte blocks remaining
+               S01:000000D6:  53 41
+F00:0172       	bcs.s		.ev1mb
+               S01:000000D8:  65 0C
+F00:0173       
+F00:0174       .lp1mb:
+F00:0175       .lp16b:	move.l		(a1)+,(a0)+
+               S01:000000DA:  20 D9
+F00:0176       	move.l		(a1)+,(a0)+
+               S01:000000DC:  20 D9
+F00:0177       	move.l		(a1)+,(a0)+
+               S01:000000DE:  20 D9
+F00:0178       	move.l		(a1)+,(a0)+
+               S01:000000E0:  20 D9
+F00:0179       	dbra		d1,.lp16b
+               S01:000000E2:  51 C9 FF F6
+F00:0180       
+F00:0181       .ev1mb:	subq.w		#1,d0
+               S01:000000E6:  53 40
+F00:0182       	bpl.s		.lp1mb
+               S01:000000E8:  6A F0
+F00:0183       
+F00:0184       	moveq		#16-1,d1
+               S01:000000EA:  72 0F
+F00:0185       	and.w		.sp_size+2(sp),d1
+               S01:000000EC:  C2 6F 00 0E
+F00:0186       	lsl.b		#4+1,d1
+               S01:000000F0:  EB 09
+F00:0187       	bcc.s		.n8
+               S01:000000F2:  64 04
+F00:0188       	move.l		(a1)+,(a0)+
+               S01:000000F4:  20 D9
+F00:0189       	move.l		(a1)+,(a0)+
+               S01:000000F6:  20 D9
+F00:0190       .n8:	add.b		d1,d1
+               S01:000000F8:  D2 01
+F00:0191       	bcc.s		.n4
+               S01:000000FA:  64 02
+F00:0192       	move.l		(a1)+,(a0)+
+               S01:000000FC:  20 D9
+F00:0193       .n4:	add.b		d1,d1
+               S01:000000FE:  D2 01
+F00:0194       	bcc.s		.n2
+               S01:00000100:  64 02
+F00:0195       	move.w		(a1)+,(a0)+
+               S01:00000102:  30 D9
+F00:0196       .n2:	add.b		d1,d1
+               S01:00000104:  D2 01
+F00:0197       	bcc.s		.n1
+               S01:00000106:  64 02
+F00:0198       	move.b		(a1)+,(a0)+
+               S01:00000108:  10 D9
+F00:0199       .n1:
+F00:0200       	move.l		.sp_pdst(sp),d0
+               S01:0000010A:  20 2F 00 04
+F00:0201       	rts
+               S01:0000010E:  4E 75
+F00:0202       
+F00:0203       .memcpy_misaligned:
+F00:0204       	move.w		a1,d1
+               S01:00000110:  32 09
+F00:0205       	eor.w		d0,d1
+               S01:00000112:  B1 41
+F00:0206       	btst		#0,d1
+               S01:00000114:  08 01 00 00
+F00:0207       	bne		.memcpy_misaligned_sgl
+               S01:00000118:  66 4E
+F00:0208       		
+F00:0209       .memcpy_misaligned_pair:		
+F00:0210       	move.l		.sp_size(sp),d1
+               S01:0000011A:  22 2F 00 0C
+F00:0211       	
+F00:0212       	move.b		(a1)+,(a0)+
+               S01:0000011E:  10 D9
+F00:0213       	subq.l		#1,d1
+               S01:00000120:  53 81
+F00:0214       	beq		.done
+               S01:00000122:  67 3E
+F00:0215       	move.w		d1,.sp_size+2(sp)
+               S01:00000124:  3F 41 00 0E
+F00:0216       	
+F00:0217       	lsr.l		#4,d1					; num 16-byte blocks total
+               S01:00000128:  E8 89
+F00:0218       	move.l		d1,d0
+               S01:0000012A:  20 01
+F00:0219       	swap		d0					; num 1mb blocks (64k * 16bytes)
+               S01:0000012C:  48 40
+F00:0220       	subq.w		#1,d1					; num 16-byte blocks remaining
+               S01:0000012E:  53 41
+F00:0221       	bcs.s		.ev1mc
+               S01:00000130:  65 0C
+F00:0222       
+F00:0223       .lp1mc:
+F00:0224       .lp16c:	move.l		(a1)+,(a0)+
+               S01:00000132:  20 D9
+F00:0225       	move.l		(a1)+,(a0)+
+               S01:00000134:  20 D9
+F00:0226       	move.l		(a1)+,(a0)+
+               S01:00000136:  20 D9
+F00:0227       	move.l		(a1)+,(a0)+
+               S01:00000138:  20 D9
+F00:0228       	dbra		d1,.lp16c
+               S01:0000013A:  51 C9 FF F6
+F00:0229       
+F00:0230       .ev1mc:	subq.w		#1,d0
+               S01:0000013E:  53 40
+F00:0231       	bpl.s		.lp1mc
+               S01:00000140:  6A F0
+F00:0232       
+F00:0233       	moveq		#16-1,d1
+               S01:00000142:  72 0F
+F00:0234       	and.w		.sp_size+2(sp),d1
+               S01:00000144:  C2 6F 00 0E
+F00:0235       	lsl.b		#4+1,d1
+               S01:00000148:  EB 09
+F00:0236       	bcc.s		.n8c
+               S01:0000014A:  64 04
+F00:0237       	move.l		(a1)+,(a0)+
+               S01:0000014C:  20 D9
+F00:0238       	move.l		(a1)+,(a0)+
+               S01:0000014E:  20 D9
+F00:0239       .n8c:	add.b		d1,d1
+               S01:00000150:  D2 01
+F00:0240       	bcc.s		.n4c
+               S01:00000152:  64 02
+F00:0241       	move.l		(a1)+,(a0)+
+               S01:00000154:  20 D9
+F00:0242       .n4c:	add.b		d1,d1
+               S01:00000156:  D2 01
+F00:0243       	bcc.s		.n2c
+               S01:00000158:  64 02
+F00:0244       	move.w		(a1)+,(a0)+
+               S01:0000015A:  30 D9
+F00:0245       .n2c:	add.b		d1,d1
+               S01:0000015C:  D2 01
+F00:0246       	bcc.s		.n1c
+               S01:0000015E:  64 02
+F00:0247       	move.b		(a1)+,(a0)+
+               S01:00000160:  10 D9
+F00:0248       .n1c:
+F00:0249       .done:	move.l		.sp_pdst(sp),d0
+               S01:00000162:  20 2F 00 04
+F00:0250       	rts
+               S01:00000166:  4E 75
+F00:0251       
+F00:0252       .memcpy_misaligned_sgl:		
+F00:0253       	move.l		.sp_size(sp),d1
+               S01:00000168:  22 2F 00 0C
+F00:0254       	
+F00:0255       	lsr.l		#4,d1					; num 16-byte blocks total
+               S01:0000016C:  E8 89
+F00:0256       	move.l		d1,d0
+               S01:0000016E:  20 01
+F00:0257       	swap		d0					; num 1mb blocks (64k * 16bytes)
+               S01:00000170:  48 40
+F00:0258       	subq.w		#1,d1					; num 16-byte blocks remaining
+               S01:00000172:  53 41
+F00:0259       	bcs.s		.ev1md
+               S01:00000174:  65 24
+F00:0260       
+F00:0261       .lp1md:
+F00:0262       .lp16d:	move.b		(a1)+,(a0)+
+               S01:00000176:  10 D9
+F00:0263       	move.b		(a1)+,(a0)+
+               S01:00000178:  10 D9
+F00:0264       	move.b		(a1)+,(a0)+
+               S01:0000017A:  10 D9
+F00:0265       	move.b		(a1)+,(a0)+
+               S01:0000017C:  10 D9
+F00:0266       	move.b		(a1)+,(a0)+
+               S01:0000017E:  10 D9
+F00:0267       	move.b		(a1)+,(a0)+
+               S01:00000180:  10 D9
+F00:0268       	move.b		(a1)+,(a0)+
+               S01:00000182:  10 D9
+F00:0269       	move.b		(a1)+,(a0)+
+               S01:00000184:  10 D9
+F00:0270       	move.b		(a1)+,(a0)+
+               S01:00000186:  10 D9
+F00:0271       	move.b		(a1)+,(a0)+
+               S01:00000188:  10 D9
+F00:0272       	move.b		(a1)+,(a0)+
+               S01:0000018A:  10 D9
+F00:0273       	move.b		(a1)+,(a0)+
+               S01:0000018C:  10 D9
+F00:0274       	move.b		(a1)+,(a0)+
+               S01:0000018E:  10 D9
+F00:0275       	move.b		(a1)+,(a0)+
+               S01:00000190:  10 D9
+F00:0276       	move.b		(a1)+,(a0)+
+               S01:00000192:  10 D9
+F00:0277       	move.b		(a1)+,(a0)+
+               S01:00000194:  10 D9
+F00:0278       	dbra		d1,.lp16d
+               S01:00000196:  51 C9 FF DE
+F00:0279       
+F00:0280       .ev1md:	subq.w		#1,d0
+               S01:0000019A:  53 40
+F00:0281       	bpl.s		.lp1md
+               S01:0000019C:  6A D8
+F00:0282       
+F00:0283       ;	copy remaining bytes, if any
+F00:0284       
+F00:0285       	moveq		#16-1,d1
+               S01:0000019E:  72 0F
+F00:0286       	and.w		.sp_size+2(sp),d1
+               S01:000001A0:  C2 6F 00 0E
+F00:0287       	add.w		d1,d1
+               S01:000001A4:  D2 41
+F00:0288       	neg.w		d1
+               S01:000001A6:  44 41
+F00:0289       	jmp		.jtab(pc,d1.w)
+               S01:000001A8:  4E FB 10 22
+F00:0290       	move.b		(a1)+,(a0)+
+               S01:000001AC:  10 D9
+F00:0291       	move.b		(a1)+,(a0)+
+               S01:000001AE:  10 D9
+F00:0292       	move.b		(a1)+,(a0)+
+               S01:000001B0:  10 D9
+F00:0293       	move.b		(a1)+,(a0)+
+               S01:000001B2:  10 D9
+F00:0294       	move.b		(a1)+,(a0)+
+               S01:000001B4:  10 D9
+F00:0295       	move.b		(a1)+,(a0)+
+               S01:000001B6:  10 D9
+F00:0296       	move.b		(a1)+,(a0)+
+               S01:000001B8:  10 D9
+F00:0297       	move.b		(a1)+,(a0)+
+               S01:000001BA:  10 D9
+F00:0298       	move.b		(a1)+,(a0)+
+               S01:000001BC:  10 D9
+F00:0299       	move.b		(a1)+,(a0)+
+               S01:000001BE:  10 D9
+F00:0300       	move.b		(a1)+,(a0)+
+               S01:000001C0:  10 D9
+F00:0301       	move.b		(a1)+,(a0)+
+               S01:000001C2:  10 D9
+F00:0302       	move.b		(a1)+,(a0)+
+               S01:000001C4:  10 D9
+F00:0303       	move.b		(a1)+,(a0)+
+               S01:000001C6:  10 D9
+F00:0304       	move.b		(a1)+,(a0)+
+               S01:000001C8:  10 D9
+F00:0305       	move.b		(a1)+,(a0)+
+               S01:000001CA:  10 D9
+F00:0306       .jtab:	
+F00:0307       	move.l		.sp_pdst(sp),d0
+               S01:000001CC:  20 2F 00 04
+F00:0308       	rts
+               S01:000001D0:  4E 75
+F00:0309       	
+F00:0310       ; --------------------------------------------------------------
+F00:0311       _memset:
+F00:0312       ; --------------------------------------------------------------	
+F00:0313       
+F00:0314       ;	move.l		d2,-(sp)
+F00:0315       	move.l		d2,a1
+               S01:000001D2:  22 42
+F00:0316       	
+F00:0317       	; value
+F00:0318       	move.b		0+8+3(sp),d0
+               S01:000001D4:  10 2F 00 0B
+F00:0319       	move.b		d0,d1
+               S01:000001D8:  12 00
+F00:0320       	lsl.w		#8,d1
+               S01:000001DA:  E1 49
+F00:0321       	move.b		d0,d1
+               S01:000001DC:  12 00
+F00:0322       	move.w		d1,d2
+               S01:000001DE:  34 01
+F00:0323       	swap		d2
+               S01:000001E0:  48 42
+F00:0324       	move.w		d1,d2
+               S01:000001E2:  34 01
+F00:0325       
+F00:0326       	; size
+F00:0327       	move.l		0+12(sp),d1
+               S01:000001E4:  22 2F 00 0C
+F00:0328       	
+F00:0329       	; dest
+F00:0330       	move.l		0+4(sp),d0
+               S01:000001E8:  20 2F 00 04
+F00:0331       	move.l		d0,a0
+               S01:000001EC:  20 40
+F00:0332       	and.w		#1,d0
+               S01:000001EE:  C0 7C 00 01
+F00:0333       	beq.s		.aligned
+               S01:000001F2:  67 0A
+F00:0334       	move.b		d2,(a0)+
+               S01:000001F4:  10 C2
+F00:0335       	subq.l		#1,d1
+               S01:000001F6:  53 81
+F00:0336       	beq		.done
+               S01:000001F8:  67 3E
+F00:0337       	move.w		d1,0+12+2(sp)
+               S01:000001FA:  3F 41 00 0E
+F00:0338       .aligned:	
+F00:0339       	
+F00:0340       	lsr.l		#4,d1
+               S01:000001FE:  E8 89
+F00:0341       	move.l		d1,d0
+               S01:00000200:  20 01
+F00:0342       	swap		d0
+               S01:00000202:  48 40
+F00:0343       	subq.w		#1,d1
+               S01:00000204:  53 41
+F00:0344       	bcs.s		.ev1mb
+               S01:00000206:  65 0C
+F00:0345       
+F00:0346       .lp1mb:
+F00:0347       .lp16b:	move.l		d2,(a0)+
+               S01:00000208:  20 C2
+F00:0348       	move.l		d2,(a0)+
+               S01:0000020A:  20 C2
+F00:0349       	move.l		d2,(a0)+
+               S01:0000020C:  20 C2
+F00:0350       	move.l		d2,(a0)+
+               S01:0000020E:  20 C2
+F00:0351       	dbra		d1,.lp16b
+               S01:00000210:  51 C9 FF F6
+F00:0352       
+F00:0353       .ev1mb:	subq.w		#1,d0
+               S01:00000214:  53 40
+F00:0354       	bpl.s		.lp1mb
+               S01:00000216:  6A F0
+F00:0355       
+F00:0356       	moveq		#16-1,d1
+               S01:00000218:  72 0F
+F00:0357       	and.w		0+12+2(sp),d1
+               S01:0000021A:  C2 6F 00 0E
+F00:0358       	lsl.b		#4+1,d1
+               S01:0000021E:  EB 09
+F00:0359       	bcc.s		.n8
+               S01:00000220:  64 04
+F00:0360       	move.l		d2,(a0)+
+               S01:00000222:  20 C2
+F00:0361       	move.l		d2,(a0)+
+               S01:00000224:  20 C2
+F00:0362       .n8:	add.b		d1,d1
+               S01:00000226:  D2 01
+F00:0363       	bcc.s		.n4
+               S01:00000228:  64 02
+F00:0364       	move.l		d2,(a0)+
+               S01:0000022A:  20 C2
+F00:0365       .n4:	add.b		d1,d1
+               S01:0000022C:  D2 01
+F00:0366       	bcc.s		.n2
+               S01:0000022E:  64 02
+F00:0367       	move.w		d2,(a0)+
+               S01:00000230:  30 C2
+F00:0368       .n2:	add.b		d1,d1
+               S01:00000232:  D2 01
+F00:0369       	bcc.s		.n1
+               S01:00000234:  64 02
+F00:0370       	move.b		d2,(a0)+
+               S01:00000236:  10 C2
+F00:0371       .n1:
+F00:0372       
+F00:0373       .done:	move.l		0+4(sp),d0
+               S01:00000238:  20 2F 00 04
+F00:0374       
+F00:0375       	move.l		a1,d2
+               S01:0000023C:  24 09
+F00:0376       ;	move.l		(sp)+,d2
+F00:0377       	rts
+               S01:0000023E:  4E 75
+F00:0378       	
+F00:0379       ; --------------------------------------------------------------
+F00:0380       
+F00:0381       ; --------------------------------------------------------------
+F00:0382       ___mulsi3:		xdef	___mulsi3
+F00:0383       ; --------------------------------------------------------------
+F00:0384       	move.w		6(sp),d0
+               S01:00000240:  30 2F 00 06
+F00:0385       	move.l		d0,a0
+               S01:00000244:  20 40
+F00:0386       	mulu.w		8(sp),d0
+               S01:00000246:  C0 EF 00 08
+F00:0387       	move.w		10(sp),d1
+               S01:0000024A:  32 2F 00 0A
+F00:0388       	move.l		d1,a1
+               S01:0000024E:  22 41
+F00:0389       	mulu.w		4(sp),d1
+               S01:00000250:  C2 EF 00 04
+F00:0390       	add.w		d1,d0
+               S01:00000254:  D0 41
+F00:0391       	swap		d0
+               S01:00000256:  48 40
+F00:0392       	clr.w		d0
+               S01:00000258:  42 40
+F00:0393       	exg.l		a0,d0
+               S01:0000025A:  C1 88
+F00:0394       	move.l		a1,d1
+               S01:0000025C:  22 09
+F00:0395       	mulu.w		d1,d0
+               S01:0000025E:  C0 C1
+F00:0396       	add.l		a0,d0
+               S01:00000260:  D0 88
+F00:0397       	rts
+               S01:00000262:  4E 75
+F00:0398       
+F00:0399       ; --------------------------------------------------------------
+F00:0400       ___modsi3:		xdef	___modsi3
+F00:0401       ; --------------------------------------------------------------
+F00:0402       	move.l		(sp)+,a0
+               S01:00000264:  20 5F
+F00:0403       	move.l		4(sp),d1
+               S01:00000266:  22 2F 00 04
+F00:0404       	bpl.s		.nabs
+               S01:0000026A:  6A 04
+F00:0405       	neg.l		4(sp)
+               S01:0000026C:  44 AF 00 04
+F00:0406       .nabs:	move.l		(sp),d0
+               S01:00000270:  20 17
+F00:0407       	pea		.ret(pc)
+               S01:00000272:  48 7A 00 0E
+F00:0408       	bpl.s		.nabsd
+               S01:00000276:  6A 06
+F00:0409       	neg.l		4(sp)
+               S01:00000278:  44 AF 00 04
+F00:0410       	subq.l		#2,(sp)
+               S01:0000027C:  55 97
+F00:0411       .nabsd:	bra		___udivsi3
+               S01:0000027E:  60 06
+F00:0412       	neg.l		d1
+               S01:00000280:  44 81
+F00:0413       .ret:	move.l		d1,d0
+               S01:00000282:  20 01
+F00:0414       	jmp		(a0)
+               S01:00000284:  4E D0
+F00:0415       
+F00:0416       ; --------------------------------------------------------------
+F00:0417       ___udivsi3:		xdef	___udivsi3
+F00:0418       ; --------------------------------------------------------------
+F00:0419       	move.l		d2,-(sp)
+               S01:00000286:  2F 02
+F00:0420       	move.l		12(sp),d0
+               S01:00000288:  20 2F 00 0C
+F00:0421       	move.l		8(sp),d1
+               S01:0000028C:  22 2F 00 08
+F00:0422       .norm:	cmpi.l		#$10000,d0
+               S01:00000290:  0C 80 00 01 00 00
+F00:0423       	bcs.s		.normd
+               S01:00000296:  65 06
+F00:0424       	lsr.l		#1,d0
+               S01:00000298:  E2 88
+F00:0425       	lsr.l		#1,d1
+               S01:0000029A:  E2 89
+F00:0426       	bra.s		.norm
+               S01:0000029C:  60 F2
+F00:0427       .normd:	move.w		d1,d2
+               S01:0000029E:  34 01
+F00:0428       	clr.w		d1
+               S01:000002A0:  42 41
+F00:0429       	swap		d1
+               S01:000002A2:  48 41
+F00:0430       	divu.w		d0,d1
+               S01:000002A4:  82 C0
+F00:0431       	movea.l		d1,a1
+               S01:000002A6:  22 41
+F00:0432       	move.w		d2,d1
+               S01:000002A8:  32 02
+F00:0433       	divu.w		d0,d1
+               S01:000002AA:  82 C0
+F00:0434       	move.l		a1,d0
+               S01:000002AC:  20 09
+F00:0435       	swap		d0
+               S01:000002AE:  48 40
+F00:0436       	clr.w		d0
+               S01:000002B0:  42 40
+F00:0437       	andi.l		#$ffff,d1
+               S01:000002B2:  02 81 00 00 FF FF
+F00:0438       	add.l		d1,d0
+               S01:000002B8:  D0 81
+F00:0439       	move.l		12(sp),d2
+               S01:000002BA:  24 2F 00 0C
+F00:0440       	swap		d2
+               S01:000002BE:  48 42
+F00:0441       	move.l		d0,d1
+               S01:000002C0:  22 00
+F00:0442       	mulu.w		d2,d1
+               S01:000002C2:  C2 C2
+F00:0443       	movea.l		d1,a1
+               S01:000002C4:  22 41
+F00:0444       	swap		d2
+               S01:000002C6:  48 42
+F00:0445       	move.l		d0,d1
+               S01:000002C8:  22 00
+F00:0446       	swap		d1
+               S01:000002CA:  48 41
+F00:0447       	mulu.w		d2,d1
+               S01:000002CC:  C2 C2
+F00:0448       	add.l		a1,d1
+               S01:000002CE:  D2 89
+F00:0449       	swap		d1
+               S01:000002D0:  48 41
+F00:0450       	clr.w		d1
+               S01:000002D2:  42 41
+F00:0451       	movea.l		d2,a1
+               S01:000002D4:  22 42
+F00:0452       	mulu.w		d0,d2
+               S01:000002D6:  C4 C0
+F00:0453       	add.l		d1,d2
+               S01:000002D8:  D4 81
+F00:0454       	move.l		8(sp),d1
+               S01:000002DA:  22 2F 00 08
+F00:0455       	sub.l		d2,d1
+               S01:000002DE:  92 82
+F00:0456       	bcc.s		.ninc
+               S01:000002E0:  64 04
+F00:0457       	subq.l		#1,d0
+               S01:000002E2:  53 80
+F00:0458       	add.l		a1,d1
+               S01:000002E4:  D2 89
+F00:0459       .ninc:	move.l		(sp)+,d2
+               S01:000002E6:  24 1F
+F00:0460       	rts
+               S01:000002E8:  4E 75
+F00:0461       
+F00:0462       ; --------------------------------------------------------------
+F00:0463       ___umodsi3:		xdef	___umodsi3
+F00:0464       ; --------------------------------------------------------------
+F00:0465       	move.l		(sp)+,a0
+               S01:000002EA:  20 5F
+F00:0466       	bsr		___udivsi3
+               S01:000002EC:  61 98
+F00:0467       	move.l		d1,d0
+               S01:000002EE:  20 01
+F00:0468       	jmp		(a0)
+               S01:000002F0:  4E D0
+F00:0469       
+F00:0470       ; --------------------------------------------------------------
+F00:0471       ___divsi3:		xdef	___divsi3
+F00:0472       ; --------------------------------------------------------------
+F00:0473       	move.l		4(sp),d1
+               S01:000002F2:  22 2F 00 04
+F00:0474       	bpl.s		.nabs1
+               S01:000002F6:  6A 04
+F00:0475       	neg.l		4(sp)
+               S01:000002F8:  44 AF 00 04
+F00:0476       .nabs1:	move.l		8(sp),d0
+               S01:000002FC:  20 2F 00 08
+F00:0477       	bpl.s		.nabs2
+               S01:00000300:  6A 04
+F00:0478       	neg.l		8(sp)
+               S01:00000302:  44 AF 00 08
+F00:0479       .nabs2:	eor.l		d1,d0
+               S01:00000306:  B3 80
+F00:0480       	bpl.s		.npop
+               S01:00000308:  6A 06
+F00:0481       	move.l		(sp)+,a0
+               S01:0000030A:  20 5F
+F00:0482       	pea		.ret(pc)
+               S01:0000030C:  48 7A 00 06
+F00:0483       .npop:	bra		___udivsi3
+               S01:00000310:  60 00 FF 74
+F00:0484       .ret:	neg.l		d0
+               S01:00000314:  44 80
+F00:0485       	jmp		(a0)
+               S01:00000316:  4E D0
+F00:0486       	
+F00:0487       ; --------------------------------------------------------------
+F00:0488       _putchar:		xdef	_putchar
+F00:0489       ; --------------------------------------------------------------
+F00:0490       	move.w		4+2(sp),d1
+               S01:00000318:  32 2F 00 06
+F00:0491       	movem.l		d2/a2,-(sp)
+               S01:0000031C:  48 E7 20 20
+F00:0492       	move.w		d1,-(sp)
+               S01:00000320:  3F 01
+F00:0493       	move.w		#2,-(sp)
+               S01:00000322:  3F 3C 00 02
+F00:0494       	move.w		#3,-(sp)
+               S01:00000326:  3F 3C 00 03
+F00:0495       	trap		#13
+               S01:0000032A:  4E 4D
+F00:0496       	addq.l		#6,sp
+               S01:0000032C:  5C 8F
+F00:0497       	moveq		#0,d0
+               S01:0000032E:  70 00
+F00:0498       	movem.l		(sp)+,d2/a2
+               S01:00000330:  4C DF 04 04
+F00:0499       	rts
+               S01:00000334:  4E 75
+F00:0500       	
+F00:0501       ; --------------------------------------------------------------
+F00:0502       	text
+F00:0503       ; --------------------------------------------------------------
+F00:0504       
+F00:0505       _rand:	XDEF	_rand
+F00:0506       ___cxa_guard_acquire:
+F00:0507       ___cxa_guard_release:
+F00:0508       	rts
+               S01:00000336:  4E 75
+F00:0509       		
+F00:0510       ; --------------------------------------------------------------
+F00:0511       __ZSt17__throw_bad_allocv:
+F00:0512       ___cxa_pure_virtual:	
+F00:0513       ; --------------------------------------------------------------
+F00:0514       	jmp		_exit
+               S01:00000338:  4E F9 00 00 00 00 [R]
+F00:0515       
+F00:0516       ; --------------------------------------------------------------
+F00:0517       	data
+F00:0518       ; --------------------------------------------------------------
+F00:0519       	
+F00:0520       dummy_argv:
+F00:0521       dummy_envp:
+F00:0522       	dc.b		0
+               S02:00000000:  00
+F00:0523       	even
+F00:0524       
+F00:0525       ; --------------------------------------------------------------
+F00:0526       	bss
+F00:0527       ; --------------------------------------------------------------
+F00:0528       	
+F00:0529       	ds.b		SSPS
+F00:0530       new_ssp:
+F00:0531       	ds.l		1
+F00:0532       entrypoint_ssp:
+F00:0533       	ds.l		1
+F00:0534       	
+F00:0535       ; --------------------------------------------------------------
+F00:0536       
+F00:0537       
+
+
+Sections:
+S01  CODE
+S02  DATA
+S03  BSS
+
+
+Sources:
+F00  brownboot.s
+
+
+Symbols:
+_rand LAB (0x336) UNUSED EXPORT sec=CODE 
+_putchar LAB (0x318) UNUSED EXPORT sec=CODE 
+ ___divsi3 .ret LAB (0x314) sec=CODE 
+ ___divsi3 .npop LAB (0x310) sec=CODE 
+ ___divsi3 .nabs2 LAB (0x306) sec=CODE 
+ ___divsi3 .nabs1 LAB (0x2fc) sec=CODE 
+___divsi3 LAB (0x2f2) UNUSED EXPORT sec=CODE 
+___umodsi3 LAB (0x2ea) UNUSED EXPORT sec=CODE 
+ ___udivsi3 .ninc LAB (0x2e6) sec=CODE 
+ ___udivsi3 .normd LAB (0x29e) sec=CODE 
+ ___udivsi3 .norm LAB (0x290) sec=CODE 
+___udivsi3 LAB (0x286) EXPORT sec=CODE 
+ ___modsi3 .nabsd LAB (0x27e) sec=CODE 
+ ___modsi3 .ret LAB (0x282) sec=CODE 
+ ___modsi3 .nabs LAB (0x270) sec=CODE 
+___modsi3 LAB (0x264) UNUSED EXPORT sec=CODE 
+___mulsi3 LAB (0x240) UNUSED EXPORT sec=CODE 
+ _memset .n1 LAB (0x238) sec=CODE 
+ _memset .n2 LAB (0x232) sec=CODE 
+ _memset .n4 LAB (0x22c) sec=CODE 
+ _memset .n8 LAB (0x226) sec=CODE 
+ _memset .lp16b LAB (0x208) sec=CODE 
+ _memset .lp1mb LAB (0x208) sec=CODE 
+ _memset .ev1mb LAB (0x214) sec=CODE 
+ _memset .done LAB (0x238) sec=CODE 
+ _memset .aligned LAB (0x1fe) sec=CODE 
+ _memcpy .jtab LAB (0x1cc) sec=CODE 
+ _memcpy .lp16d LAB (0x176) sec=CODE 
+ _memcpy .lp1md LAB (0x176) sec=CODE 
+ _memcpy .ev1md LAB (0x19a) sec=CODE 
+ _memcpy .n1c LAB (0x162) sec=CODE 
+ _memcpy .n2c LAB (0x15c) sec=CODE 
+ _memcpy .n4c LAB (0x156) sec=CODE 
+ _memcpy .n8c LAB (0x150) sec=CODE 
+ _memcpy .lp16c LAB (0x132) sec=CODE 
+ _memcpy .lp1mc LAB (0x132) sec=CODE 
+ _memcpy .ev1mc LAB (0x13e) sec=CODE 
+ _memcpy .done LAB (0x162) sec=CODE 
+ _memcpy .memcpy_misaligned_pair LAB (0x11a) UNUSED sec=CODE 
+ _memcpy .memcpy_misaligned_sgl LAB (0x168) sec=CODE 
+ _memcpy .n1 LAB (0x10a) sec=CODE 
+ _memcpy .n2 LAB (0x104) sec=CODE 
+ _memcpy .n4 LAB (0xfe) sec=CODE 
+ _memcpy .n8 LAB (0xf8) sec=CODE 
+ _memcpy .lp16b LAB (0xda) sec=CODE 
+ _memcpy .lp1mb LAB (0xda) sec=CODE 
+ _memcpy .ev1mb LAB (0xe6) sec=CODE 
+ _memcpy .memcpy_misaligned LAB (0x110) sec=CODE 
+ _memcpy .sp_size EXPR(12=0xc) EQU 
+ _memcpy .sp_psrc EXPR(8=0x8) EQU 
+ _memcpy .sp_pdst EXPR(4=0x4) EQU 
+ _memcpy .sp_return EXPR(0=0x0) UNUSED EQU 
+entrypoint_ssp LAB (0x4004) REF sec=BSS 
+dummy_envp LAB (0x0) REF sec=DATA 
+dummy_argv LAB (0x0) REF sec=DATA 
+new_ssp LAB (0x4000) REF sec=BSS 
+super_start LAB (0x60) sec=CODE 
+user_start LAB (0x3a) sec=CODE 
+_start LAB (0x0) UNUSED EXPORT sec=CODE 
+__crt_entrypoint LAB (0x0) UNUSED EXPORT sec=CODE 
+SSPS EXPR(16384=0x4000) EQU 
+USPS EXPR(1024=0x400) EQU 
+BASEPAGE_SIZE EXPR(256=0x100) EQU 
+___libc_csu_init IMP EXPORT REF 
+___cxa_guard_release LAB (0x336) UNUSED EXPORT sec=CODE 
+___cxa_guard_acquire LAB (0x336) UNUSED EXPORT sec=CODE 
+__exit LAB (0xaa) UNUSED EXPORT sec=CODE 
+_exit IMP EXPORT REF 
+_main IMP EXPORT REF 
+_memset LAB (0x1d2) EXPORT sec=CODE 
+_memcpy LAB (0xb8) UNUSED EXPORT sec=CODE 
+__ZSt17__throw_bad_allocv LAB (0x338) UNUSED EXPORT sec=CODE 
+___cxa_pure_virtual LAB (0x338) UNUSED EXPORT sec=CODE 
+_MOVEMBYTES EXPR(8=0x8) INTERNAL 
+ MOVEMSIZE EXPR(4=0x4) INTERNAL 
+_MOVEMREGS EXPR(1028=0x404) INTERNAL 
+__LINE__ EXPR(537=0x219) INTERNAL 
+__FO EXPR(0=0x0) INTERNAL 
+__RS EXPR(16=0x10) INTERNAL 
+REPTN EXPR(-1=0xffffffff) INTERNAL 
+__VASM EXPR(1=0x1) INTERNAL 
+ELF_CONFIG_STACK EXPR(16384=0x4000) 
+__M68000__ EXPR(1=0x1) UNUSED 
+__ATARI__ EXPR(1=0x1) UNUSED 
+__UNIXFS EXPR(0=0x0) INTERNAL 
+
+There have been no errors.

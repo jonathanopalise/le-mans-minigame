@@ -1,0 +1,25 @@
+/* 
+	BrownELF GCC startup: dml/2017
+
+	mark the end of all ELF/GCC6 initialize/finalize lists.
+	- required for all C++ projects using static initialization
+	  with constructors/destructors.
+	- this file should be the very last to link.
+ */
+	
+        .globl 		___preinit_array_end
+        .globl 		___init_array_end
+        .globl 		___fini_array_end
+
+        .section        .preinit_array
+___preinit_array_end:
+        .long   0
+
+        .section        .init_array
+___init_array_end:
+        .long   0
+
+        .section        .fini_array
+___fini_array_end:
+        .long   0
+

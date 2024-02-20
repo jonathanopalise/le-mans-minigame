@@ -1,0 +1,25 @@
+#ifndef __BLITTER_H
+#define __BLITTER_H
+
+#include <inttypes.h>
+
+#define BLITTER_SOURCE_X_INCREMENT 0xffff8a20
+#define BLITTER_SOURCE_Y_INCREMENT 0xffff8a22
+#define BLITTER_SOURCE_ADDRESS 0xffff8a24
+#define BLITTER_ENDMASK_1 0xffff8a28
+#define BLITTER_ENDMASK_2 0xffff8a2a
+#define BLITTER_ENDMASK_3 0xffff8a2c
+#define BLITTER_DESTINATION_X_INCREMENT 0xffff8a2e
+#define BLITTER_DESTINATION_Y_INCREMENT 0xffff8a30
+#define BLITTER_DESTINATION_ADDRESS 0xffff8a32
+#define BLITTER_X_COUNT 0xffff8a36
+#define BLITTER_Y_COUNT 0xffff8a38
+#define BLITTER_HOP_OP 0xffff8a3a
+#define BLITTER_CONTROL 0xffff8a3c
+#define BLITTER_SKEW 0xffff8a3d
+
+#define BLITTER_HOG_START 0xc0
+
+#endif
+
+

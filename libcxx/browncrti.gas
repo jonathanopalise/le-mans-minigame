@@ -1,0 +1,20 @@
+/* 
+	BrownELF GCC startup: dml/2017
+
+	mark the beginning of all ELF/GCC6 initialize/finalize lists.
+	- required for all C++ projects using static initialization
+	  with constructors/destructors.
+	- this file should be the first to link after [ crt0.o ]
+ */
+
+        .globl 		___preinit_array_start
+        .globl 		___init_array_start
+        .globl 		___fini_array_start
+
+        .section        .preinit_array,"",@progbits
+___preinit_array_start:
+        .section        .init_array,"",@progbits
+___init_array_start:
+        .section        .fini_array,"",@progbits
+___fini_array_start:
+
