@@ -14,9 +14,9 @@ void road_movement_update() {
     for (uint16_t index = 0; index < 80; index++) {
 
         if (joy_left) {
-            current_road_scanline->current_unnormalised_skew += current_road_scanline->unnormalised_skew_add_values[255];
+            current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[1];
         } else if (joy_right) {
-            current_road_scanline->current_unnormalised_skew -= current_road_scanline->unnormalised_skew_add_values[255];
+            current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[1];
         }
 
         current_road_scanline++;

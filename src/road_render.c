@@ -45,7 +45,7 @@ void road_render()
     for (uint16_t index = 0; index < 80; index++) {
         line_start_source = &gfx_data[*current_byte_offset/2];
 
-        current_skew = current_road_scanline->current_unnormalised_skew >> 16;
+        current_skew = current_road_scanline->current_logical_xpos >> 16;
         skew_adjust = (current_skew >> 2) & 0xfffffffc;
 
         /*source = line_start_source;
@@ -56,8 +56,13 @@ void road_render()
             dest += 4;
         }*/
 
+        if (current_road_scanline->distance_along_road & 2048) {
+            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // -4 bytes
+            *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
+        } else {
+            *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
+        }
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
-        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // -4 bytes
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
         *((volatile uint16_t *)BLITTER_CONTROL) = 0xc080 | (current_skew & 15);
 
@@ -68,6 +73,7 @@ void road_render()
             source += 2;
             dest += 4;
         }*/
+        *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
 
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest + 2; // +2 bytes
         *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes

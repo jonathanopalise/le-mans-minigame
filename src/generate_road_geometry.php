@@ -27,6 +27,7 @@ const SUPPLEMENTAL_SCANLINE_COUNT = 20;
 const DEGREE_CHANGE_PER_VISIBLE_SCANLINE = (NEAR_VISIBLE_SCANLINE_ANGLE_DEGREES - FAR_VISIBLE_SCANLINE_ANGLE_DEGREES) / (VISIBLE_SCANLINE_COUNT-1);
 const TOTAL_SCANLINE_COUNT = VISIBLE_SCANLINE_COUNT + SUPPLEMENTAL_SCANLINE_COUNT;
 const ROAD_Y = 1000;
+const PLAYER_CAR_SCANLINE = 75;
 
 //echo("degree change per visible scanline: ".DEGREE_CHANGE_PER_VISIBLE_SCANLINE."\n");
 
@@ -45,39 +46,18 @@ $scanlineYVectorAddQuantity = ($farVisibleScanlineYVector - $nearVisibleScanline
 $xVector = $farVisibleScanlineXVector;
 $yVector = $farVisibleScanlineYVector;
 
-//echo("far visible scanline x vector: ".$farVisibleScanlineXVector."\n");
-//echo("far visible scanline y vector: ".$farVisibleScanlineYVector."\n");
-//echo("near visible scanline x vector: ".$nearVisibleScanlineXVector."\n");
-//echo("near visible scanline y vector: ".$nearVisibleScanlineYVector."\n");
-
-$width = 5;
-
 $scanlines = [];
 
-//$currentDegrees = FAR_VISIBLE_SCANLINE_ANGLE_DEGREES;
 $unnormalisedSkewAddValuesMultiplier = 10;
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
-    $distanceFromEye = sqrt(pow(ROAD_Y,2) + pow($distanceAlongRoad,2));
-    //$width = 600000/$distanceAlongRoad;
-
-    //echo(str_pad("degrees: ".$currentDegrees,25));
-    //echo(str_pad("xvector: ".round($xVector,3),25));
-    //echo(str_pad("yvector: ".round($yVector,3),25));
-    //echo(str_pad("distanceAlongRoad: ".round($distanceAlongRoad,3),30));
-    //echo(str_pad("distanceFromEye: ".round($distanceFromEye,3),30));
-    //echo(str_pad("road width: ".round($width,3),25));
-    //echo("\n");
-
-    //$currentDegrees += DEGREE_CHANGE_PER_VISIBLE_SCANLINE;
-
     $xVector -= $scanlineXVectorAddQuantity;
     $yVector -= $scanlineYVectorAddQuantity;
-    $width += 2;
 
+    // note the magic number to make sure that normalisedSkewAddValues[1] on the player car scanline is exactly 65536
     $unnormalisedSkewAddValues = [];
     for ($index = 0; $index < 256; $index++) {
-        $unnormalisedSkewAddValues[] = $index * $unnormalisedSkewAddValuesMultiplier;
+        $unnormalisedSkewAddValues[] = intval((floatval($index) * 211.408) * $unnormalisedSkewAddValuesMultiplier);
     }
 
     $scanlines[] = [
@@ -85,9 +65,29 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
         'unnormalisedSkewAddValues' => $unnormalisedSkewAddValues,
     ];
 
-    $unnormalisedSkewAddValuesMultiplier+=2;
+    $unnormalisedSkewAddValuesMultiplier+=4;
 }
 
+echo("unnormalisedSkewAddValue[1] on player scanline: ".$scanlines[PLAYER_CAR_SCANLINE]['unnormalisedSkewAddValues'][1]."\n");
+
+$distanceToScanlineLookup = [];
+for ($distanceAlongRoad = 0; $distanceAlongRoad < 65536; $distanceAlongRoad++) {
+    // start from nearest scanline
+    $lookupValue = -1;
+
+    for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT - 2; $scanlineIndex++) {
+        $furtherScanlineDistance = intval($scanlines[$scanlineIndex]['distanceAlongRoad']);
+        $nearerScanlineDistance = intval($scanlines[$scanlineIndex + 1]['distanceAlongRoad']);
+
+        if (($distanceAlongRoad >= $nearerScanlineDistance) && ($distanceAlongRoad < $furtherScanlineDistance)) {
+            $lookupValue = $scanlineIndex;
+            break;
+        }
+
+    }
+
+    $distanceToScanlineLookup[] = $lookupValue;
+}
 
 $lines = [
     '#include "../road_geometry.h"',
@@ -105,13 +105,37 @@ foreach ($scanlines as $key => $scanline) {
     );
 
     $lines[] = sprintf(
-        '       .unnormalised_skew_add_values = {%s}',
+        '       .logical_xpos_add_values = {%s}',
         implode(', ', $scanline['unnormalisedSkewAddValues'])
     );
 
 
     $line = '    }';
     if ($key !== array_key_last($scanlines)) {
+        $line .= ',';
+    }
+
+    $lines[] = $line;
+}
+
+$lines = array_merge(
+    $lines,
+    [
+        '};',
+    ]
+);
+
+$lines = array_merge(
+    $lines,
+    [
+        '',
+        'uint16_t distance_to_scanline_lookup[] = {',
+    ]
+);
+
+foreach ($distanceToScanlineLookup as $key => $item) {
+    $line = '    '.$item;
+    if ($key !== array_key_last($distanceToScanlineLookup)) {
         $line .= ',';
     }
 
