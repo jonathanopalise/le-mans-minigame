@@ -10,9 +10,9 @@ if ($argc < 2) {
 $outputFilename = $argv[1];
 
 
-const COLOUR_WHITE = 1;           // 0110 -> 0110
-const COLOUR_LIGHT_ASPHALT = 2;  // 1101 -> 1101
-const COLOUR_GRASS_1 = 3;        // 1100 -> 1000
+const COLOUR_WHITE = 2;           // 0110 -> 0110
+const COLOUR_LIGHT_ASPHALT = 3;  // 1101 -> 1101
+const COLOUR_GRASS_1 = 1;        // 1100 -> 1000
 
 $padding = 22;
 

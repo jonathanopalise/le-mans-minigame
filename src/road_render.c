@@ -2,6 +2,7 @@
 #include "road_graphics.h"
 #include "road_geometry.h"
 #include "hardware_playfield.h"
+#include "player_car.h"
 #include "blitter.h"
 
 void road_render()
@@ -56,7 +57,7 @@ void road_render()
             dest += 4;
         }*/
 
-        if (current_road_scanline->distance_along_road & 2048) {
+        if ((current_road_scanline->distance_along_road + player_car_track_position) & 2048) {
             *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // -4 bytes
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
         } else {
