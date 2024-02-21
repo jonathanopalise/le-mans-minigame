@@ -2,6 +2,7 @@
 #include "hardware_playfield.h"
 #include "initialise.h"
 #include "vbl_handler.h"
+#include "road_movement.h"
 #include "road_render.h"
 
 void game_loop()
@@ -10,6 +11,7 @@ void game_loop()
     initialise();
 
     while (1) {
+        road_movement_update();
         road_render();
         *((volatile uint16_t *)0xffff8240) = 0x040; // green
 

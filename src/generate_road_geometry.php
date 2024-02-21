@@ -50,11 +50,12 @@ $yVector = $farVisibleScanlineYVector;
 //echo("near visible scanline x vector: ".$nearVisibleScanlineXVector."\n");
 //echo("near visible scanline y vector: ".$nearVisibleScanlineYVector."\n");
 
-$width = 10;
+$width = 5;
 
 $scanlines = [];
 
 //$currentDegrees = FAR_VISIBLE_SCANLINE_ANGLE_DEGREES;
+$unnormalisedSkewAddValuesMultiplier = 10;
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
     $distanceFromEye = sqrt(pow(ROAD_Y,2) + pow($distanceAlongRoad,2));
@@ -72,11 +73,19 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
 
     $xVector -= $scanlineXVectorAddQuantity;
     $yVector -= $scanlineYVectorAddQuantity;
-    $width += 4;
+    $width += 2;
+
+    $unnormalisedSkewAddValues = [];
+    for ($index = 0; $index < 256; $index++) {
+        $unnormalisedSkewAddValues[] = $index * $unnormalisedSkewAddValuesMultiplier;
+    }
 
     $scanlines[] = [
         'distanceAlongRoad' => $distanceAlongRoad,
+        'unnormalisedSkewAddValues' => $unnormalisedSkewAddValues,
     ];
+
+    $unnormalisedSkewAddValuesMultiplier+=2;
 }
 
 
@@ -84,15 +93,24 @@ $lines = [
     '#include "../road_geometry.h"',
     '#include <inttypes.h>',
     '',
-    'struct RoadScanline road_scanlines[] = {',
+    'struct RoadScanline road_scanlines[] = (struct RoadScanline[]) {',
 ];
 
 foreach ($scanlines as $key => $scanline) {
-    $line = sprintf(
-        '    {%d}',
+    $lines[] = '    {';
+
+    $lines[] = sprintf(
+        '       .distance_along_road = %d,',
         $scanline['distanceAlongRoad']
     );
 
+    $lines[] = sprintf(
+        '       .unnormalised_skew_add_values = {%s}',
+        implode(', ', $scanline['unnormalisedSkewAddValues'])
+    );
+
+
+    $line = '    }';
     if ($key !== array_key_last($scanlines)) {
         $line .= ',';
     }

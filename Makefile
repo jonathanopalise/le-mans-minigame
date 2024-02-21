@@ -10,6 +10,7 @@ OBJECT_FILES =\
 	src/game_loop.o\
 	src/hardware_playfield.o\
 	src/vbl_handler.o\
+    src/road_movement.o\
     src/road_render.o\
 	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
@@ -23,7 +24,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/road_render.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h
@@ -32,7 +33,7 @@ src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
-src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/hardware_playfield.h src/blitter.h
+src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h

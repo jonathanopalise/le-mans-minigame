@@ -1,5 +1,6 @@
 #include "road_render.h"
 #include "road_graphics.h"
+#include "road_geometry.h"
 #include "hardware_playfield.h"
 #include "blitter.h"
 
@@ -39,10 +40,12 @@ void road_render()
         *((int16_t *)BLITTER_X_COUNT) = 20;
         *((uint16_t *)BLITTER_HOP_OP) = 0x0203;
 
-    current_skew = -80;
+    struct RoadScanline *current_road_scanline = road_scanlines;
 
     for (uint16_t index = 0; index < 80; index++) {
         line_start_source = &gfx_data[*current_byte_offset/2];
+
+        current_skew = current_road_scanline->current_unnormalised_skew >> 16;
         skew_adjust = (current_skew >> 2) & 0xfffffffc;
 
         /*source = line_start_source;
@@ -73,7 +76,7 @@ void road_render()
 
         line_start_dest += 160;
         current_byte_offset++;
-        current_skew += 2;
+        current_road_scanline++;
     }
 
 }
