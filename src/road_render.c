@@ -6,11 +6,13 @@
 void road_render()
 {
     uint32_t *current_byte_offset = byte_offsets;
-    uint16_t *line_start_dest = (hidden_hardware_playfield->buffer) + 160*119;
-    uint16_t *line_start_source;
+    uint8_t *line_start_dest = (hidden_hardware_playfield->buffer) + 160*119;
+    uint8_t *line_start_source;
     uint16_t x;
     uint16_t *dest;
     uint16_t *source;
+    int32_t current_skew;
+    int32_t skew_adjust;
 
     /*
 
@@ -37,8 +39,11 @@ void road_render()
         *((int16_t *)BLITTER_X_COUNT) = 20;
         *((uint16_t *)BLITTER_HOP_OP) = 0x0203;
 
+    current_skew = -80;
+
     for (uint16_t index = 0; index < 80; index++) {
         line_start_source = &gfx_data[*current_byte_offset/2];
+        skew_adjust = (current_skew >> 2) & 0xfffffffc;
 
         /*source = line_start_source;
         dest = line_start_dest;
@@ -49,9 +54,9 @@ void road_render()
         }*/
 
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
-        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source - 2; // -4 bytes
+        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // -4 bytes
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
-        *((volatile uint16_t *)BLITTER_CONTROL) = 0xc080;
+        *((volatile uint16_t *)BLITTER_CONTROL) = 0xc080 | (current_skew & 15);
 
         /*source = line_start_source + 1;
         dest = line_start_dest + 1;
@@ -61,13 +66,14 @@ void road_render()
             dest += 4;
         }*/
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest + 1; // +2 bytes
-        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source - 1; // -2 bytes
+        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest + 2; // +2 bytes
+        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
-        *((volatile uint16_t *)BLITTER_CONTROL) = 0xc080;
+        *((volatile uint16_t *)BLITTER_CONTROL) = 0xc080 | (current_skew & 15);
 
-        line_start_dest += 80;
+        line_start_dest += 160;
         current_byte_offset++;
+        current_skew += 2;
     }
 
 }
