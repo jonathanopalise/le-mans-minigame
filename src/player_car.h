@@ -4,7 +4,7 @@
 extern uint32_t player_car_track_position;
 extern int32_t player_car_logical_xpos;
 extern int32_t player_car_speed;
-extern uint32_t player_car_steering;
+extern int32_t player_car_steering;
 
 void player_car_handle_inputs();
 
