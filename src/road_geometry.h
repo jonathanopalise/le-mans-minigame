@@ -13,6 +13,8 @@ struct RoadScanline {
     // unnormalised_skew += current_scanline->unnormalised_skew_add_values[128]; 
     int32_t logical_xpos_add_values[256];
 
+    int32_t logical_xpos_corner_add_values[256];
+
     // runtime values
     int32_t current_logical_xpos;
     uint16_t render_method;

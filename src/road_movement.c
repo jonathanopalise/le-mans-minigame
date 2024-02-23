@@ -5,6 +5,15 @@
 // TODO: this should be a generated value
 #define PLAYER_CAR_SCANLINE 75
 
+void road_corners_update() {
+    // TODO: this needs to be all 100 scanlines
+    struct RoadScanline *current_road_scanline = road_scanlines;
+    for (uint16_t index = 0; index < 80; index++) {
+        current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[1];
+        current_road_scanline++;
+    }
+}
+
 void road_movement_update() {
     // TODO: need to turn scanline count = 80 into a constant somewhere
 

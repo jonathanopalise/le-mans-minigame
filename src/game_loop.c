@@ -13,6 +13,7 @@ void game_loop()
 
     while (1) {
         player_car_handle_inputs();
+        road_corners_update();
         road_movement_update();
         road_render();
         *((volatile uint16_t *)0xffff8240) = 0x040; // green

@@ -68,6 +68,28 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
     $unnormalisedSkewAddValuesMultiplier+=4;
 }
 
+$cornerValue = 0;
+$cornerAddValue = 0;
+// start from player scanline and go up
+for ($scanlineIndex = PLAYER_CAR_SCANLINE; $scanlineIndex >= 0; $scanlineIndex--) {
+    $unnormalisedCornerAddValues = [];
+    for ($index = 0; $index < 256; $index++) {
+        $unnormalisedCornerAddValues[] = $cornerValue * $index;
+    }
+    $scanlines[$scanlineIndex]['unnormalisedCornerAddValues'] = $unnormalisedCornerAddValues;
+
+    $cornerValue += $cornerAddValue;
+    $cornerAddValue += 10;
+}
+
+// start from scanline below player scanline and go down
+$sourceScanlineIndex = PLAYER_CAR_SCANLINE - 1;
+for ($scanlineIndex = PLAYER_CAR_SCANLINE + 1; $scanlineIndex < count($scanlines); $scanlineIndex++) {
+    $scanlines[$scanlineIndex]['unnormalisedCornerAddValues'] = $scanlines[$sourceScanlineIndex]['unnormalisedCornerAddValues'];
+    $sourceScanlineIndex--;
+}
+
+// should probably fail build here if value is not 65536
 echo("unnormalisedSkewAddValue[1] on player scanline: ".$scanlines[PLAYER_CAR_SCANLINE]['unnormalisedSkewAddValues'][1]."\n");
 
 $distanceToScanlineLookup = [];
@@ -105,10 +127,14 @@ foreach ($scanlines as $key => $scanline) {
     );
 
     $lines[] = sprintf(
-        '       .logical_xpos_add_values = {%s}',
+        '       .logical_xpos_add_values = {%s},',
         implode(', ', $scanline['unnormalisedSkewAddValues'])
     );
 
+    $lines[] = sprintf(
+        '       .logical_xpos_corner_add_values = {%s}',
+        implode(', ', $scanline['unnormalisedCornerAddValues'])
+    );
 
     $line = '    }';
     if ($key !== array_key_last($scanlines)) {
