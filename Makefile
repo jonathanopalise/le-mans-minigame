@@ -11,6 +11,7 @@ OBJECT_FILES =\
 	src/hardware_playfield.o\
 	src/vbl_handler.o\
     src/road_movement.o\
+    src/track_segments.o\
     src/road_render.o\
     src/player_car.o\
 	src/generated/road_geometry.o\
@@ -37,10 +38,13 @@ src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
 
+src/track_segments.o: src/track_segments.c src/track_segments.h
+	$(CC) $(CFLAGS) -c src/track_segments.c -o src/track_segments.o
+
 src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
 
-src/player_car.o: src/player_car.c src/player_car.h src/initialise.h
+src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h

@@ -2,10 +2,26 @@
 #include "player_car.h"
 #include "initialise.h"
 
+struct TrackSegment *player_car_current_track_segment;
+uint32_t player_car_current_track_segment_start_position;
+uint32_t player_car_current_track_segment_end_position;
+uint16_t player_car_current_track_segment_changes_applied;
 uint32_t player_car_track_position;
 int32_t player_car_logical_xpos;
 int32_t player_car_speed;
 int32_t player_car_steering;
+
+void player_car_initialise()
+{
+    player_car_current_track_segment = track_segments;
+    player_car_current_track_segment_start_position = 0;
+    player_car_current_track_segment_end_position = (player_car_current_track_segment->change_frequency * player_car_current_track_segment->change_count);
+    player_car_current_track_segment_changes_applied = 0;
+    player_car_track_position = 0;
+    player_car_logical_xpos = 0;
+    player_car_speed = 0;
+    player_car_steering = 0;
+}
 
 void player_car_handle_inputs()
 {

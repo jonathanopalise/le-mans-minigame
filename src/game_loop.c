@@ -10,6 +10,7 @@ void game_loop()
 {
     hardware_playfield_init();
     initialise();
+    player_car_initialise();
 
     while (1) {
         player_car_handle_inputs();
