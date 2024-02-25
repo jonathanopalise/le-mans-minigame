@@ -12,6 +12,7 @@ OBJECT_FILES =\
 	src/vbl_handler.o\
     src/road_movement.o\
     src/track_segments.o\
+    src/trackside_items.o\
     src/road_render.o\
     src/player_car.o\
 	src/generated/road_geometry.o\
@@ -40,6 +41,9 @@ src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h
 
 src/track_segments.o: src/track_segments.c src/track_segments.h
 	$(CC) $(CFLAGS) -c src/track_segments.c -o src/track_segments.o
+
+src/trackside_items.o: src/trackside_items.c src/trackside_items.h
+	$(CC) $(CFLAGS) -c src/trackside_items.c -o src/trackside_items.o
 
 src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o

@@ -49,9 +49,9 @@ void road_corners_update() {
         struct RoadScanline *current_road_scanline = road_scanlines;
         for (uint16_t index = 0; index < 80; index++) {
             if (total_change_to_apply > 0) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[1];
+                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
             } else {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[1];
+                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply];
             }
             current_road_scanline++;
         }

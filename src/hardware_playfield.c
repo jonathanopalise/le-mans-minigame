@@ -35,9 +35,11 @@ void hardware_playfield_erase_sprites()
 
     *((uint16_t *)BLITTER_HOP_OP) = 0;    
 
+    // TODO: run two passes
+    // and check the bitplanes it writes to - should only write to bitplanes that road doesn't write to
     for (int index = 0; index < hidden_hardware_playfield->sprites_drawn; index++) { 
         *((uint16_t **)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address;
-        *((uint16_t *)BLITTER_DESTINATION_X_INCREMENT) = current_bitplane_draw_record->destination_x_increment;
+        *((uint16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8; // TODO: check value
         *((uint16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
         *((int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
         *((int16_t *)BLITTER_Y_COUNT) = current_bitplane_draw_record->y_count;

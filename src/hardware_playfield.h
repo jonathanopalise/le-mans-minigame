@@ -11,7 +11,6 @@
 
 struct BitplaneDrawRecord {
     uint16_t *destination_address;
-    int16_t destination_x_increment; // is this required?
     int16_t destination_y_increment;
     uint16_t x_count;
     uint16_t y_count;
