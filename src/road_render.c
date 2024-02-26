@@ -10,9 +10,6 @@ void road_render()
     uint32_t *current_byte_offset = byte_offsets;
     uint8_t *line_start_dest = (hidden_hardware_playfield->buffer) + 160*119;
     uint8_t *line_start_source;
-    uint16_t x;
-    uint16_t *dest;
-    uint16_t *source;
     int32_t current_skew;
     int32_t skew_adjust;
 
@@ -33,13 +30,13 @@ void road_render()
     */
 
 // iteration
-        *((int16_t *)BLITTER_ENDMASK_1) = -1;
-        *((int16_t *)BLITTER_ENDMASK_2) = -1;
-        *((int16_t *)BLITTER_ENDMASK_3) = -1;
-        *((int16_t *)BLITTER_SOURCE_X_INCREMENT) = 4;
-        *((int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
-        *((int16_t *)BLITTER_X_COUNT) = 20;
-        *((uint16_t *)BLITTER_HOP_OP) = 0x0203;
+        *((volatile int16_t *)BLITTER_ENDMASK_1) = -1;
+        *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
+        *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
+        *((volatile int16_t *)BLITTER_SOURCE_X_INCREMENT) = 4;
+        *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
+        *((volatile int16_t *)BLITTER_X_COUNT) = 20;
+        *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
 
     struct RoadScanline *current_road_scanline = road_scanlines;
 

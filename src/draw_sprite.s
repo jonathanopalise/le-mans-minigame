@@ -67,6 +67,7 @@ _draw_sprite:
     ; source_data_width = word at sp + 18
     ; source_data_height = word at sp + 22
     ; screen_buffer = long at sp + 24
+    ; bitplane_draw_record = long at sp + 28
 
     move.l sp,a0
     movem.l d2-d7/a2-a6,-(sp)
@@ -94,6 +95,7 @@ _draw_sprite:
     add.l d3,d7
 
     move.l 24(a0),a1 ; screen buffer
+    move.l 28(a0),a4 ; bitplane draw record address
 
     move.l 12(a0),a0 ; source data pointer
 
@@ -205,9 +207,12 @@ label_7a374:
     ;adda.l    a1,a2        ; add buffer location into a2?
     ;movea.l   a2,a1            ; transfer destination address into a1
 
+    move.l #0,(a4)     ; if destination address is 0, don't try to clear
     add.w     d2,a1    ; a1.l is final destination address for BitplaneDrawRecord
     tst.w     d4
     beq       alldone
+
+    move.l    a1,(a4)  ; set BitplaneDrawRecord destination_address
  
     ; end of modified lotus code and start of new blitter code
     moveq.l #10,d5
@@ -223,10 +228,7 @@ label_7a374:
 
     ; d3.w is y_count for BitplaneDrawRecord
 
-    lea $ffff8a38.w,a2
-    lea $ffff8a24.w,a4
-    lea $ffff8a32.w,a5 ; destination address
-    lea $ffff8a3c.w,a6
+    move.w d3,8(a4)           ; set BitplaneDrawRecord y_count
 
     addq.l #8,d6               ; convert to value suitable for blitter
     add.w d5,d7               ; convert to value suitable for blitter | TODO: #10 for 4bpp and #8 for 3bpp
@@ -269,9 +271,9 @@ nonfsr:
 
     move.w d7,($ffff8a22).w             ; source y increment
     move.w d6,($ffff8a30).w             ; dest y increment
-                                        ; d6.w is dest y increment for BitplaneDrawRecord
+    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
     move.w d4,($ffff8a36).w             ; xcount = number of 16 pixel blocks (one pass per bitplane)
-                                        ; d4.w is xcount for BitplaneDrawRecord
+    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
     move.b d1,($ffff8a3d).w
 
     lea.l rightendmasks(pc),a3
@@ -284,9 +286,9 @@ nofxsr:
 
     move.w d7,($ffff8a22).w             ; source y increment
     move.w d6,($ffff8a30).w             ; dest y increment
-                                        ; d6.w is dest y increment for BitplaneDrawRecord
+    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
     move.w d4,($ffff8a36).w             ; xcount = number of 16 pixel blocks (once pass per bitplane)
-                                        ; d4.w is xcount for BitplaneDrawRecord
+    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
     move.b d1,($ffff8a3d).w
 
     add.l d0,d0                         ; byte offset in mask lookup table
@@ -314,6 +316,11 @@ nocalcendmask3:
     ; looks like d0, d1 and d2 are also available to us
 
 blitterstart:
+
+    lea $ffff8a38.w,a2
+    lea $ffff8a24.w,a4
+    lea $ffff8a32.w,a5 ; destination address
+    lea $ffff8a3c.w,a6
 
     cmp.w #3,d4
     bgt draw_one_line_chunks

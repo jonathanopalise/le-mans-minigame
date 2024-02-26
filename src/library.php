@@ -10,6 +10,7 @@ class IndexedBitmapPixel
     public function __construct(int $colourIndex, bool $visible)
     {
         $this->validateColourIndex($colourIndex);
+        $this->colourIndex = $colourIndex;
         $this->visible = $visible;
     }
 
@@ -148,6 +149,7 @@ class IndexedBitmap {
                     new IndexedBitmapPixel($pixelIndex, !$visible)
                 );
             }
+    
             $lines[] = $line;
         }
 

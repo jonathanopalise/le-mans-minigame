@@ -4,28 +4,26 @@
 #include <inttypes.h>
 #include "sprite_common.h"
 #include "hardware.h"
+#include "sprite_definitions.h"
+#include "draw_sprite.h"
+#include "bitplane_draw_record.h"
 
 #define HARDWARE_PLAYFIELD_WIDTH 320
 #define HARDWARE_PLAYFIELD_HEIGHT 200
 #define HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES (PIXELS_TO_BYTES(HARDWARE_PLAYFIELD_WIDTH * HARDWARE_PLAYFIELD_HEIGHT))
 
-struct BitplaneDrawRecord {
-    uint16_t *destination_address;
-    int16_t destination_y_increment;
-    uint16_t x_count;
-    uint16_t y_count;
-};
-
 struct HardwarePlayfield {
-   uint8_t *buffer;
-   struct BitplaneDrawRecord bitplane_draw_records[SPRITE_COUNT];
-   uint16_t sprites_drawn;
+    uint8_t *buffer;
+    struct BitplaneDrawRecord bitplane_draw_records[SPRITE_COUNT];
+    struct BitplaneDrawRecord *current_bitplane_draw_record;
+    uint16_t sprites_drawn;
 };
 
 extern struct HardwarePlayfield *hidden_hardware_playfield;
 extern struct HardwarePlayfield *visible_hardware_playfield;
 
 void hardware_playfield_handle_vbl();
+void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos);
 void hardware_playfield_erase_sprites();
 void hardware_playfield_init();
 

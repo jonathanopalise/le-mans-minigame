@@ -9,6 +9,7 @@ OBJECT_FILES =\
 	src/lemans.o\
 	src/game_loop.o\
 	src/hardware_playfield.o\
+    src/draw_sprite.o\
 	src/vbl_handler.o\
     src/road_movement.o\
     src/track_segments.o\
@@ -17,7 +18,10 @@ OBJECT_FILES =\
     src/player_car.o\
 	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
+    src/generated/sprite_definitions.o\
 	src/initialise.o
+
+ASSETS_GIF = assets/round-tree.gif
 
 bin/lemans.prg: $(OBJECT_FILES)
 	$(CC) -o src/lemans.elf libcxx/brownboot.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerolibc.o libcxx/zerocrtfini.o $(OBJECT_FILES) -g -O3 -flto -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
@@ -27,11 +31,14 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/road_render.h src/player_car.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/road_render.h src/player_car.h src/sprite_definitions.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
-src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h
+src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h src/sprite_definitions.h
 	$(CC) $(CFLAGS) -c src/hardware_playfield.c -o src/hardware_playfield.o
+
+src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
+	$(VASM) $(VASM_OPTS) src/draw_sprite.s -Felf -o src/draw_sprite.o
 
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
@@ -62,6 +69,12 @@ src/generated/road_graphics.o: src/generated/road_graphics.c src/road_graphics.h
 
 src/generated/road_graphics.c: src/generate_road_graphics.php
 	$(PHP) src/generate_road_graphics.php src/generated/road_graphics.c
+
+src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprite_definitions.h
+	$(CC) $(CFLAGS) -c src/generated/sprite_definitions.c -o src/generated/sprite_definitions.o
+
+src/generated/sprite_definitions.c: src/generate_sprite_definitions.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
+	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
 
 src/initialise.o: src/initialise.s
 	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o
