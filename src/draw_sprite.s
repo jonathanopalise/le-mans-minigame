@@ -12,14 +12,7 @@ topclipped:
 bottomclipped:
     dc.w 0
 
-sprite_jump_table:
-    dc.l 0 ; should never be used
-    dc.l draw_eight_line_chunks    ; 16 wide
-    dc.l draw_four_line_chunks    ; 32 wide
-    dc.l draw_two_line_chunks    ; 48 wide
-
 _draw_sprite:
-
 
     ; inputs:
 
@@ -322,92 +315,8 @@ blitterstart:
     lea $ffff8a32.w,a5 ; destination address
     lea $ffff8a3c.w,a6
 
-    cmp.w #3,d4
-    bgt draw_one_line_chunks
-
-    lea sprite_jump_table(pc),a3
-    move.w d4,d2
-    add.w d2,d2
-    add.w d2,d2
-    move.l (a3,d2.w),a3
-    jmp (a3)
-
-draw_eight_line_chunks:
-    lea eight_line_chunks_lookup(pc),a3
-    move.w d3,d2
-    and.w #7,d2
-    move.b (a3,d2.w),d2
-    move.w d2,finalblit+2
-
-    move.w #798,d1
-    subq.w #1,d3
-    and.w #$f8,d3
-    lsr.w #1,d3
-    sub.w d3,d1
-    move.w d1,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
-    moveq.l #8,d1                       ; ycount
-    bra.s draw_now
-
-eight_line_chunks_lookup:
-    dc.b 8
-    dc.b 1
-    dc.b 2
-    dc.b 3
-    dc.b 4
-    dc.b 5
-    dc.b 6
-    dc.b 7
-
-draw_four_line_chunks:
-    lea four_line_chunks_lookup(pc),a3
-    move.w d3,d2
-    and.w #3,d2
-    move.b (a3,d2.w),d2
-    move.w d2,finalblit+2
-
-    move.w #798,d1
-    subq.w #1,d3
-    and.w #$fc,d3
-    sub.w d3,d1
-    move.w d1,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
-    moveq.l #4,d1                       ; ycount
-    bra.s draw_now
-
-four_line_chunks_lookup:
-    dc.b 4
-    dc.b 1
-    dc.b 2
-    dc.b 3
-
-draw_two_line_chunks:
-    lea two_line_chunks_lookup(pc),a3
-    move.w d3,d2
-    and.w #1,d2
-    move.b (a3,d2.w),d2
-    move.w d2,finalblit+2
-
-    move.w #798,d1
-    subq.w #1,d3
-    and.w #$fe,d3
-    add.w d3,d3
-    sub.w d3,d1
-    move.w d1,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
-    moveq.l #2,d1                       ; ycount
-    bra.s draw_now
-
-two_line_chunks_lookup:
-    dc.b 2
-    dc.b 1
-
-draw_one_line_chunks:
-    move.w #802,d1                      ; size of unrolled blitter calling table plus 2
-    lsl.w #2,d3                         ; one entry in the table is 4 bytes
-    sub.w d3,d1                         ; generate value to be placed within modified bra instruction
-    move.w d1,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
-    moveq.l #1,d1                       ; ycount
-    move.w d1,finalblit+2
-
-draw_now:
+    move.w #798,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
+    move.w d3,finalblit+2                 ; ycount
     move.b #$c0,d6                      ; blitter start instruction
 
     rept 3
@@ -424,11 +333,11 @@ draw_now:
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
     bsr.s drawsceneryplane
+
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
     bsr.s drawsceneryplane
 
-    ; stop here if 3bpp
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
     bsr.s drawsceneryplane

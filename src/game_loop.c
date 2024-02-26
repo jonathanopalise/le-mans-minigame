@@ -16,9 +16,12 @@ void game_loop()
 
     while (1) {
         player_car_handle_inputs();
+        *((volatile uint16_t *)0xffff8240) = 0x440; // yellow
         road_corners_update();
         road_movement_update();
+        *((volatile uint16_t *)0xffff8240) = 0x404; // purple
         road_render();
+        *((volatile uint16_t *)0xffff8240) = 0x004; // blue
         hardware_playfield_erase_sprites();
         hardware_playfield_draw_sprite(&sprite_definitions[0], xpos, 120);
         hardware_playfield_draw_sprite(&sprite_definitions[0], 150, 50);
@@ -28,6 +31,9 @@ void game_loop()
         while (waiting_for_vbl) {}
 
         xpos++;
+        if (xpos > 320) {
+            xpos = 0;
+        }
         hardware_playfield_handle_vbl();
 
         *((volatile uint16_t *)0xffff8240) = 0x400; // red

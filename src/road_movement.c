@@ -47,7 +47,7 @@ void road_corners_update() {
     if (total_change_to_apply != 0) {
         // TODO: this needs to be all 100 scanlines
         struct RoadScanline *current_road_scanline = road_scanlines;
-        for (uint16_t index = 0; index < 80; index++) {
+        for (uint16_t index = 0; index < 100; index++) {
             if (total_change_to_apply > 0) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
             } else {
@@ -67,7 +67,7 @@ void road_movement_update() {
         struct RoadScanline *current_road_scanline = road_scanlines;
 
         // TODO: this needs to be all 100 scanlines
-        for (uint16_t index = 0; index < 80; index++) {
+        for (uint16_t index = 0; index < 100; index++) {
 
             if (shift_required < 0) {
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[-shift_required];
