@@ -48,13 +48,18 @@ void road_corners_update() {
     if (total_change_to_apply != 0) {
         // TODO: this needs to be all 100 scanlines
         struct RoadScanline *current_road_scanline = road_scanlines;
-        for (uint16_t index = 0; index < 100; index++) {
-            if (total_change_to_apply > 0) {
+
+        if (total_change_to_apply > 0) {
+            for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-            } else {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply];
+                current_road_scanline++;
             }
-            current_road_scanline++;
+        } else {
+            total_change_to_apply = -total_change_to_apply;
+            for (uint16_t index = 0; index < 100; index++) {
+                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
+                current_road_scanline++;
+            }
         }
     }
 }
