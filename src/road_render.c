@@ -29,7 +29,7 @@ void road_render()
     for (uint16_t index = 0; index < 80; index++) {
         // TODO: rather than maintaining current_byte_offset and current_road_scanline,
         // could we integrate road graphics data into road_scanlines?
-        line_start_source = &gfx_data[*current_byte_offset >> 1] - skew_adjust;
+        line_start_source = &gfx_data[*current_byte_offset >> 1];
         current_skew = current_road_scanline->current_logical_xpos >> 16;
         skew_adjust = (current_skew >> 2) & 0xfffffffc;
         blitter_control_word = 0xc080 | (current_skew & 15);
@@ -39,7 +39,7 @@ void road_render()
         if ((current_road_scanline->distance_along_road + player_car_track_position) & 2048) {
             // draw two textured bitplanes
             *((volatile int16_t *)BLITTER_Y_COUNT) = 2; // 8a38
-            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4); // 8a24, -4 bytes
+            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // 8a24, -4 bytes
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
         } else {
             // draw a solid bitplane then a textured bitplane
@@ -47,7 +47,7 @@ void road_render()
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
-            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2); // -2 bytes
+            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
             *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
         }
