@@ -7,6 +7,7 @@
 #define SCENERY_TYPE_ROUND_TREE 1
 #define SCENERY_TYPE_PINE_TREE 2
 #define SCENERY_TYPE_DEAD_TREE 3
+#define TRACKSIDE_ITEM_COUNT 7
 
 struct TracksideItem {
     uint16_t type;

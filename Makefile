@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -g -O3 -flto -fomit-frame-pointer -m68000 -Wl,--traditional-format -Wall
+CFLAGS = -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -g -Os -fomit-frame-pointer -m68000 -Wl,--traditional-format -Wall
 VASM = vasmm68k_mot
 VASM_OPTS = -no-opt
 VLINK = vlink
@@ -25,14 +25,14 @@ OBJECT_FILES =\
 ASSETS_GIF = assets/round-tree.gif
 
 bin/lemans.prg: $(OBJECT_FILES)
-	$(CC) -o src/lemans.elf libcxx/brownboot.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerolibc.o libcxx/zerocrtfini.o $(OBJECT_FILES) -g -O3 -flto -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
+	$(CC) -o src/lemans.elf libcxx/brownboot.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerolibc.o libcxx/zerocrtfini.o $(OBJECT_FILES) -g -Os -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
 	brownout -s -i src/lemans.elf -o bin/lemans.prg
 	chmod +x bin/lemans.prg
 
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/road_render.h src/player_car.h src/sprite_definitions.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h src/sprite_definitions.h

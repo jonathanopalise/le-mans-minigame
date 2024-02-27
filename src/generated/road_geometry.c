@@ -504,7 +504,7 @@ struct RoadScanline road_scanlines[] = (struct RoadScanline[]) {
     }
 };
 
-uint16_t distance_to_scanline_lookup[] = {
+int16_t distance_to_scanline_lookup[] = {
     -1,
     -1,
     -1,

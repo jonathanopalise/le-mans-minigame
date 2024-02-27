@@ -22,6 +22,6 @@ struct RoadScanline {
 
 extern struct RoadScanline road_scanlines[];
 
-extern uint16_t distance_to_scanline_lookup[];
+extern int16_t distance_to_scanline_lookup[];
 
 #endif
