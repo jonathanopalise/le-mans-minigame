@@ -2,6 +2,7 @@
 #include "road_geometry.h"
 #include "player_car.h"
 #include "track_segments.h"
+#include "movement_update_inner.h"
 
 // TODO: this should be a generated value
 #define PLAYER_CAR_SCANLINE 75
@@ -77,17 +78,13 @@ void road_movement_update() {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
                 current_road_scanline++;
             }
+
+            // disabled for now while I try to merge road_corners_update and road_movement_update
+            /*movement_update_inner(
+                sizeof(struct RoadScanline),                                        // needs to go into a2
+                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
+                &(current_road_scanline->logical_xpos_add_values[shift_required])   // needs to go into a1
+            );*/
         }
-
-        // TODO: this needs to be all 100 scanlines
-        /*for (uint16_t index = 0; index < 100; index++) {
-            if (shift_required < 0) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[-shift_required];
-            } else {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-            }
-
-            current_road_scanline++;
-        }*/
     }
 }

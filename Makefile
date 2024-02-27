@@ -12,6 +12,7 @@ OBJECT_FILES =\
     src/draw_sprite.o\
 	src/vbl_handler.o\
     src/road_movement.o\
+    src/movement_update_inner.o\
     src/track_segments.o\
     src/trackside_items.o\
     src/road_render.o\
@@ -43,8 +44,11 @@ src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
-src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h
+src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
+
+src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inner.h
+	$(VASM) $(VASM_OPTS) src/movement_update_inner.s -Felf -o src/movement_update_inner.o
 
 src/track_segments.o: src/track_segments.c src/track_segments.h
 	$(CC) $(CFLAGS) -c src/track_segments.c -o src/track_segments.o
