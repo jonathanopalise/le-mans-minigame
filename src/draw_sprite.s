@@ -315,52 +315,59 @@ blitterstart:
     lea $ffff8a32.w,a5 ; destination address
     lea $ffff8a3c.w,a6
 
-    move.w #798,2+drawsceneryplane_jsr    ; jump address in unrolled blitter calling table
-    move.w d3,finalblit+2                 ; ycount
     move.b #$c0,d6                      ; blitter start instruction
 
     rept 3
-    bsr.s drawsceneryplane
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
+
     addq.l #2,a1                        ; move to next bitplane
     endr
-    bsr.s drawsceneryplane
+
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
 
     subq.l #6,a1                        ; move destination back to initial bitplane
     move.w #$0207,($ffff8a3a).w         ; hop/op: read from source, source | destination
 
     addq.l #2,a0                        ; move source to next bitplane
-    bsr.s drawsceneryplane
-    addq.l #2,a1                        ; move destination to next bitplane
-    addq.l #2,a0                        ; move source to next bitplane
-    bsr.s drawsceneryplane
+
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
 
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
-    bsr.s drawsceneryplane
+
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
 
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
-    bsr.s drawsceneryplane
+
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
+
+    addq.l #2,a1                        ; move destination to next bitplane
+    addq.l #2,a0                        ; move source to next bitplane
+
+    move.l a0,(a4)             ; set source address
+    move.l a1,(a5)             ; set destination
+    move.w d3,(a2)
+    move.b d6,(a6)
 
 alldone:
     movem.l (sp)+,d2-d7/a2-a6
 
-    rts
-
-drawsceneryplane:
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
-
-drawsceneryplane_jsr:
-    bra drawsceneryplane_aft
-    rept 199
-    move.w d1,(a2)             ; ycount
-    move.b d6,(a6)
-    endr
-finalblit:
-    move.w #1,(a2)
-    move.b d6,(a6)
-drawsceneryplane_aft:
     rts
 
 leftendmasks:

@@ -13,28 +13,12 @@ void road_render()
     int32_t current_skew;
     int32_t skew_adjust;
 
-    /*
-
-    from lotus ste source:
-
-    ext.l d1                 ; d1 is the shift value for the current line
-    move.l d1,d3             ; copy to d3
-    and.b #15,d3             ; convert to skew value
-    asr.w d5,d1              ; shift the source data pointer to the correct start point
-    and.b #$f8,d1
-
-    ...
-
-    sub.l d1,d6              ; d1 now contains adjusted source
-
-    */
-
-// iteration
     *((volatile int16_t *)BLITTER_ENDMASK_1) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
     *((volatile int16_t *)BLITTER_SOURCE_X_INCREMENT) = 4;
     *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
+    *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = -150;
     *((volatile int16_t *)BLITTER_X_COUNT) = 20;
     *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
 
@@ -61,7 +45,6 @@ void road_render()
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
         }
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest + 2; // +2 bytes
         *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
         *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
