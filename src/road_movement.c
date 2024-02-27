@@ -50,17 +50,6 @@ void road_corners_update() {
         total_change_to_apply -= segment_changes_to_apply;
     }
 
-    // possible scenarios:
-    // shift_required = 0, total_change_to_apply = 0: do nothing
-    // shift_required > 0, total_change_to_apply = 0: path 4 only
-    // shift_required < 0, total_change_to_apply = 0; path 3 only
-    // shift_required = 0, total_change_to_apply > 0: path 1 only
-    // shift_required = 0, total_change_to_apply < 0: path 2 only
-    // shift_required > 0, total_change_to_apply < 0: path 2 + path 4
-    // shift_required < 0, total_change_to_apply < 0; path 2 + path 3
-    // shift_required > 0, total_change_to_apply > 0: path 1 + path 4
-    // shift_required < 0, total_change_to_apply > 0; path 1 + path 3
-
     int32_t shift_required = (road_scanlines[PLAYER_CAR_SCANLINE].current_logical_xpos >> 16) - (player_car_logical_xpos >> 16);
 
     uint16_t scenario = 0;
@@ -106,13 +95,9 @@ void road_corners_update() {
             break;
         case NEGATIVE_SHIFT_REQUIRED|NEGATIVE_TOTAL_CHANGE_TO_APPLY:
             shift_required =- shift_required;
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-            current_road_scanline = road_scanlines;
             total_change_to_apply = -total_change_to_apply;
             for (uint16_t index = 0; index < 100; index++) {
+                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
                 current_road_scanline++;
             }
@@ -121,88 +106,24 @@ void road_corners_update() {
             shift_required =- shift_required;
             for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-            current_road_scanline = road_scanlines;
-            for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
                 current_road_scanline++;
             }
             break;
         case POSITIVE_SHIFT_REQUIRED|NEGATIVE_TOTAL_CHANGE_TO_APPLY:
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-            current_road_scanline = road_scanlines;
             total_change_to_apply = -total_change_to_apply;
             for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
+                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
                 current_road_scanline++;
             }
             break;
         case POSITIVE_SHIFT_REQUIRED|POSITIVE_TOTAL_CHANGE_TO_APPLY:
             for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-            current_road_scanline = road_scanlines;
-            for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
                 current_road_scanline++;
             }
             break;
-    }
-
-    /*if (total_change_to_apply != 0) {
-        // TODO: this needs to be all 100 scanlines
-        struct RoadScanline *current_road_scanline = road_scanlines;
-
-        if (total_change_to_apply > 0) {
-            // path 1
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }
-        } else {
-            // path 2
-            total_change_to_apply = -total_change_to_apply;
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }
-        }
-    }*/
-}
-
-void road_movement_update() {
-    // TODO: need to turn scanline count = 80 into a constant somewhere
-
-    int32_t shift_required = (road_scanlines[PLAYER_CAR_SCANLINE].current_logical_xpos >> 16) - (player_car_logical_xpos >> 16);
-
-    if (shift_required != 0) {
-        struct RoadScanline *current_road_scanline = road_scanlines;
-
-        if (shift_required < 0) {
-            // path 3
-            shift_required =- shift_required;
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-        } else {
-            // path 4
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }
-
-            // disabled for now while I try to merge road_corners_update and road_movement_update
-            /*movement_update_inner(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_add_values[shift_required])   // needs to go into a1
-            );*/
-        }
     }
 }
