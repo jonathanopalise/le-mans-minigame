@@ -66,9 +66,21 @@ void road_movement_update() {
     if (shift_required != 0) {
         struct RoadScanline *current_road_scanline = road_scanlines;
 
-        // TODO: this needs to be all 100 scanlines
-        for (uint16_t index = 0; index < 100; index++) {
+        if (shift_required < 0) {
+            shift_required =- shift_required;
+            for (uint16_t index = 0; index < 100; index++) {
+                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
+                current_road_scanline++;
+            }
+        } else {
+            for (uint16_t index = 0; index < 100; index++) {
+                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
+                current_road_scanline++;
+            }
+        }
 
+        // TODO: this needs to be all 100 scanlines
+        /*for (uint16_t index = 0; index < 100; index++) {
             if (shift_required < 0) {
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[-shift_required];
             } else {
@@ -76,6 +88,6 @@ void road_movement_update() {
             }
 
             current_road_scanline++;
-        }
+        }*/
     }
 }
