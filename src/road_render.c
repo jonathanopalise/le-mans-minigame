@@ -36,21 +36,21 @@ void road_render()
 
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
 
-        *((volatile int16_t *)BLITTER_Y_COUNT) = 1; // 8a38
         if ((current_road_scanline->distance_along_road + player_car_track_position) & 2048) {
-            // draw a textured span
+            // draw two textured bitplanes
+            *((volatile int16_t *)BLITTER_Y_COUNT) = 2; // 8a38
             *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // 8a24, -4 bytes
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
         } else {
-            // draw a solid span
+            // draw a solid bitplane then a textured bitplane
+            *((volatile int16_t *)BLITTER_Y_COUNT) = 1; // 8a38
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
             *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
+            *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
+            *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
         }
-
-        *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
-        *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
 
         line_start_dest += 160;
         current_byte_offset++;
