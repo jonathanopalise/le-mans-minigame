@@ -19,8 +19,8 @@ void game_loop()
         *((volatile uint16_t *)0xffff8240) = 0x440; // yellow
         road_corners_update();
         *((volatile uint16_t *)0xffff8240) = 0x044; // green/blue combination
-        road_movement_update();
-        *((volatile uint16_t *)0xffff8240) = 0x404; // purple
+        //road_movement_update();
+        //*((volatile uint16_t *)0xffff8240) = 0x404; // purple
         road_render();
         *((volatile uint16_t *)0xffff8240) = 0x004; // blue
         hardware_playfield_erase_sprites();
