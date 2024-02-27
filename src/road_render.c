@@ -17,6 +17,7 @@ void road_render()
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
     *((volatile int16_t *)BLITTER_SOURCE_X_INCREMENT) = 4;
+    *((volatile int16_t *)BLITTER_SOURCE_Y_INCREMENT) = -78; // originally 158
     *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
     *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = -150;
     *((volatile int16_t *)BLITTER_X_COUNT) = 20;
@@ -37,15 +38,17 @@ void road_render()
 
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1; // 8a38
         if ((current_road_scanline->distance_along_road + player_car_track_position) & 2048) {
+            // draw a textured span
             *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 4) - skew_adjust; // 8a24, -4 bytes
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
         } else {
+            // draw a solid span
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
             *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
+            *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
         }
 
-        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // -2 bytes
         *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
         *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word;
 
