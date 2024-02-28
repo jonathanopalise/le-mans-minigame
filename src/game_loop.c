@@ -41,7 +41,7 @@ void game_loop()
 
                     hardware_playfield_draw_sprite(
                         &sprite_definitions[0],
-                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[255]) >> 16)) - sprite_definitions[0].origin_x,
+                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[150]) >> 16)) - sprite_definitions[0].origin_x,
                         (119 + trackside_item_scanline_index) - sprite_definitions[0].origin_y
                     );
                 }
