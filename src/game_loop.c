@@ -26,6 +26,11 @@ void game_loop()
     struct TracksideItem *current_trackside_item;
     uint32_t trackside_item_relative_position;
     int16_t trackside_item_scanline_index;
+    int16_t sprite_index;
+
+    *((volatile uint16_t *)0xffff8242) = 0x40;
+    *((volatile uint16_t *)0xffff8244) = 0x777;
+    *((volatile uint16_t *)0xffff8246) = 0x222;
 
     while (1) {
         player_car_handle_inputs();
@@ -46,17 +51,27 @@ void game_loop()
                 trackside_item_scanline_index = distance_to_scanline_lookup[trackside_item_relative_position];
                 if (trackside_item_scanline_index != -1) {
                     road_scanline = &road_scanlines[trackside_item_scanline_index];
+                    sprite_index = 7 - (trackside_item_scanline_index / 6);
+                    if (sprite_index < 0) {
+                        sprite_index = 0;
+                    }
 
                     hardware_playfield_draw_sprite(
-                        &sprite_definitions[0],
-                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[150]) >> 16)) - sprite_definitions[0].origin_x,
-                        (119 + trackside_item_scanline_index) - sprite_definitions[0].origin_y
+                        &sprite_definitions[sprite_index],
+                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[160]) >> 16) - sprite_definitions[sprite_index].origin_x),
+                        (119 + trackside_item_scanline_index) - sprite_definitions[sprite_index].origin_y
                     );
                 }
             }
 
             current_trackside_item++;
         }
+
+        hardware_playfield_draw_sprite(
+            &sprite_definitions[8],
+            160 - sprite_definitions[8].origin_x,
+            194 - sprite_definitions[8].origin_y
+        );
 
         *((volatile uint16_t *)0xffff8240) = 0x040; // green
 

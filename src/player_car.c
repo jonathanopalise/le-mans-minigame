@@ -32,8 +32,8 @@ void player_car_handle_inputs()
 
     if (joy_up) {
         player_car_speed += 2;
-        if (player_car_speed > 700) {
-            player_car_speed = 700;
+        if (player_car_speed > 800) {
+            player_car_speed = 800;
         }
     } else if (joy_down) {
         player_car_speed -= 6;
@@ -70,9 +70,9 @@ void player_car_handle_inputs()
     player_car_track_position += player_car_speed;
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
-    if (player_car_logical_xpos > 18000000) {
-        player_car_logical_xpos = 18000000;
-    } else if (player_car_logical_xpos < -18000000) {
-        player_car_logical_xpos = -18000000;
+    if (player_car_logical_xpos > 13000000) {
+        player_car_logical_xpos = 13000000;
+    } else if (player_car_logical_xpos < -13000000) {
+        player_car_logical_xpos = -13000000;
     }
 }

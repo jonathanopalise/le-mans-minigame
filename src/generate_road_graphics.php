@@ -32,26 +32,26 @@ for ($index = 0; $index < 80; $index++) {
     $texturePosition = 0;
     $midpointTexturePosition = $textureStep * ($roundedPixelWidth / 2);
 
-    $roadMultiplier = 0.75;
+    $roadMultiplier = 0.95;
 
-    $leftRumbleStripLeft = ($midpointTexturePosition + 0.46  * $roadMultiplier);
-    $leftRumbleStripRight = ($midpointTexturePosition + 0.54 * $roadMultiplier);
+    $leftRumbleStripLeft = ($midpointTexturePosition + 0.49  * $roadMultiplier);
+    $leftRumbleStripRight = ($midpointTexturePosition + 0.51 * $roadMultiplier);
 
-    $rightRumbleStripLeft = ($midpointTexturePosition - 0.54 * $roadMultiplier);
-    $rightRumbleStripRight = ($midpointTexturePosition - 0.46 * $roadMultiplier);
+    $whiteLine2Left = ($midpointTexturePosition + 0.45 * $roadMultiplier);
+    $whiteLine2Right = ($midpointTexturePosition + 0.47 * $roadMultiplier);
 
 
-    $whiteLine1Left = ($midpointTexturePosition + 0.42 * $roadMultiplier);
-    $whiteLine1Right = ($midpointTexturePosition + 0.44 * $roadMultiplier);
+    $whiteLine1Left = ($midpointTexturePosition + 0.15 * $roadMultiplier);
+    $whiteLine1Right = ($midpointTexturePosition + 0.17 * $roadMultiplier);
 
-    $whiteLine2Left = ($midpointTexturePosition + 0.46 * $roadMultiplier);
-    $whiteLine2Right = ($midpointTexturePosition + 0.48 * $roadMultiplier);
+    $whiteLine6Left = ($midpointTexturePosition - 0.17 * $roadMultiplier);
+    $whiteLine6Right = ($midpointTexturePosition - 0.15 * $roadMultiplier);
 
-    $whiteLine3Left = ($midpointTexturePosition - 0.44 * $roadMultiplier);
-    $whiteLine3Right = ($midpointTexturePosition - 0.42 * $roadMultiplier);
+    $whiteLine3Left = ($midpointTexturePosition - 0.47 * $roadMultiplier);
+    $whiteLine3Right = ($midpointTexturePosition - 0.45 * $roadMultiplier);
 
-    $whiteLine6Left = ($midpointTexturePosition - 0.01 * $roadMultiplier);
-    $whiteLine6Right = ($midpointTexturePosition + 0.01 * $roadMultiplier);
+    $rightRumbleStripLeft = ($midpointTexturePosition - 0.51 * $roadMultiplier);
+    $rightRumbleStripRight = ($midpointTexturePosition - 0.49 * $roadMultiplier);
 
     $asphaltLeft = ($midpointTexturePosition - 0.5 * $roadMultiplier);
     $asphaltRight = ($midpointTexturePosition + 0.5 * $roadMultiplier);

@@ -6,7 +6,27 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
     {
         .type = SCENERY_TYPE_ROUND_TREE,
         .xpos = -255,
-        .track_position = 5000
+        .track_position = 35000
+    },
+    {
+        .type = SCENERY_TYPE_ROUND_TREE,
+        .xpos = 255,
+        .track_position = 40000
+    },
+    {
+        .type = SCENERY_TYPE_ROUND_TREE,
+        .xpos = -255,
+        .track_position = 45000
+    },
+    {
+        .type = SCENERY_TYPE_ROUND_TREE,
+        .xpos = 255,
+        .track_position = 50000
+    },
+    {
+        .type = SCENERY_TYPE_ROUND_TREE,
+        .xpos = -255,
+        .track_position = 55000
     },
     {
         .type = SCENERY_TYPE_ROUND_TREE,
@@ -14,29 +34,9 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 60000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
-        .xpos = -255,
-        .track_position = 10000
-    },
-    {
-        .type = SCENERY_TYPE_ROUND_TREE,
-        .xpos = 255,
-        .track_position = 140000
-    },
-    {
-        .type = SCENERY_TYPE_ROUND_TREE,
-        .xpos = -255,
-        .track_position = 190000
-    },
-    {
-        .type = SCENERY_TYPE_ROUND_TREE,
-        .xpos = 255,
-        .track_position = 220000
-    },
-    {
         .type = SCENERY_TYPE_TERMINATE,
         .xpos = 255,
-        .track_position = 300000
+        .track_position = 65000
     }
 };
  
