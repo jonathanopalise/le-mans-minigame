@@ -3,11 +3,18 @@
 #include "initialise.h"
 #include "vbl_handler.h"
 #include "road_movement.h"
+#include "mountains_render.h"
 #include "road_render.h"
 #include "player_car.h"
 #include "sprite_definitions.h"
 #include "road_geometry.h"
 #include "trackside_items.h"
+
+struct TracksideItem* pointers_to_trackside_items[] = {
+    &trackside_items[4],
+    &trackside_items[6],
+    &trackside_items[5],
+};
 
 void game_loop()
 {
@@ -27,6 +34,7 @@ void game_loop()
         *((volatile uint16_t *)0xffff8240) = 0x044; // green/blue combination
         //road_movement_update();
         //*((volatile uint16_t *)0xffff8240) = 0x404; // purple
+        mountains_render();
         road_render();
         *((volatile uint16_t *)0xffff8240) = 0x004; // blue
         hardware_playfield_erase_sprites();
