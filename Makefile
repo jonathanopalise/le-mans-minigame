@@ -72,7 +72,7 @@ src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/ini
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h src/qsort.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
-src/qsort.o: src/qsort.c src/qsort.h src/sprite_definitions.h src/hardware_playfield.h src/qsort.h
+src/qsort.o: src/qsort.c src/qsort.h
 	$(CC) $(CFLAGS) -c src/qsort.c -o src/qsort.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h
