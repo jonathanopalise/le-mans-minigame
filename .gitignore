@@ -1,0 +1,6 @@
+*.o
+src/generated/*
+.DS_Store
+*.swp
+*.elf
+*.prg
