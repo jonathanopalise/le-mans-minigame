@@ -155,7 +155,7 @@ $lines = array_merge(
     $lines,
     [
         '',
-        'int16_t distance_to_scanline_lookup[] = {',
+        'int8_t distance_to_scanline_lookup[] = {',
     ]
 );
 
