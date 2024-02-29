@@ -60,8 +60,8 @@ void game_loop()
 
                     display_list_add_sprite(
                         &sprite_definitions[sprite_index],
-                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[160]) >> 16) - sprite_definitions[sprite_index].origin_x),
-                        (119 + trackside_item_scanline_index) - sprite_definitions[sprite_index].origin_y
+                        160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[160]) >> 16)),
+                        (119 + trackside_item_scanline_index)
                     );
                 }
             }
@@ -71,8 +71,8 @@ void game_loop()
 
         display_list_add_sprite(
             &sprite_definitions[8],
-            160 - sprite_definitions[8].origin_x,
-            194 - sprite_definitions[8].origin_y
+            160,
+            194
         );
 
         display_list_execute();

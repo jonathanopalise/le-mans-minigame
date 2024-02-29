@@ -32,8 +32,8 @@ void hardware_playfield_handle_vbl()
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
 {
     draw_sprite(
-        xpos,
-        ypos,
+        xpos - sprite_definition->origin_x,
+        ypos - sprite_definition->origin_y,
         sprite_definition->words,
         sprite_definition->source_data_width,
         sprite_definition->source_data_height,
