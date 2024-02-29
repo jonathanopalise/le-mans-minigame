@@ -18,6 +18,7 @@ OBJECT_FILES =\
     src/mountains_render.o\
     src/road_render.o\
     src/player_car.o\
+    src/display_list.o\
 	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
@@ -34,7 +35,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_render.h src/sprite_definitions.h
@@ -66,6 +67,9 @@ src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/r
 
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
+
+src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
+	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h
 	$(CC) $(CFLAGS) -c src/generated/road_geometry.c -o src/generated/road_geometry.o

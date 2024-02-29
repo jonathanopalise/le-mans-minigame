@@ -9,6 +9,7 @@
 #include "sprite_definitions.h"
 #include "road_geometry.h"
 #include "trackside_items.h"
+#include "display_list.h"
 
 struct TracksideItem* pointers_to_trackside_items[] = {
     &trackside_items[4],
@@ -21,6 +22,7 @@ void game_loop()
     hardware_playfield_init();
     initialise();
     player_car_initialise();
+    display_list_init();
     int16_t xpos = 0;
     struct RoadScanline *road_scanline;
     struct TracksideItem *current_trackside_item;
@@ -56,7 +58,7 @@ void game_loop()
                         sprite_index = 0;
                     }
 
-                    hardware_playfield_draw_sprite(
+                    display_list_add_sprite(
                         &sprite_definitions[sprite_index],
                         160 + (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[160]) >> 16) - sprite_definitions[sprite_index].origin_x),
                         (119 + trackside_item_scanline_index) - sprite_definitions[sprite_index].origin_y
@@ -67,11 +69,13 @@ void game_loop()
             current_trackside_item++;
         }
 
-        hardware_playfield_draw_sprite(
+        display_list_add_sprite(
             &sprite_definitions[8],
             160 - sprite_definitions[8].origin_x,
             194 - sprite_definitions[8].origin_y
         );
+
+        display_list_execute();
 
         *((volatile uint16_t *)0xffff8240) = 0x040; // green
 
