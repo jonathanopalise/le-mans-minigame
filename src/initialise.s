@@ -40,9 +40,38 @@ dummy:
 
 vbl:
     movem.l d0-d7/a0-a6,-(sp)
+
+    lea.l sky_gradient,a0
+    lea.l $ffff8242.w,a1
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.w (a0)+,(a1)+
+
     jsr _vbl_handler
     movem.l (sp)+,d0-d7/a0-a6
     rte
+
+sky_gradient:
+    dc.w $07f
+    dc.w $0ef
+    dc.w $06f
+    dc.w $0df
+    dc.w $05f
+    dc.w $0cf
+    dc.w $04f
+    dc.w $0bf
+    dc.w $03f
+    dc.w $0af
+    dc.w $02f
+    dc.w $09f
+    dc.w $01f
+    dc.w $08f
+    dc.w $00f
 
 newikbd:
     move d0,-(sp)
