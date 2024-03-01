@@ -19,7 +19,6 @@ OBJECT_FILES =\
     src/road_render.o\
     src/player_car.o\
     src/display_list.o\
-    src/qsort.o\
  	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
@@ -69,11 +68,8 @@ src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/r
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
-src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h src/qsort.h
+src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
-
-src/qsort.o: src/qsort.c src/qsort.h
-	$(CC) $(CFLAGS) -c src/qsort.c -o src/qsort.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h
 	$(CC) $(CFLAGS) -c src/generated/road_geometry.c -o src/generated/road_geometry.o

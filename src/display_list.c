@@ -2,7 +2,6 @@
 #define __DISPLAY_LIST_H
 
 #include "hardware_playfield.h"
-#include "qsort.h"
 
 #define DISPLAY_LIST_SIZE 16
 
@@ -43,10 +42,34 @@ int compare(const void *a, const void *b) {
 	return visible_object_1->ypos-visible_object_2->ypos;
 }
 
+void insertionSort(struct DisplayListItem arr[], int n)
+{
+    struct DisplayListItem key;
+    int i, j;
+    for (i = 1; i < n; i++) 
+    {
+        key = arr[i];
+        j = i - 1;
+ 
+        /* Move elements of arr[0..i-1], 
+           that are greater than key, 
+           to one position ahead of 
+           their current position */
+        while (j >= 0 && arr[j].ypos > key.ypos) 
+        {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
 void display_list_execute() {
     struct DisplayListItem *current_display_list_item = display_list;
 
-    qsort(display_list, num_visible_objects, sizeof(struct DisplayListItem), compare);
+    *((volatile uint16_t *)0xffff8240) = 0x222;
+    insertionSort(display_list, num_visible_objects);
+    *((volatile uint16_t *)0xffff8240) = 0x444;
 
     while (current_display_list_item < next_free_display_list_item) {
         hardware_playfield_draw_sprite(
