@@ -10,7 +10,7 @@ _initialise:
     move.l #vbl,$70.w       ; Install our own VBL
     move.l #dummy,$68.w     ; Install our own HBL (dummy)
     move.l #dummy,$134.w    ; Install our own Timer A (dummy)
-    move.l #timer_1,$120.w	; Install our own Timer B
+    move.l #timer_2,$120.w	; Install our own Timer B
     move.l #dummy,$114.w    ; Install our own Timer C (dummy)
     move.l #dummy,$110.w    ; Install our own Timer D (dummy)
 	move.l #newikbd,$118.w  ; Install our own ACIA (dummy)
@@ -47,15 +47,14 @@ vbl:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#80+35,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#80+34,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
-    move.b	#8,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
+    move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
     move.w	#$2300,sr			; Interrupts back on
 
     lea.l sky_gradient,a0
-    lea.l $ffff8242.w,a1
-    move.l (a0)+,(a1)+
+    lea.l $ffff8246.w,a1
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
@@ -63,8 +62,8 @@ vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.w (a0)+,(a1)+
-    move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
-    move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
+    move.w #$321,$ffff8242.w ; mountain colour 1
+    move.w #$200,$ffff8244.w ; mountain colour 2
  
     jsr _vbl_handler
     movem.l (sp)+,d0-d7/a0-a6
@@ -72,26 +71,12 @@ vbl:
 
     ; timer 1 - top of mountains
 
-timer_1:
-    move.w	#$2700,sr			;Stop all interrupts
-	move.l	#timer_2,$120.w			;Install our own Timer B
-	clr.b	$fffffa1b.w			;Timer B control (stop)
-	move.b	#36,$fffffa21.w			;Timer B data (number of scanlines to next interrupt)
-	move.b	#8,$fffffa1b.w			;Timer B control (event mode (HBL))
-	move.w	#$2300,sr			;Interrupts back on
-
-    move.w #$777,$ffff8242.w
-   rte
-
 timer_2:
     move.w	#$2700,sr			;Stop all interrupts
 	;move.l	#timer_2,$120.w			;Install our own Timer B
 	;clr.b	$fffffa1b.w			;Timer B control (stop)
 	;move.b	#8,$fffffa21.w			;Timer B data (number of scanlines to next interrupt)
 	;move.b	#8,$fffffa1b.w			;Timer B control (event mode (HBL))
-
-    move.w #$777,$ffff8242.w ; grass
-    move.w #$777,$ffff8244.w ; grass
 
 wait:
     cmpi.b		#4,$fffffa21.w;	; timerb event counter
@@ -122,8 +107,6 @@ sky_gradient:
     dc.w $03f
     dc.w $0af
     dc.w $02f
-    dc.w $09f
-    dc.w $01f
     dc.w $08f
     dc.w $00f
 
