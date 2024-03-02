@@ -12,6 +12,14 @@ $outputFilename = $argv[2];
 
 $indexedBitmap = IndexedBitmap::loadGif($inputFilename);
 
+// workaround for the fact that gimp insists on removing unused colours from the colour map
+for ($ypos = 0; $ypos < $indexedBitmap->getHeight(); $ypos++) {
+    for ($xpos = 0; $xpos < $indexedBitmap->getWidth(); $xpos++) {
+        $index = $indexedBitmap->getPixel($xpos, $ypos);
+        $indexedBitmap->putPixel($xpos, $ypos, $index + 1);
+    }
+}
+
 $outputWords = [];
 $outputWordLines = [];
 

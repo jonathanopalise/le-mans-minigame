@@ -124,6 +124,10 @@ class IndexedBitmap {
 
     public static function loadGif($filename)
     {
+        echo("Loading gif ".$filename."\n");
+
+        $distinctPixelIndices = [];
+
         $image = imagecreatefromgif($filename);
         if ($image === false) {
             throw new RuntimeException('failed to open file ' . $filename);
@@ -131,14 +135,16 @@ class IndexedBitmap {
 
         $width = imagesx($image);
         $height = imagesy($image);
-
-        $transparentIndex = imagecolortransparent($image);
+        $transparentIndex = imagecolorexact($image, 255, 0, 255);
+        echo("transparent index is ".$transparentIndex."\n");
 
         $lines = [];
         for ($y = 0; $y < $height; $y++) {
             $line = new IndexedBitmapLine();
             for ($x = 0; $x < $width; $x++) {
                 $pixelIndex = imagecolorat($image, $x, $y);
+
+                $distinctPixelIndices[$pixelIndex] = true;
 
                 $visible = $pixelIndex != $transparentIndex;
                 if (!$visible) {
@@ -152,6 +158,8 @@ class IndexedBitmap {
     
             $lines[] = $line;
         }
+
+        echo("distinct pixel indices: ".var_export(array_keys($distinctPixelIndices),1)."\n");
 
         return new static($lines, 0, 0);
     }
@@ -188,6 +196,16 @@ class IndexedBitmap {
         }
 
         $this->lines[$y]->getPixel($x)->setColourIndex($colourIndex);
+    }
+
+    public function getPixel($x, $y)
+    {
+        if (!isset($this->lines[$y])) {
+            var_dump(array_keys($this->lines));
+            throw new RuntimeException('y value '.$y.' out of range');
+        }
+
+        return $this->lines[$y]->getPixel($x)->getColourIndex();
     }
 
     public function extractRegionToIndexedBitmap($left, $top, $width, $height, $originX = 0, $originY = 0)

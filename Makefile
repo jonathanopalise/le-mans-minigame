@@ -86,13 +86,13 @@ src/generated/road_graphics.c: src/generate_road_graphics.php
 src/generated/mountain_graphics.o: src/generated/mountain_graphics.c src/mountain_graphics.h
 	$(CC) $(CFLAGS) -c src/generated/mountain_graphics.c -o src/generated/mountain_graphics.o
 
-src/generated/mountain_graphics.c: src/generate_mountain_graphics.php assets/mountains.gif
+src/generated/mountain_graphics.c: src/generate_mountain_graphics.php src/library.php assets/mountains.gif
 	$(PHP) src/generate_mountain_graphics.php assets/mountains.gif src/generated/mountain_graphics.c
 
 src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprite_definitions.h
 	$(CC) $(CFLAGS) -c src/generated/sprite_definitions.c -o src/generated/sprite_definitions.o
 
-src/generated/sprite_definitions.c: src/generate_sprite_definitions.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
+src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/library.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
 	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
 
 src/initialise.o: src/initialise.s
