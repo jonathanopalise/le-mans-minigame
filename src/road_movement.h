@@ -1,8 +1,12 @@
 #ifndef __ROAD_MOVEMENT_H
 #define __ROAD_MOVEMENT_H
 
-void road_corners_update();
+#include <inttypes.h>
 
-void road_movement_update();
+extern int32_t mountains_shift;
+
+void road_corners_init();
+
+void road_corners_update();
 
 #endif

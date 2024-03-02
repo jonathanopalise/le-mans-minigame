@@ -21,6 +21,7 @@ void game_loop()
 {
     hardware_playfield_init();
     initialise();
+    road_corners_init();
     player_car_initialise();
     display_list_init();
     int16_t xpos = 0;

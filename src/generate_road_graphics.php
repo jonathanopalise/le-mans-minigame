@@ -14,7 +14,7 @@ const COLOUR_WHITE = 2;           // 0110 -> 0110
 const COLOUR_LIGHT_ASPHALT = 3;  // 1101 -> 1101
 const COLOUR_GRASS_1 = 1;        // 1100 -> 1000
 
-$padding = 22;
+$padding = 18;
 
 $byteOffsets = [];
 $outputWords = [];
@@ -32,7 +32,7 @@ for ($index = 0; $index < 80; $index++) {
     $texturePosition = 0;
     $midpointTexturePosition = $textureStep * ($roundedPixelWidth / 2);
 
-    $roadMultiplier = 0.95;
+    $roadMultiplier = 0.90;
 
     $leftRumbleStripLeft = ($midpointTexturePosition + 0.49  * $roadMultiplier);
     $leftRumbleStripRight = ($midpointTexturePosition + 0.51 * $roadMultiplier);

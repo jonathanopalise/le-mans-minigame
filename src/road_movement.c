@@ -12,6 +12,21 @@
 #define NEGATIVE_TOTAL_CHANGE_TO_APPLY 4
 #define POSITIVE_TOTAL_CHANGE_TO_APPLY 8
 
+#define MAX_MOUNTAINS_SHIFT (319<<16)
+
+uint32_t current_road_curvature;
+int32_t mountains_shift;
+
+void road_corners_init()
+{
+    for (uint16_t index = 0; index < 100; index++) {
+        road_scanlines[index].current_logical_xpos = 0;
+    }
+
+    current_road_curvature = 0;
+    mountains_shift = 0;
+}
+
 void road_corners_update() {
     uint32_t segment_changes_to_apply;
     int32_t total_change_to_apply = 0;
@@ -58,11 +73,19 @@ void road_corners_update() {
     } else if (shift_required < 0) {
         scenario |= NEGATIVE_SHIFT_REQUIRED;
     }
-
+    
     if (total_change_to_apply > 0) {
         scenario |= POSITIVE_TOTAL_CHANGE_TO_APPLY;
     } else if (total_change_to_apply < 0) {
         scenario |= NEGATIVE_TOTAL_CHANGE_TO_APPLY;
+    }
+
+    current_road_curvature -= total_change_to_apply;
+    mountains_shift += current_road_curvature << 10;
+    if (mountains_shift < 0) {
+        mountains_shift += MAX_MOUNTAINS_SHIFT;
+    } else if (mountains_shift > (MAX_MOUNTAINS_SHIFT - 1)) {
+        mountains_shift -= MAX_MOUNTAINS_SHIFT;
     }
 
     struct RoadScanline *current_road_scanline = road_scanlines;

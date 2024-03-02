@@ -17,7 +17,6 @@ struct RoadScanline {
 
     // runtime values
     int32_t current_logical_xpos;
-    uint16_t render_method;
 };
 
 extern struct RoadScanline road_scanlines[];
