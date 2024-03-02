@@ -47,10 +47,10 @@ vbl:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#80+26,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#80+33,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
-    move.b	#17,$fffffa21.w	; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
+    move.b	#10,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
     move.w	#$2300,sr			; Interrupts back on
 
     lea.l sky_gradient,a0
@@ -63,7 +63,9 @@ vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.w (a0)+,(a1)+
-
+    move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
+    move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
+ 
     jsr _vbl_handler
     movem.l (sp)+,d0-d7/a0-a6
     rte
@@ -79,9 +81,7 @@ timer_1:
 	move.w	#$2300,sr			;Interrupts back on
 
     move.w #$777,$ffff8242.w
-    move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
-    move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
-    rte
+   rte
 
 timer_2:
     move.w	#$2700,sr			;Stop all interrupts
