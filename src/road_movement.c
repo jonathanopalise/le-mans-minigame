@@ -81,7 +81,7 @@ void road_corners_update() {
     }
 
     current_road_curvature -= total_change_to_apply;
-    mountains_shift += current_road_curvature << 10;
+    mountains_shift += current_road_curvature * player_car_speed;
     if (mountains_shift < 0) {
         mountains_shift += MAX_MOUNTAINS_SHIFT;
     } else if (mountains_shift > (MAX_MOUNTAINS_SHIFT - 1)) {
