@@ -43,11 +43,11 @@ vbl:
     movem.l d0-d7/a0-a6,-(sp)
 
     move.w	#$2700,sr			; Stop all interrupts
-    move.l	#timer_2,$120.w	; Install our own Timer B
+    move.l	#timer_1,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#80+34,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#(80+34)-29,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
@@ -71,6 +71,35 @@ vbl:
 
     ; timer 1 - top of mountains
 
+timer_1:
+    move.w	#$2700,sr			;Stop all interrupts
+
+wait_timer_1:
+    cmpi.b		#4,$fffffa21.w;	; timerb event counter
+	bne.s		wait_timer_1
+	clr.b	$fffffa1b.w			;Timer B control (stop)
+
+
+    move.w #$133,$ffff8248.w
+    move.w #$3dc,$ffff824a.w
+    move.w #$dde,$ffff824c.w
+    move.w #$d00,$ffff824e.w
+    move.w #$333,$ffff8250.w
+    move.w #$eff,$ffff8252.w
+    move.w #$005,$ffff8254.w
+     
+
+    move.l	#timer_2,$120.w	; Install our own Timer B
+    clr.b	$fffffa1b.w		; Timer B control (stop)
+    bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
+    bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
+    move.b	#24,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    bclr	#3,$fffffa17.w		; Automatic end of interrupt
+    move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
+    move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
+	move.w	#$2300,sr			;Interrupts back on
+    rte
+
 timer_2:
     move.w	#$2700,sr			;Stop all interrupts
 	;move.l	#timer_2,$120.w			;Install our own Timer B
@@ -78,15 +107,15 @@ timer_2:
 	;move.b	#8,$fffffa21.w			;Timer B data (number of scanlines to next interrupt)
 	;move.b	#8,$fffffa1b.w			;Timer B control (event mode (HBL))
 
-wait:
+wait_timer_2:
     cmpi.b		#4,$fffffa21.w;	; timerb event counter
-	bne.s		wait
+	bne.s		wait_timer_2
 	clr.b	$fffffa1b.w			;Timer B control (stop)
 
     ;move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
     ;move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
 
-    move.w #$040,$ffff8242.w ; grass
+    move.w #$221,$ffff8242.w ; grass
     move.w #$777,$ffff8244.w ; lines
     move.w #$222,$ffff8246.w ; road
 

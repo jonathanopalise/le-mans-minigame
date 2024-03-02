@@ -74,8 +74,8 @@ $definitions = [
     ],
     [
         'label' => 'car',
-        'left' => 138,
-        'top' => 88,
+        'left' => 105,
+        'top' => 200,
         'width' => 48,
         'height' => 25,
     ],
