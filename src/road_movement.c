@@ -81,6 +81,8 @@ void road_corners_update() {
     }
 
     current_road_curvature -= total_change_to_apply;
+    player_car_logical_xpos += current_road_curvature * ((player_car_speed * player_car_speed) / 500);
+
     mountains_shift += current_road_curvature * player_car_speed;
     if (mountains_shift < 0) {
         mountains_shift += MAX_MOUNTAINS_SHIFT;
@@ -169,12 +171,4 @@ void road_corners_update() {
             }
             break;
     }
-
-
-            /*movement_update_inner(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_add_values[shift_required])   // needs to go into a1
-            );*/
-
 }

@@ -48,20 +48,20 @@ void player_car_handle_inputs()
     }
 
     if (joy_left) {
-        player_car_steering += 100;
-        if (player_car_steering < -2000) {
-            player_car_steering = -2000;
+        player_car_steering += 125;
+        if (player_car_steering > 500) {
+            player_car_steering = 500;
         }
     } else if (joy_right) {
-        player_car_steering -= 100;
-        if (player_car_steering > 2000) {
-            player_car_steering = 2000;
+        player_car_steering -= 125;
+        if (player_car_steering < 500) {
+            player_car_steering = -500;
         }
     } else {
         if (player_car_steering > 0) {
-            player_car_steering -= 25;
+            player_car_steering -= 20;
         } else if (player_car_steering < 0) {
-            player_car_steering += 25;
+            player_car_steering += 20;
         }
     }
 
