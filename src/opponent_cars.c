@@ -3,6 +3,7 @@
 #include "sprite_definitions.h"
 #include "road_geometry.h"
 #include "display_list.h"
+#include "road_movement.h"
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
@@ -12,7 +13,7 @@ void opponent_cars_init()
 
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->xpos = -100;
-    current_opponent_car->speed = 300;
+    current_opponent_car->speed = 350;
     current_opponent_car->active = 1;
 
     current_opponent_car++;
@@ -26,7 +27,7 @@ void opponent_cars_init()
 
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->xpos = 100;
-    current_opponent_car->speed = 500;
+    current_opponent_car->speed = 450;
     current_opponent_car->active = 1;
 }
 
@@ -34,8 +35,18 @@ void opponent_cars_update()
 {
     struct OpponentCar *current_opponent_car = opponent_cars;
 
+    int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
+    int32_t curvature_max_speed = 450 - (corner_sharpness >> 8);
+    int32_t normalised_opponent_car_speed;
+
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
-        current_opponent_car->player_relative_track_position += current_opponent_car->speed;
+
+        normalised_opponent_car_speed = current_opponent_car->speed;
+        if (normalised_opponent_car_speed > curvature_max_speed) {
+            normalised_opponent_car_speed = curvature_max_speed;
+        }
+
+        current_opponent_car->player_relative_track_position += normalised_opponent_car_speed;
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->player_relative_track_position < 0) {
