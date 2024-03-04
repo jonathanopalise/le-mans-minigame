@@ -11,6 +11,7 @@
 #include "trackside_items.h"
 #include "trackside_items_process.h"
 #include "display_list.h"
+#include "opponent_cars.h"
 
 void game_loop()
 {
@@ -22,6 +23,7 @@ void game_loop()
     initialise();
     road_corners_init();
     player_car_initialise();
+    opponent_cars_init();
     display_list_init();
     trackside_items_process_init();
     int16_t xpos = 0;
@@ -31,6 +33,7 @@ void game_loop()
 
     while (1) {
         player_car_handle_inputs();
+        opponent_cars_update();
         //*((volatile uint16_t *)0xffff8240) = 0x740; // yellow - road geometry calculations
         road_corners_update();
         //*((volatile uint16_t *)0xffff8240) = 0x044; // turqoise - render mountains
@@ -41,6 +44,7 @@ void game_loop()
         hardware_playfield_erase_sprites();
         //*((volatile uint16_t *)0xffff8240) = 0x040; // green - add trackside items to display list
         trackside_items_process();
+        opponent_cars_process();
         //*((volatile uint16_t *)0xffff8240) = 0x400; // red
 
         player_car_sprite_definition_offset = 8;

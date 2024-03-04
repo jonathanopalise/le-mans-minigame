@@ -1,5 +1,4 @@
 #include "trackside_items_process.h"
-#include "trackside_items.h"
 #include "player_car.h"
 #include "sprite_definitions.h"
 #include "road_geometry.h"

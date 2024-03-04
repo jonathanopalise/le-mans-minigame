@@ -1,0 +1,1 @@
+hatari --parse debug.txt bin/lemans.prg
