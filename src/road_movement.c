@@ -14,7 +14,7 @@
 
 #define MAX_MOUNTAINS_SHIFT (319<<16)
 
-uint32_t current_road_curvature;
+int32_t current_road_curvature;
 int32_t mountains_shift;
 
 void road_corners_init()

@@ -50,7 +50,7 @@ void game_loop()
         player_car_sprite_definition_offset = 8;
         if (player_car_speed > 0) {
             if (player_car_steering <= -250) {
-                player_car_sprite_definition_offset += 9;
+                player_car_sprite_definition_offset += 16;
             } else if (player_car_steering >= 250) {
                 player_car_sprite_definition_offset += 8;
             }
@@ -68,11 +68,6 @@ void game_loop()
 
         waiting_for_vbl = 1;
         while (waiting_for_vbl) {}
-
-        xpos++;
-        if (xpos > 320) {
-            xpos = 0;
-        }
         hardware_playfield_handle_vbl();
 
         //*((volatile uint16_t *)0xffff8240) = 0x400; // red

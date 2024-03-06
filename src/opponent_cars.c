@@ -12,7 +12,7 @@ void opponent_cars_init()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->xpos = -100;
+    current_opponent_car->xpos = -90;
     current_opponent_car->speed = 350;
     current_opponent_car->active = 1;
 
@@ -26,7 +26,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->xpos = 100;
+    current_opponent_car->xpos = 90;
     current_opponent_car->speed = 450;
     current_opponent_car->active = 1;
 }
@@ -70,6 +70,7 @@ void opponent_cars_process()
     struct RoadScanline *road_scanline;
     int16_t sprite_index;
     int16_t screen_xpos;
+    int16_t sprite_aspect;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         // TODO: the 65535 check may eventually be over-defensive
@@ -87,6 +88,15 @@ void opponent_cars_process()
                 } else {
                     screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->logical_xpos_add_values[-current_opponent_car->xpos]) >> 16));
                 }
+
+                sprite_aspect = (screen_xpos << 1) - (current_road_curvature >> 1);
+
+                if (sprite_aspect > 50) {
+                    sprite_index += 8;
+                } else if (sprite_aspect < -50) {
+                    sprite_index += 16;
+                }
+
                 screen_xpos += 160;
 
                 display_list_add_sprite(

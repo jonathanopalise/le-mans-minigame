@@ -24,6 +24,24 @@ $roadLinesColour = COLOUR_WHITE;
 $asphaltColour = COLOUR_LIGHT_ASPHALT;
 $grassColour = COLOUR_GRASS_1;
 
+$indexedBitmap = IndexedBitmap::create(320, 1);
+for ($xpos = 0; $xpos < 320; $xpos++) {
+    $indexedBitmap->putPixel($xpos, 0, $grassColour);
+}
+
+// TODO: refactor to remove copy/pasted code
+$indexedBitmapFirstLine = $indexedBitmap->getLineAt(0);
+$bitplane0Words = $indexedBitmapFirstLine->toBitplaneWordSequence(0);
+$bitplane1Words = $indexedBitmapFirstLine->toBitplaneWordSequence(1);
+
+$bitplaneMergedWords = [];
+for ($wordIndex = 0; $wordIndex < $bitplane0Words->getLength(); $wordIndex++) {
+    $bitplaneMergedWords[] = $bitplane0Words->getWordAt($wordIndex);
+    $bitplaneMergedWords[] = $bitplane1Words->getWordAt($wordIndex);
+}
+
+$outputWords = array_merge($outputWords, $bitplaneMergedWords);
+
 $actualPixelWidth = 10;
 for ($index = 0; $index < 80; $index++) {
     $roundedPixelWidth = (($actualPixelWidth - 1) & 0xffe0) + 32 + ($padding * 16);
