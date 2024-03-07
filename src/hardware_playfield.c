@@ -58,16 +58,18 @@ void hardware_playfield_erase_sprites()
     for (uint16_t index = 0; index < hidden_hardware_playfield->sprites_drawn; index++) {
         // road draws in bitplanes 0 and 1, so we only need to clear bitplanes 2 and 3
         // we will probably draw background in planes 0 and 1 too...
-        *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
-        *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
+        if (current_bitplane_draw_record->destination_address != 0) {
+            *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
+            *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 4;
-        *((volatile int16_t *)BLITTER_Y_COUNT) = current_bitplane_draw_record->y_count;
-        *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 4;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = current_bitplane_draw_record->y_count;
+            *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 6;
-        *((volatile int16_t *)BLITTER_Y_COUNT) = current_bitplane_draw_record->y_count;
-        *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 6;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = current_bitplane_draw_record->y_count;
+            *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+        }
 
         current_bitplane_draw_record++;
     }

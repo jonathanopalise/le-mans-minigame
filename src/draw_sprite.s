@@ -92,6 +92,8 @@ _draw_sprite:
 
     move.l 12(a0),a0 ; source data pointer
 
+    move.l #0,(a4)     ; default destination address = 0 (don't try to clear)
+
     moveq     #0,d0
     move.w    d0,leftclipped
     move.w    d0,rightclipped
@@ -200,7 +202,6 @@ label_7a374:
     ;adda.l    a1,a2        ; add buffer location into a2?
     ;movea.l   a2,a1            ; transfer destination address into a1
 
-    move.l #0,(a4)     ; if destination address is 0, don't try to clear
     add.w     d2,a1    ; a1.l is final destination address for BitplaneDrawRecord
     tst.w     d4
     beq       alldone
