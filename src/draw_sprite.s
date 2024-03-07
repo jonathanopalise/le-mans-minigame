@@ -6,10 +6,7 @@ leftclipped:
 rightclipped:
     dc.w 0
 
-topclipped:
-    dc.w 0
-
-bottomclipped:
+original_height_in_lines:
     dc.w 0
 
 _draw_sprite:
@@ -61,6 +58,7 @@ _draw_sprite:
     ; source_data_height = word at sp + 22
     ; screen_buffer = long at sp + 24
     ; bitplane_draw_record = long at sp + 28
+    ; compiled sprites pointer = long at sp + 32
 
     move.l sp,a0
     movem.l d2-d7/a2-a6,-(sp)
@@ -77,6 +75,7 @@ _draw_sprite:
 
     moveq.l #0,d3
     move.w 22(a0),d3 ; source_data_height
+    move.w d3,original_height_in_lines
 
     moveq.l #0,d5
     move.w 10(a0),d5 ; ypos
@@ -86,6 +85,9 @@ _draw_sprite:
 
     move.l d5,d7
     add.l d3,d7
+
+    move.l 32(a0),a1 ; compiled sprites pointer
+    move.l a1,usp
 
     move.l 24(a0),a1 ; screen buffer
     move.l 28(a0),a4 ; bitplane draw record address
@@ -97,8 +99,6 @@ _draw_sprite:
     moveq     #0,d0
     move.w    d0,leftclipped
     move.w    d0,rightclipped
-    move.w    d0,topclipped
-    move.w    d0,bottomclipped
 
     move.l a3,d0                       ; get desired xpos of scenery object
     and.l #$f,d0                       ; convert to skew value for blitter
@@ -211,6 +211,7 @@ label_7a374:
     ; end of modified lotus code and start of new blitter code
     moveq.l #10,d5
 
+
     ; draw a roadside object
     ; a0 is source address
     ; a1 is destination address
@@ -223,8 +224,38 @@ label_7a374:
     ; d3.w is y_count for BitplaneDrawRecord
 
     move.w d3,8(a4)           ; set BitplaneDrawRecord y_count
+    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
 
     addq.l #8,d6               ; convert to value suitable for blitter
+    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
+
+    ; this is where we need to intercept for compiled sprites
+
+    tst.w leftclipped
+    bne.s compiled_not_usable
+    tst.w rightclipped
+    bne.s compiled_not_usable
+    cmp.w original_height_in_lines,d3
+    bne.s compiled_not_usable
+
+    move.l usp,a2 ; get address of table
+
+;boo:
+;    bra.s boo
+
+    move.l a3,d0               ; get desired xpos of scenery object
+    and.w #$f,d0               ; convert to skew value for blitter
+    add.w d0,d0
+    add.w d0,d0
+    move.l (a2,d0),a2
+    jsr (a2)
+
+    bra alldone
+
+    ; end of compiled sprites intercept
+
+compiled_not_usable:
+
     add.w d5,d7               ; convert to value suitable for blitter | TODO: #10 for 4bpp and #8 for 3bpp
 
     move.w d5,($ffff8a20).w   ; source x increment | TODO: #10 for 4bpp and #8 for 3bpp
@@ -265,9 +296,9 @@ nonfsr:
 
     move.w d7,($ffff8a22).w             ; source y increment
     move.w d6,($ffff8a30).w             ; dest y increment
-    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
+    ;move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
     move.w d4,($ffff8a36).w             ; xcount = number of 16 pixel blocks (one pass per bitplane)
-    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
+    ;move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
     move.b d1,($ffff8a3d).w
 
     lea.l rightendmasks(pc),a3
@@ -280,9 +311,9 @@ nofxsr:
 
     move.w d7,($ffff8a22).w             ; source y increment
     move.w d6,($ffff8a30).w             ; dest y increment
-    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
+    ;move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
     move.w d4,($ffff8a36).w             ; xcount = number of 16 pixel blocks (once pass per bitplane)
-    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
+    ;move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
     move.b d1,($ffff8a3d).w
 
     add.l d0,d0                         ; byte offset in mask lookup table

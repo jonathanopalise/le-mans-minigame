@@ -360,7 +360,7 @@ void generate_compiled_sprite_all_skews(
     //compiled_sprite_output += sizeof(current_skew_compiled_sprite_ptr) * SKEW_COUNT;
 
     for (uint16_t skew = 0; skew < SKEW_COUNT; skew++) {
-        current_skew_compiled_sprite_ptr = &compiled_sprite_output;
+        *current_skew_compiled_sprite_ptr = compiled_sprite_output;
         
         /*if (bitplanes == 3) {
             remap_3bpp_to_4bpp(source, width_in_16_pixel_blocks, height_in_lines, &remap_buffer);

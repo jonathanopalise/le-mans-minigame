@@ -34,6 +34,7 @@ void game_loop()
     //*((volatile uint16_t *)0xffff8246) = 0x222;
 
     while (1) {
+        *((volatile uint16_t *)0xffff8240) = 0x0;
         player_car_handle_inputs();
         opponent_cars_update();
         //*((volatile uint16_t *)0xffff8240) = 0x740; // yellow - road geometry calculations
@@ -66,7 +67,7 @@ void game_loop()
 
         display_list_execute();
 
-        //*((volatile uint16_t *)0xffff8240) = 0x040; // green
+        *((volatile uint16_t *)0xffff8240) = 0x040; // green
 
         waiting_for_vbl = 1;
         while (waiting_for_vbl) {}

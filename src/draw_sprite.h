@@ -10,7 +10,8 @@ void draw_sprite(
     int16_t source_data_width,
     int16_t source_data_height,
     void *screen_buffer,
-    struct BitplaneDrawRecord *bitplane_draw_record
+    struct BitplaneDrawRecord *bitplane_draw_record,
+    uint8_t *compiled_sprites 
 );
 
 #endif
