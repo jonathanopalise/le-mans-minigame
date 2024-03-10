@@ -426,6 +426,14 @@ class CompiledSpriteBuilder {
                 $length
             );
 
+            $endmask1 = null;
+            $endmask2 = null;
+            $endmask3 = null;
+
+            $oldEndmask1 = null;
+            $oldEndmask2 = null;
+            $oldEndmask3 = null;
+
             $lengthBasedSpanCollection = $spanCollection->getSpanCollectionByLength($length);
             foreach ($lengthBasedSpanCollection->getSpans() as $span) {
                 $blockCollection = $span->getBlockCollection();
@@ -438,7 +446,7 @@ class CompiledSpriteBuilder {
                 $instructions[] = '';
                 $instructions[] = sprintf(
                     'lea.l %d(a0),a2 ; calc source address into a2',
-                    $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset()
+                    $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset() + 2
                 );
                 $instructions[] = 'move.l a2,(a3) ; set source address';
                 $instructions[] = sprintf(
@@ -452,39 +460,91 @@ class CompiledSpriteBuilder {
                     case 1:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
-                        $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a28.w ; set endmask1',
-                            $endmask1
-                        );
+                        if ($endmask1 != $oldEndmask1) {
+                            if ($endmask1 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                    $endmask1
+                                );
+                            }
+                        }
                         break;
                     case 2:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
 
-                        $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a28.w ; set endmask1',
-                            $endmask1
-                        );
-                        $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
-                            $endmask3
-                        );
+                        if ($endmask1 != $oldEndmask1) {
+                            if ($endmask1 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                    $endmask1
+                                );
+                            }
+                        }
+                        if ($endmask3 != $oldEndmask3) {
+                            if ($endmask3 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask1';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                                    $endmask3
+                                );
+                            }
+                        }
                         break;
                     default:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
-                        $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a28.w ; set endmask1',
-                            $endmask1
-                        );
-                        $instructions[] = sprintf(
-                            'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
-                            (($endmask2 << 16) | $endmask3) & 0xffffffff
-                        );
+                        if ($endmask1 != $oldEndmask1) {
+                            if ($endmask1 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                    $endmask1
+                                );
+                            }
+                        }
+                        if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
+                            if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
+                                $instructions[] = 'move.l d7,$ffff8a2a.w ; set endmask2 and endmask3';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
+                                    (($endmask2 << 16) | $endmask3) & 0xffffffff
+                                );
+                            }
+                        } elseif ($endmask2 != $oldEndmask2) {
+                            if ($endmask2 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a2a.w ; set endmask2';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a2a.w ; set endmask2',
+                                    $endmask2
+                                );
+                            }
+                        } elseif ($endmask3 != $oldEndmask3) {
+                            if ($endmask3 == 0xffff) {
+                                $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask1';
+                            } else {
+                                $instructions[] = sprintf(
+                                    'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                                    $endmask3
+                                );
+                            }
+                        }
                         break;
                 }
+
+                $oldEndmask1 = $endmask1;
+                $oldEndmask2 = $endmask2;
+                $oldEndmask3 = $endmask3;
 
                 $instructions[] = 'move.w d1,(a6) ; set blitter control';
             }

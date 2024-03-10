@@ -68,7 +68,7 @@ void game_loop()
 
         //draw_compiled_sprite(hidden_hardware_playfield->buffer);
 
-        *((volatile uint16_t *)0xffff8240) = 0x040; // green
+        //*((volatile uint16_t *)0xffff8240) = 0x040; // green
 
         waiting_for_vbl = 1;
         while (waiting_for_vbl) {}

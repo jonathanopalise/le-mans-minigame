@@ -250,7 +250,7 @@ label_7a374:
     move.l a3,d0               ; get desired xpos of scenery object
     and.w #$f,d0               ; convert to skew value for blitter
 
-    move.w #$c080,d1           ; blitter control
+    move.w #$c000,d1           ; blitter control
     or.w d0,d1                 ; apply skew
 
     add.w d0,d0
@@ -267,6 +267,7 @@ label_7a374:
     lea $ffff8a32.w,a4        ; cache dest address register
     lea $ffff8a38.w,a5        ; cache ycount register
     lea $ffff8a3c.w,a6        ; cache control register
+    moveq.l #-1,d7
 
     jsr (a2)
 
