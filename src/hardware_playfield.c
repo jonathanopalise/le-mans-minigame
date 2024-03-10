@@ -40,7 +40,7 @@ void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, 
         sprite_definition->source_data_height,
         hidden_hardware_playfield->buffer,
         hidden_hardware_playfield->current_bitplane_draw_record,
-        sprite_definition->compiled_sprites
+        &(sprite_definition->compiled_sprite_0)
     );
 
     hidden_hardware_playfield->current_bitplane_draw_record++;

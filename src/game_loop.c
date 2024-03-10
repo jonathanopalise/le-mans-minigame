@@ -12,7 +12,6 @@
 #include "trackside_items_process.h"
 #include "display_list.h"
 #include "opponent_cars.h"
-#include "compile_sprites.h"
 #include "draw_compiled_sprite.h"
 
 void game_loop()
@@ -21,7 +20,6 @@ void game_loop()
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
-    generate_all_compiled_sprites();
     hardware_playfield_init();
     initialise();
     road_corners_init();
