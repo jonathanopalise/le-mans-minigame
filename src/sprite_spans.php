@@ -181,6 +181,11 @@ class SixteenPixelBlock {
         return $this->maskWord;
     }
 
+    public function getInvertedMaskWord(): int
+    {
+        return ~($this->maskWord) & 0xffff;
+    }
+
     public function getBitplaneWords(): array
     {
         return $this->bitplaneWords;
@@ -439,7 +444,7 @@ class CompiledSpriteBuilder {
 
                 switch ($length) {
                     case 1:
-                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
                         printf(
                             "      endmask1: %x\n",
@@ -452,8 +457,8 @@ class CompiledSpriteBuilder {
                         );
                         break;
                     case 2:
-                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
-                        $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord();
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
+                        $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
 
                         printf(
                             "      endmask1: %x\n      endmask3: %x\n",
@@ -471,9 +476,9 @@ class CompiledSpriteBuilder {
                         );
                         break;
                     default:
-                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
-                        $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord();
-                        $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord();
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
+                        $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
+                        $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
                         printf(
                             "      endmask1: %x\n      endmask2: %x\n      endmask3: %x\n",
