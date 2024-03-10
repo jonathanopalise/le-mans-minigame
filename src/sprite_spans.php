@@ -391,9 +391,28 @@ class CompiledSpriteBuilder {
             echo("  endOffset: ".$span->getEndOffset()."\n");
         }*/
 
+        $instructions = [];
+        $instructions[] = 'move.w #10,$ffff8a20.w ; set source x increment';
+        $instructions[] = 'move.w #8,$ffff8a2e.w ; set dest x increment';
+        $instructions[] = 'move.w #$0203,$ffff8a3a.w ; set hop/op';
+
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         foreach ($uniqueSpanLengths as $length) {
+            $instructions[] = '';
             echo("Spans of length ".$length."\n");
+
+            $destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+
+            $instructions[] = sprintf(
+                'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
+                $destinationYIncrement
+            );
+
+            $instructions[] = sprintf(
+                'move.w #%d,$ffff8a36.w ; x count (per length group)',
+                $length
+            );
+
             $lengthBasedSpanCollection = $spanCollection->getSpanCollectionByLength($length);
             foreach ($lengthBasedSpanCollection->getSpans() as $span) {
                 $blockCollection = $span->getBlockCollection();
@@ -402,29 +421,79 @@ class CompiledSpriteBuilder {
                 echo("    endOffset: ".$span->getEndOffset()."\n");
                 echo("    length: ".$span->getLength()."\n");
                 echo("    masks:\n");
+
+                $instructions[] = '';
+                $instructions[] = sprintf(
+                    'move.l %d(a0),$ffff8a24.w ; set source address, a0 is start of sprite data',
+                    $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset()
+                );
+                $instructions[] = sprintf(
+                    'move.l %d(a1),$$ffff8a32 ; set destination address, a2 is start of sprite data',
+                    $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
+                );
+                $instructions[] = 'move.w $4,$ffff8a38.w ; set ycount (4 bitplanes)';
+
                 switch ($length) {
                     case 1:
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
+
                         printf(
                             "      endmask1: %x\n",
-                            $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord()
+                            $endmask1
+                        );
+
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
                         );
                         break;
                     case 2:
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
+                        $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord();
+
                         printf(
                             "      endmask1: %x\n      endmask3: %x\n",
-                            $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord(),
-                            $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord()
+                            $endmask1,
+                            $endmask3
+                        );
+
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
+                        );
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                            $endmask3
                         );
                         break;
                     default:
+                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord();
+                        $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord();
+                        $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord();
+
                         printf(
                             "      endmask1: %x\n      endmask2: %x\n      endmask3: %x\n",
-                            $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord(),
-                            $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord(),
-                            $blockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord()
+                            $endmask1,
+                            $endmask2,
+                            $endmask3
+                        );
+
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
+                        );
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2a.w ; set endmask2 (might be able to merge this and following call)',
+                            $endmask2
+                        );
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                            $endmask3
                         );
                         break;
                 }
+
+                $instructions[] = 'move.w #$c080,$ffff8a3c.w ; set blitter control';
             }
         }
 
@@ -454,7 +523,7 @@ class CompiledSpriteBuilder {
             }
         }*/
 
-
+        return $instructions;
 
         //var_dump($spans);
     }
@@ -476,7 +545,12 @@ foreach ($carWords as $word) {
 }
 
 $builder = new CompiledSpriteBuilder($str, $carWidth, $carHeight);
-$builder->runFirstPass();
+$instructions = $builder->runFirstPass();
+
+foreach ($instructions as $instruction) {
+    echo($instruction);
+    echo("\n");
+}
 
 //var_dump($instructionStream);
 
