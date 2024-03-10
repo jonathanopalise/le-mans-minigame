@@ -397,10 +397,10 @@ class CompiledSpriteBuilder {
         }*/
 
         $instructions = [];
-        $instructions[] = 'move.w #10,$ffff8a20.w ; set source x increment';
-        $instructions[] = 'move.w #8,$ffff8a2e.w ; set dest x increment';
+        //$instructions[] = 'move.w #10,$ffff8a20.w ; set source x increment';
+        //$instructions[] = 'move.w #8,$ffff8a2e.w ; set dest x increment';
         //$instructions[] = 'move.w #$0203,$ffff8a3a.w ; set hop/op';
-        $instructions[] = 'move.w #$0,$ffff8a3a.w ; set hop/op';
+        //$instructions[] = 'move.w #$0,$ffff8a3a.w ; set hop/op';
 
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         foreach ($uniqueSpanLengths as $length) {
