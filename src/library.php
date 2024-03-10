@@ -375,9 +375,9 @@ class Bitplane
         }
 
         $shiftedBits = array_merge(
-            array_fill(0, $bitsToShift, 0),
+            array_fill(0, $bitsToShift, 1),
             $this->bits,
-            array_fill(0, 16 - $bitsToShift, 0)
+            array_fill(0, 16 - $bitsToShift, 1)
         );
 
         return new static($shiftedBits);
@@ -427,8 +427,8 @@ class WordSequence
         $bits = [];
         foreach ($this->words as $word) {
             for ($index = 0; $index < 16; $index++) {
-                $bits[] = $word & 1;
-                $word >>= 1;
+                $bits[] = ($word & 32768) >> 15;
+                $word <<= 1;
             }
         }
 

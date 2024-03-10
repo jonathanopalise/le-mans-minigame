@@ -291,10 +291,27 @@ foreach ($definitions as $definition) {
     ];
 
     for ($skew = 0; $skew < 16; $skew++) {
-        //$skewedMaskedSprite = $maskedSprite->getShiftedCopy(0);
-        $skewedMaskedSprite = $maskedSprite;
-
+        printf(
+            "masked sprite width: %d\n",
+            $maskedSprite->getWidth()
+        );
+        $skewedMaskedSprite = $maskedSprite->getShiftedCopy($skew);
+        printf(
+            "skewed masked sprite width: %d\n",
+            $skewedMaskedSprite->getWidth()
+        );
+        //$skewedMaskedSprite = $maskedSprite;
+        $planarData = $maskedSprite->exportToPlanarData();
         $skewedPlanarData = $skewedMaskedSprite->exportToPlanarData();
+
+        /*$planarDataWords = $planarData->getWords();
+        $skewedPlanarDataWords = $skewedPlanarData->getWords();
+        if ($planarDataWords != $skewedPlanarDataWords) {
+            var_dump(array_slice($planarDataWords, 0, 10));
+            var_dump(array_slice($skewedPlanarDataWords, 0, 10));
+            echo("FAIL");
+            exit(1);
+        }*/
 
         // convert word data to byte data
         $skewedCharData= '';
