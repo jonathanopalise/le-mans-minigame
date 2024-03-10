@@ -252,8 +252,8 @@ class CompiledSpriteBuilder {
 
     private function getWordAtSourceOffset(int $offset): int
     {
-        return ord($this->data[$offset])
-            | (ord($this->data[$offset+1]) << 8);
+        return ord($this->data[$offset+1])
+            | (ord($this->data[$offset]) << 8);
     }
 
 	private function getLongAtSourceOffset(int $offset): int
@@ -337,10 +337,29 @@ class CompiledSpriteBuilder {
             $sixteenPixelBlockOffset += $this->widthInSixteenPixelBlocks;
 		}
 
+
+        /*foreach ($spans as $span) {
+            var_dump($span);
+            printf("start mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span['startOffset'])->getMaskWord());
+            printf("end mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span['endOffset'])->getMaskWord());
+            printf("---------\n");
+        }*/
+        // at this point we don't seem to have any spans with start mask or end mask of ffff
+        //exit();
+
         $spanCollection = new SpanCollection($this->sixteenPixelBlockCollection);
         foreach ($spans as $span) {
             $spanCollection->addSpanUsingOffsets($this->sixteenPixelBlockCollection, $span['startOffset'], $span['endOffset']);
         }
+
+        /*foreach ($spanCollection->getSpans() as $span) {
+            echo("span:\n");
+            echo("  startOffset: ".$span->getStartOffset()."\n");
+            echo("  endOffset: ".$span->getEndOffset()."\n");
+            printf("  start mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord());
+            printf("  end mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord());
+        }
+        exit();*/
 
         while (!$spanCollection->isBlitterGood()) {
             $replacementSpanCollection = new SpanCollection($this->sixteenPixelBlockCollection);
@@ -353,6 +372,16 @@ class CompiledSpriteBuilder {
             }
             $spanCollection = $replacementSpanCollection;
         }
+
+        /*foreach ($spanCollection->getSpans() as $span) {
+            echo("span:\n");
+            echo("  startOffset: ".$span->getStartOffset()."\n");
+            echo("  endOffset: ".$span->getEndOffset()."\n");
+            printf("  start mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord());
+            printf("  end mask: %x\n", $this->sixteenPixelBlockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord());
+        }*/
+        //exit();
+
 
         //var_dump($spanCollection);
 
@@ -392,7 +421,7 @@ class CompiledSpriteBuilder {
                             "      endmask1: %x\n      endmask2: %x\n      endmask3: %x\n",
                             $blockCollection->getBlockByOffset($span->getStartOffset())->getMaskWord(),
                             $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getMaskWord(),
-                            $blockCollection->getBlockByOffset($span->getEndOffset()+1)->getMaskWord()
+                            $blockCollection->getBlockByOffset($span->getEndOffset())->getMaskWord()
                         );
                         break;
                 }
@@ -441,6 +470,7 @@ $carHeight = 25;
 
 $str= '';
 foreach ($carWords as $word) {
+    // most significant at lowest storage address
     $str .= chr($word >> 8);
     $str .= chr($word & 255);
 }
