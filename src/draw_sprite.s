@@ -9,6 +9,9 @@ rightclipped:
 original_height_in_lines:
     dc.w 0
 
+source_data_address:
+    dc.l 0
+
 _draw_sprite:
 
     ; inputs:
@@ -93,6 +96,7 @@ _draw_sprite:
     move.l 28(a0),a4 ; bitplane draw record address
 
     move.l 12(a0),a0 ; source data pointer
+    move.l a0,source_data_address
 
     move.l #0,(a4)     ; default destination address = 0 (don't try to clear)
 
@@ -245,14 +249,24 @@ label_7a374:
 
     move.l a3,d0               ; get desired xpos of scenery object
     and.w #$f,d0               ; convert to skew value for blitter
+
+    move.w #$c080,d1           ; blitter control
+    or.w d0,d1                 ; apply skew
+
     add.w d0,d0
     add.w d0,d0
     move.l (a2,d0),a2
 
     move.w #10,$ffff8a20.w    ; set source x increment
     move.w #8,$ffff8a2e.w     ; set dest x increment
-    ;move.w #$0203,$ffff8a3a.w ; set hop/op
-    move.w #$0,$ffff8a3a.w    ; set hop/op
+    move.w #$0203,$ffff8a3a.w ; set hop/op
+    ;move.w #$0,$ffff8a3a.w   ; set hop/op
+    moveq.l #4,d0             ; ycount
+    move.l source_data_address,a0
+    lea $ffff8a24.w,a3        ; cache source address register
+    lea $ffff8a32.w,a4        ; cache dest address register
+    lea $ffff8a38.w,a5        ; cache ycount register
+    lea $ffff8a3c.w,a6        ; cache control register
 
     jsr (a2)
 

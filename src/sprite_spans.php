@@ -407,6 +407,13 @@ class CompiledSpriteBuilder {
             $instructions[] = '';
             //echo("Spans of length ".$length."\n");
 
+            $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+
+            $instructions[] = sprintf(
+                'move.w #%d,$ffff8a22.w ; source y increment (per length group)',
+                $sourceYIncrement
+            );
+
             $destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
 
             $instructions[] = sprintf(
@@ -429,28 +436,21 @@ class CompiledSpriteBuilder {
                 //echo("    masks:\n");
 
                 $instructions[] = '';
-                /*$instructions[] = sprintf(
-                    'lea.l %d(a0),$ffff8a24.w ; set source address, a0 is start of sprite data',
+                $instructions[] = sprintf(
+                    'lea.l %d(a0),a2 ; calc source address into a2',
                     $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset()
-                );*/
+                );
+                $instructions[] = 'move.l a2,(a3) ; set source address';
                 $instructions[] = sprintf(
                     'lea.l %d(a1),a2 ; calc destination address into a2',
                     $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
                 );
-                $instructions[] = sprintf(
-                    'move.l a2,$ffff8a32.w ; set destination address',
-                    $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
-                );
-                $instructions[] = 'move.w #$4,$ffff8a38.w ; set ycount (4 bitplanes)';
+                $instructions[] = 'move.l a2,(a4) ; set destination address';
+                $instructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
 
                 switch ($length) {
                     case 1:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
-
-                        /*printf(
-                            "      endmask1: %x\n",
-                            $endmask1
-                        );*/
 
                         $instructions[] = sprintf(
                             'move.w #$%x,$ffff8a28.w ; set endmask1',
@@ -460,12 +460,6 @@ class CompiledSpriteBuilder {
                     case 2:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-
-                        /*printf(
-                            "      endmask1: %x\n      endmask3: %x\n",
-                            $endmask1,
-                            $endmask3
-                        );*/
 
                         $instructions[] = sprintf(
                             'move.w #$%x,$ffff8a28.w ; set endmask1',
@@ -481,29 +475,18 @@ class CompiledSpriteBuilder {
                         $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
-                        /*printf(
-                            "      endmask1: %x\n      endmask2: %x\n      endmask3: %x\n",
-                            $endmask1,
-                            $endmask2,
-                            $endmask3
-                        );*/
-
                         $instructions[] = sprintf(
                             'move.w #$%x,$ffff8a28.w ; set endmask1',
                             $endmask1
                         );
                         $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a2a.w ; set endmask2 (might be able to merge this and following call)',
-                            $endmask2
-                        );
-                        $instructions[] = sprintf(
-                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
-                            $endmask3
+                            'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
+                            (($endmask2 << 16) | $endmask3) & 0xffffffff
                         );
                         break;
                 }
 
-                $instructions[] = 'move.w #$c080,$ffff8a3c.w ; set blitter control';
+                $instructions[] = 'move.w d1,(a6) ; set blitter control';
             }
         }
 
