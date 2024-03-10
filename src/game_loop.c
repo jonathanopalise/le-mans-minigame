@@ -13,6 +13,7 @@
 #include "display_list.h"
 #include "opponent_cars.h"
 #include "compile_sprites.h"
+#include "draw_compiled_sprite.h"
 
 void game_loop()
 {
@@ -66,6 +67,8 @@ void game_loop()
         );
 
         display_list_execute();
+
+        draw_compiled_sprite(hidden_hardware_playfield->buffer);
 
         *((volatile uint16_t *)0xffff8240) = 0x040; // green
 

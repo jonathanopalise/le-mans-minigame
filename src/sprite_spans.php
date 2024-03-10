@@ -423,15 +423,19 @@ class CompiledSpriteBuilder {
                 echo("    masks:\n");
 
                 $instructions[] = '';
-                $instructions[] = sprintf(
-                    'move.l %d(a0),$ffff8a24.w ; set source address, a0 is start of sprite data',
+                /*$instructions[] = sprintf(
+                    'lea.l %d(a0),$ffff8a24.w ; set source address, a0 is start of sprite data',
                     $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset()
-                );
+                );*/
                 $instructions[] = sprintf(
-                    'move.l %d(a1),$$ffff8a32 ; set destination address, a2 is start of sprite data',
+                    'lea.l %d(a1),a2 ; calc destination address into a2',
                     $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
                 );
-                $instructions[] = 'move.w $4,$ffff8a38.w ; set ycount (4 bitplanes)';
+                $instructions[] = sprintf(
+                    'move.l a2,$ffff8a32.w ; set destination address',
+                    $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
+                );
+                $instructions[] = 'move.w #$4,$ffff8a38.w ; set ycount (4 bitplanes)';
 
                 switch ($length) {
                     case 1:
