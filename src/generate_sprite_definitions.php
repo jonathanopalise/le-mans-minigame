@@ -341,7 +341,8 @@ foreach ($definitions as $definition) {
         $builder = new CompiledSpriteBuilder(
             $skewedCharData,
             $widthIn16PixelBlocks,
-            $skewedMaskedSprite->getHeight()
+            $skewedMaskedSprite->getHeight(),
+            $skew > 0
         );
         $instructions = $builder->runFirstPass();
 

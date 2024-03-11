@@ -153,17 +153,24 @@ class SpanCollection
 }
 
 class SixteenPixelBlock {
+    private int $originalSourceOffset;
     private int $sourceOffset;
     private int $destinationOffset;
     private int $maskWord;
     private array $bitplaneWords;
 
-    public function __construct(int $sourceOffset, int $destinationOffset, int $maskWord, array $bitplaneWords)
+    public function __construct(int $originalSourceOffset, int $sourceOffset, int $destinationOffset, int $maskWord, array $bitplaneWords)
     {
+        $this->originalSourceOffset = $originalSourceOffset;
         $this->sourceOffset = $sourceOffset;
         $this->destinationOffset = $destinationOffset;
         $this->maskWord = $maskWord;
         $this->bitplaneWords = $bitplaneWords;
+    }
+
+    public function getOriginalSourceOffset(): int
+    {
+        return $this->originalSourceOffset;
     }
 
     public function getSourceOffset(): int
@@ -223,13 +230,14 @@ class CompiledSpriteBuilder {
 	private int $widthInSixteenPixelBlocks;
 	private int $heightInLines;
 
-	public function __construct(string $data, int $widthInSixteenPixelBlocks, int $heightInLines)
+	public function __construct(string $data, int $widthInSixteenPixelBlocks, int $heightInLines, bool $skewed)
 	{
 		$this->data = $data; // this will need to be an array of bytes!
 		$this->widthInSixteenPixelBlocks = $widthInSixteenPixelBlocks;
 		$this->heightInLines = $heightInLines;
         $this->sixteenPixelBlockCollection = new SixteenPixelBlockCollection();
 
+        $originalSourceOffset = 0;
         $sourceOffset = 0;
         $destinationOffset = 0;
         $bytesToSkipAfterEachLine = self::FRAMEBUFFER_BYTES_PER_LINE - $widthInSixteenPixelBlocks * self::BYTES_PER_16_PIXELS;
@@ -245,8 +253,16 @@ class CompiledSpriteBuilder {
                 ];
 
                 $this->sixteenPixelBlockCollection->addBlock(
-                    new SixteenPixelBlock($sourceOffset, $destinationOffset, $maskWord, $bitplaneWords)
+                    new SixteenPixelBlock($originalSourceOffset, $sourceOffset, $destinationOffset, $maskWord, $bitplaneWords)
                 );
+
+                if ($skewed) {
+                    if ($x < $this->widthInSixteenPixelBlocks - 1) {
+                        $originalSourceOffset += 10;
+                    }
+                } else {
+                    $originalSourceOffset += 10;
+                }
 
                 $sourceOffset += 10;
                 $destinationOffset += 8;
@@ -446,7 +462,7 @@ class CompiledSpriteBuilder {
                 $instructions[] = '';
                 $instructions[] = sprintf(
                     'lea.l %d(a0),a2 ; calc source address into a2',
-                    $blockCollection->getBlockByOffset($span->getStartOffset())->getSourceOffset() + 2
+                    $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2
                 );
                 $instructions[] = 'move.l a2,(a3) ; set source address';
                 $instructions[] = sprintf(
