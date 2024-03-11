@@ -229,12 +229,14 @@ class CompiledSpriteBuilder {
     private array $uniqueLongValues = [];
 	private int $widthInSixteenPixelBlocks;
 	private int $heightInLines;
+    private bool $skewed;
 
 	public function __construct(string $data, int $widthInSixteenPixelBlocks, int $heightInLines, bool $skewed)
 	{
 		$this->data = $data; // this will need to be an array of bytes!
 		$this->widthInSixteenPixelBlocks = $widthInSixteenPixelBlocks;
 		$this->heightInLines = $heightInLines;
+        $this->skewed = $skewed;
         $this->sixteenPixelBlockCollection = new SixteenPixelBlockCollection();
 
         $originalSourceOffset = 0;
@@ -413,6 +415,14 @@ class CompiledSpriteBuilder {
         }*/
 
         $instructions = [];
+
+        // mSkewFXSR      equ  $80
+        // mSkewNFSR      equ  $40
+
+        // force extra source read if skewed
+        if ($this->skewed) {
+            $instructions[] = 'or.w #$80,d1';
+        }
         //$instructions[] = 'move.w #10,$ffff8a20.w ; set source x increment';
         //$instructions[] = 'move.w #8,$ffff8a2e.w ; set dest x increment';
         //$instructions[] = 'move.w #$0203,$ffff8a3a.w ; set hop/op';
@@ -424,6 +434,9 @@ class CompiledSpriteBuilder {
             //echo("Spans of length ".$length."\n");
 
             $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+            if ($this->skewed) {
+                $sourceYIncrement -= 10;
+            }
 
             $instructions[] = sprintf(
                 'move.w #%d,$ffff8a22.w ; source y increment (per length group)',
@@ -459,10 +472,15 @@ class CompiledSpriteBuilder {
                 //echo("    length: ".$span->getLength()."\n");
                 //echo("    masks:\n");
 
+                $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
+                if ($this->skewed) {
+                    $sourceOffset -= 10;
+                }
+
                 $instructions[] = '';
                 $instructions[] = sprintf(
                     'lea.l %d(a0),a2 ; calc source address into a2',
-                    $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2
+                    $sourceOffset
                 );
                 $instructions[] = 'move.l a2,(a3) ; set source address';
                 $instructions[] = sprintf(
@@ -476,7 +494,12 @@ class CompiledSpriteBuilder {
                     case 1:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
-                        if ($endmask1 != $oldEndmask1) {
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
+                        );
+
+                        /*if ($endmask1 != $oldEndmask1) {
                             if ($endmask1 == 0xffff) {
                                 $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
                             } else {
@@ -485,13 +508,22 @@ class CompiledSpriteBuilder {
                                     $endmask1
                                 );
                             }
-                        }
+                        }*/
                         break;
                     case 2:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
 
-                        if ($endmask1 != $oldEndmask1) {
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
+                        );
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                            $endmask3
+                        );
+
+                        /*if ($endmask1 != $oldEndmask1) {
                             if ($endmask1 == 0xffff) {
                                 $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
                             } else {
@@ -510,14 +542,29 @@ class CompiledSpriteBuilder {
                                     $endmask3
                                 );
                             }
-                        }
+                        }*/
                         break;
                     default:
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                         $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
-                        if ($endmask1 != $oldEndmask1) {
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a28.w ; set endmask1',
+                            $endmask1
+                        );
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2a.w ; set endmask2',
+                            $endmask2
+                        );
+
+                        $instructions[] = sprintf(
+                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
+                            $endmask3
+                        );
+
+
+                        /*if ($endmask1 != $oldEndmask1) {
                             if ($endmask1 == 0xffff) {
                                 $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
                             } else {
@@ -547,14 +594,14 @@ class CompiledSpriteBuilder {
                             }
                         } elseif ($endmask3 != $oldEndmask3) {
                             if ($endmask3 == 0xffff) {
-                                $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask1';
+                                $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
                             } else {
                                 $instructions[] = sprintf(
                                     'move.w #$%x,$ffff8a2c.w ; set endmask3',
                                     $endmask3
                                 );
                             }
-                        }
+                        }*/
                         break;
                 }
 
