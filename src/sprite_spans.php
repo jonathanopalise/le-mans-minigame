@@ -410,6 +410,16 @@ class CompiledSpriteBuilder {
         // mSkewFXSR      equ  $80
         // mSkewNFSR      equ  $40
 
+        $endmask1 = null;
+        $endmask2 = null;
+        $endmask3 = null;
+
+        $oldEndmask1 = null;
+        $oldEndmask2 = null;
+        $oldEndmask3 = null;
+
+        $oldSourceOffset = 0;
+        $oldDestinationOffset = 0;
 
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         foreach ($uniqueSpanLengths as $length) {
@@ -427,14 +437,6 @@ class CompiledSpriteBuilder {
                 $length
             );
 
-            $endmask1 = null;
-            $endmask2 = null;
-            $endmask3 = null;
-
-            $oldEndmask1 = null;
-            $oldEndmask2 = null;
-            $oldEndmask3 = null;
-
             $lengthBasedSpanCollection = $spanCollection->getSpanCollectionByLength($length);
             $fxsrOptions = [true, false];
             foreach ($fxsrOptions as $useFxsr) {
@@ -449,7 +451,7 @@ class CompiledSpriteBuilder {
                     }
 
                     $instructions[] = sprintf(
-                        'move.w #%d,$ffff8a22.w ; source y increment (per span but hopefully not for long)',
+                        'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
                         $sourceYIncrement
                     );
                 }
@@ -467,16 +469,23 @@ class CompiledSpriteBuilder {
 
                     $instructions[] = '';
                     $instructions[] = sprintf(
-                        'lea.l %d(a0),a2 ; calc source address into a2',
-                        $sourceOffset
+                        'lea.l %d(a0),a0 ; calc source address into a2',
+                        $sourceOffset - $oldSourceOffset
                     );
-                    $instructions[] = 'move.l a2,(a3) ; set source address';
+                    $instructions[] = 'move.l a0,(a3) ; set source address';
+
+                    $oldSourceOffset = $sourceOffset;
+
+
+                    $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
                     $instructions[] = sprintf(
-                        'lea.l %d(a1),a2 ; calc destination address into a2',
-                        $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset()
+                        'lea.l %d(a1),a1 ; calc destination address into a2',
+                        $destinationOffset - $oldDestinationOffset
                     );
-                    $instructions[] = 'move.l a2,(a4) ; set destination address';
+                    $instructions[] = 'move.l a1,(a4) ; set destination address';
                     $instructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
+
+                    $oldDestinationOffset = $destinationOffset;
 
                     switch ($length) {
                         case 1:
