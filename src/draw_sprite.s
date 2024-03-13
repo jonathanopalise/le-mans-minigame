@@ -252,6 +252,8 @@ label_7a374:
 
     move.w #$c000,d1           ; blitter control
     or.w d0,d1                 ; apply skew
+    move.w d1,d2               ; copy blitter control
+    or.w #$80,d2               ; d2 has fxsr
 
     add.w d0,d0
     add.w d0,d0

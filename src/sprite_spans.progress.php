@@ -428,8 +428,6 @@ class CompiledSpriteBuilder {
         //$instructions[] = 'move.w #$0203,$ffff8a3a.w ; set hop/op';
         //$instructions[] = 'move.w #$0,$ffff8a3a.w ; set hop/op';
 
-        $skewCalculatorLong = 0b11111111111111110000000000000000;
-
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         foreach ($uniqueSpanLengths as $length) {
             $instructions[] = '';
@@ -458,26 +456,11 @@ class CompiledSpriteBuilder {
             $lengthBasedSpanCollection = $spanCollection->getSpanCollectionByLength($length);
             foreach ($lengthBasedSpanCollection->getSpans() as $span) {
                 //$useFxsr = !$useFxsr;
-                $blockCollection = $span->getBlockCollection();
-                $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
-
-                if ($this->skewed) {
-                    $useFxsr = false;
-                    if ((($skewCalculatorLong >> $this->skewed) & 0xffff) & $endmask1) {
-                        $useFxsr = true;
-                    }
-                } else {
-                    $useFxsr = !$useFxsr;
-                }
 
                 $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
-                /*if ($this->skewed) {
-                    $sourceYIncrement -= 10;
-                }*/
-                if ($useFxsr) {
+                if ($this->skewed) {
                     $sourceYIncrement -= 10;
                 }
-
 
                 $instructions[] = sprintf(
                     'move.w #%d,$ffff8a22.w ; source y increment (per length group)',
@@ -485,6 +468,7 @@ class CompiledSpriteBuilder {
                 );
 
 
+                $blockCollection = $span->getBlockCollection();
                 //echo("  span:\n");
                 //echo("    startOffset: ".$span->getStartOffset()."\n");
                 //echo("    endOffset: ".$span->getEndOffset()."\n");
@@ -492,7 +476,7 @@ class CompiledSpriteBuilder {
                 //echo("    masks:\n");
 
                 $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
-                if ($useFxsr) {
+                if ($this->skewed) {
                     $sourceOffset -= 10;
                 }
 
@@ -628,7 +612,7 @@ class CompiledSpriteBuilder {
                 $oldEndmask2 = $endmask2;
                 $oldEndmask3 = $endmask3;
 
-                if ($useFxsr) {
+                if ($this->skewed) {
                     $instructions[] = 'move.w d2,(a6) ; set blitter control';
                 } else {
                     $instructions[] = 'move.w d1,(a6) ; set blitter control';

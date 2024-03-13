@@ -342,7 +342,7 @@ foreach ($definitions as $definition) {
             $skewedCharData,
             $widthIn16PixelBlocks,
             $skewedMaskedSprite->getHeight(),
-            $skew > 0
+            $skew
         );
         $instructions = $builder->runFirstPass();
 
