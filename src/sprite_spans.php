@@ -405,7 +405,9 @@ class CompiledSpriteBuilder {
             $spanCollection = $replacementSpanCollection;
         }
 
-       $instructions = [];
+       $instructions = [
+            'lea $ffff8a28.w,a2        ; cache endmask1'
+       ];
 
         // mSkewFXSR      equ  $80
         // mSkewNFSR      equ  $40
@@ -450,6 +452,8 @@ class CompiledSpriteBuilder {
                         $sourceYIncrement -= 10;
                     }
 
+                    $instructions[] = '';
+
                     $instructions[] = sprintf(
                         'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
                         $sourceYIncrement
@@ -469,7 +473,7 @@ class CompiledSpriteBuilder {
 
                     $instructions[] = '';
                     $instructions[] = sprintf(
-                        'lea.l %d(a0),a0 ; calc source address into a2',
+                        'lea.l %d(a0),a0 ; calc source address into a0',
                         $sourceOffset - $oldSourceOffset
                     );
                     $instructions[] = 'move.l a0,(a3) ; set source address';
@@ -479,7 +483,7 @@ class CompiledSpriteBuilder {
 
                     $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
                     $instructions[] = sprintf(
-                        'lea.l %d(a1),a1 ; calc destination address into a2',
+                        'lea.l %d(a1),a1 ; calc destination address into a1',
                         $destinationOffset - $oldDestinationOffset
                     );
                     $instructions[] = 'move.l a1,(a4) ; set destination address';
@@ -491,10 +495,10 @@ class CompiledSpriteBuilder {
                         case 1:
                             if ($endmask1 != $oldEndmask1) {
                                 if ($endmask1 == 0xffff) {
-                                    $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                                    $instructions[] = 'move.w d7,(a2) ; set endmask1';
                                 } else {
                                     $instructions[] = sprintf(
-                                        'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                        'move.w #$%x,(a2) ; set endmask1',
                                         $endmask1
                                     );
                                 }
@@ -505,17 +509,17 @@ class CompiledSpriteBuilder {
 
                             if ($endmask1 != $oldEndmask1) {
                                 if ($endmask1 == 0xffff) {
-                                    $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                                    $instructions[] = 'move.w d7,(a2) ; set endmask1';
                                 } else {
                                     $instructions[] = sprintf(
-                                        'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                        'move.w #$%x,(a2) ; set endmask1',
                                         $endmask1
                                     );
                                 }
                             }
                             if ($endmask3 != $oldEndmask3) {
                                 if ($endmask3 == 0xffff) {
-                                    $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask1';
+                                    $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
                                 } else {
                                     $instructions[] = sprintf(
                                         'move.w #$%x,$ffff8a2c.w ; set endmask3',
@@ -530,10 +534,10 @@ class CompiledSpriteBuilder {
 
                             if ($endmask1 != $oldEndmask1) {
                                 if ($endmask1 == 0xffff) {
-                                    $instructions[] = 'move.w d7,$ffff8a28.w ; set endmask1';
+                                    $instructions[] = 'move.w d7,(a2) ; set endmask1';
                                 } else {
                                     $instructions[] = sprintf(
-                                        'move.w #$%x,$ffff8a28.w ; set endmask1',
+                                        'move.w #$%x,(a2) ; set endmask1',
                                         $endmask1
                                     );
                                 }
