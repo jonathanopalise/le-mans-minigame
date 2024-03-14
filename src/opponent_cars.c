@@ -7,6 +7,9 @@
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
+#define RED_CAR_BASE_INDEX 15
+#define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 24)
+
 void opponent_cars_init()
 {
     struct OpponentCar *current_opponent_car = opponent_cars;
@@ -15,6 +18,7 @@ void opponent_cars_init()
     current_opponent_car->xpos = -90;
     current_opponent_car->speed = 350;
     current_opponent_car->active = 1;
+    current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
 
     current_opponent_car++;
 
@@ -22,6 +26,7 @@ void opponent_cars_init()
     current_opponent_car->xpos = 0;
     current_opponent_car->speed = 400;
     current_opponent_car->active = 1;
+    current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
 
     current_opponent_car++;
 
@@ -29,6 +34,7 @@ void opponent_cars_init()
     current_opponent_car->xpos = 90;
     current_opponent_car->speed = 450;
     current_opponent_car->active = 1;
+    current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
 }
 
 void opponent_cars_update()
@@ -78,9 +84,9 @@ void opponent_cars_process()
             scanline_index = distance_to_scanline_lookup[current_opponent_car->player_relative_track_position];
             if (scanline_index != -1) {
                 road_scanline = &road_scanlines[scanline_index];
-                sprite_index = 15 - (scanline_index / 6);
-                if (sprite_index < (15-7)) {
-                    sprite_index = 15-7;
+                sprite_index = current_opponent_car->base_sprite_index - (scanline_index / 6);
+                if (sprite_index < (current_opponent_car->base_sprite_index - 7)) {
+                    sprite_index = current_opponent_car->base_sprite_index - 7;
                 }
 
                 if (current_opponent_car->xpos > 0) {

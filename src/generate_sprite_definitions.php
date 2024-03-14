@@ -255,6 +255,183 @@ $definitions = [
         'height' => 6,
     ],
 
+    // yellow car centre
+
+    [
+        'label' => 'yellow-car-centre-1',
+        'left' => 3,
+        'top' => 162,
+        'width' => 48,
+        'height' => 25,
+    ],
+    [
+        'label' => 'yellow-car-centre-2',
+        'left' => 54,
+        'top' => 162,
+        'width' => 36,
+        'height' => 19,
+    ],
+    [
+        'label' => 'yellow-car-centre-3',
+        'left' => 93,
+        'top' => 162,
+        'width' => 28,
+        'height' => 14,
+    ],
+    [
+        'label' => 'yellow-car-centre-4',
+        'left' => 123,
+        'top' => 162,
+        'width' => 24,
+        'height' => 12,
+    ],
+    [
+        'label' => 'yellow-car-centre-5',
+        'left' => 149,
+        'top' => 162,
+        'width' => 22,
+        'height' => 11,
+    ],
+    [
+        'label' => 'yellow-car-centre-6',
+        'left' => 172,
+        'top' => 162,
+        'width' => 17,
+        'height' => 9,
+    ],
+    [
+        'label' => 'yellow-car-centre-7',
+        'left' => 190,
+        'top' => 162,
+        'width' => 14,
+        'height' => 7,
+    ],
+    [
+        'label' => 'yellow-car-centre-8',
+        'left' => 206,
+        'top' => 192,
+        'width' => 12,
+        'height' => 6,
+    ],
+
+    // yellow car left
+
+    [
+        'label' => 'yellow-car-left-1',
+        'left' => 3,
+        'top' => 189,
+        'width' => 64,
+        'height' => 26,
+    ],
+    [
+        'label' => 'yellow-car-left-2',
+        'left' => 69,
+        'top' => 189,
+        'width' => 47,
+        'height' => 19,
+    ],
+    [
+        'label' => 'yellow-car-left-3',
+        'left' => 119,
+        'top' => 189,
+        'width' => 38,
+        'height' => 16,
+    ],
+    [
+        'label' => 'yellow-car-left-4',
+        'left' => 159,
+        'top' => 189,
+        'width' => 31,
+        'height' => 13,
+    ],
+    [
+        'label' => 'yellow-car-left-5',
+        'left' => 192,
+        'top' => 189,
+        'width' => 28,
+        'height' => 11,
+    ],
+    [
+        'label' => 'yellow-car-left-6',
+        'left' => 222,
+        'top' => 189,
+        'width' => 22,
+        'height' => 10,
+    ],
+    [
+        'label' => 'yellow-car-left-7',
+        'left' => 246,
+        'top' => 189,
+        'width' => 19,
+        'height' => 8,
+    ],
+    [
+        'label' => 'yellow-car-left-8',
+        'left' => 267,
+        'top' => 189,
+        'width' => 14,
+        'height' => 6,
+    ],
+
+    // yellow car right
+
+    [
+        'label' => 'yellow-car-right-1',
+        'left' => 3,
+        'top' => 217,
+        'width' => 64,
+        'height' => 26,
+    ],
+    [
+        'label' => 'yellow-car-right-2',
+        'left' => 69,
+        'top' => 217,
+        'width' => 48,
+        'height' => 19,
+    ],
+    [
+        'label' => 'yellow-car-right-3',
+        'left' => 119,
+        'top' => 217,
+        'width' => 38,
+        'height' => 15,
+    ],
+    [
+        'label' => 'yellow-car-right-4',
+        'left' => 158,
+        'top' => 217,
+        'width' => 31,
+        'height' => 12,
+    ],
+    [
+        'label' => 'yellow-car-right-5',
+        'left' => 191,
+        'top' => 217,
+        'width' => 28,
+        'height' => 11,
+    ],
+    [
+        'label' => 'yellow-car-right-6',
+        'left' => 221,
+        'top' => 217,
+        'width' => 22,
+        'height' => 9,
+    ],
+    [
+        'label' => 'yellow-car-right-7',
+        'left' => 245,
+        'top' => 217,
+        'width' => 18,
+        'height' => 7,
+    ],
+    [
+        'label' => 'yellow-car-right-8',
+        'left' => 265,
+        'top' => 217,
+        'width' => 15,
+        'height' => 6,
+    ],
+ 
     // blue car TBC ...
 
     [
