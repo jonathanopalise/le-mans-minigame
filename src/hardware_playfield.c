@@ -6,50 +6,51 @@
 #include "blitter.h"
 #include "draw_sprite.h"
 
-struct HardwarePlayfield *hidden_hardware_playfield;
-struct HardwarePlayfield *visible_hardware_playfield;
+#define HARDWARE_PLAYFIELD_COUNT 3
 
-struct HardwarePlayfield hardware_playfield_1;
-struct HardwarePlayfield hardware_playfield_2;
+static int16_t visible_index;
+static int16_t ready_index;
+static int16_t drawing_index;
 
-uint8_t back_buffer[HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES];
+struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 
 void hardware_playfield_handle_vbl()
 {
-    struct HardwarePlayfield *tmp_hardware_playfield;
-
-    // swap screens
-    tmp_hardware_playfield = visible_hardware_playfield;
-    visible_hardware_playfield = hidden_hardware_playfield;
-    hidden_hardware_playfield = tmp_hardware_playfield;
-
-    Setscreen(
-        visible_hardware_playfield->buffer,
-        hidden_hardware_playfield->buffer,
-        -1
-    );
+	if (ready_index >= 0) {
+		visible_index = ready_index;
+		ready_index = -1;
+		Setscreen(
+            hardware_playfields[visible_index].buffer,
+            hardware_playfields[drawing_index].buffer,
+            -1
+        );
+    }
 }
 
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
 {
+    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+
     draw_sprite(
         xpos - sprite_definition->origin_x,
         ypos - sprite_definition->origin_y,
         sprite_definition->words,
         sprite_definition->source_data_width,
         sprite_definition->source_data_height,
-        hidden_hardware_playfield->buffer,
-        hidden_hardware_playfield->current_bitplane_draw_record,
+        playfield->buffer,
+        playfield->current_bitplane_draw_record,
         &(sprite_definition->compiled_sprite_0)
     );
 
-    hidden_hardware_playfield->current_bitplane_draw_record++;
-    hidden_hardware_playfield->sprites_drawn++;
+    playfield->current_bitplane_draw_record++;
+    playfield->sprites_drawn++;
 }
 
 void hardware_playfield_erase_sprites()
 {
-    struct BitplaneDrawRecord *current_bitplane_draw_record = hidden_hardware_playfield->bitplane_draw_records;
+    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+
+    struct BitplaneDrawRecord *current_bitplane_draw_record = playfield->bitplane_draw_records;
 
     *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
     *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8; // TODO: check value
@@ -57,7 +58,7 @@ void hardware_playfield_erase_sprites()
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
 
-    for (uint16_t index = 0; index < hidden_hardware_playfield->sprites_drawn; index++) {
+    for (uint16_t index = 0; index < playfield->sprites_drawn; index++) {
         // road draws in bitplanes 0 and 1, so we only need to clear bitplanes 2 and 3
         // we will probably draw background in planes 0 and 1 too...
         if (current_bitplane_draw_record->destination_address != 0) {
@@ -76,8 +77,8 @@ void hardware_playfield_erase_sprites()
         current_bitplane_draw_record++;
     }
 
-    hidden_hardware_playfield->current_bitplane_draw_record = hidden_hardware_playfield->bitplane_draw_records;
-    hidden_hardware_playfield->sprites_drawn = 0;
+    playfield->current_bitplane_draw_record = playfield->bitplane_draw_records;
+    playfield->sprites_drawn = 0;
 }
 
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
@@ -119,16 +120,41 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
 
 void hardware_playfield_init()
 {
-    //memcpy((void *)0xffff8240, palette, 32);
+    visible_index = 0;
+    ready_index = -1;
+    drawing_index = 1;
 
-    visible_hardware_playfield = &hardware_playfield_1;
-    hidden_hardware_playfield = &hardware_playfield_2;
+    uint16_t *phys_base = Physbase();
+    hardware_playfields[0].buffer = phys_base;
+    hardware_playfields[1].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES;
+    hardware_playfields[2].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES * 2;
 
-    visible_hardware_playfield->buffer = Physbase();
-    hidden_hardware_playfield->buffer = back_buffer;
+    for (uint16_t index = 0; index < HARDWARE_PLAYFIELD_COUNT; index++) {
+        hardware_playfield_init_playfield(&hardware_playfields[index]);
+    }
+}
 
-    hardware_playfield_init_playfield(visible_hardware_playfield);
-    hardware_playfield_init_playfield(hidden_hardware_playfield);
+static void hardware_playfield_error()
+{
+    while(0) {};
+}
+
+void hardware_playfield_frame_complete()
+{
+    if (ready_index >= 0) {
+        hardware_playfield_error();
+    } else {
+        ready_index = drawing_index;
+        drawing_index++;
+        if (drawing_index == HARDWARE_PLAYFIELD_COUNT) {
+            drawing_index = 0;
+        }
+    }
+}
+
+struct HardwarePlayfield *hardware_playfield_get_drawing_playfield()
+{
+    return &hardware_playfields[drawing_index];
 }
 
 

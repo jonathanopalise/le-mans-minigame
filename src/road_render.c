@@ -7,8 +7,10 @@
 
 void road_render()
 {
+    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+
     uint32_t *current_byte_offset = byte_offsets;
-    uint8_t *line_start_dest = (hidden_hardware_playfield->buffer) + 160*119;
+    uint8_t *line_start_dest = (playfield->buffer) + 160*119;
     uint8_t *line_start_source;
     int32_t current_skew;
     int32_t skew_adjust;

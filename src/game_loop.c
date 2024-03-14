@@ -67,14 +67,16 @@ void game_loop()
         //*((volatile uint16_t *)0xffff8240) = 0x333; // grey
 
         display_list_execute();
+        hardware_playfield_frame_complete();
+
 
         //draw_compiled_sprite(hidden_hardware_playfield->buffer);
 
         //*((volatile uint16_t *)0xffff8240) = 0x070; // green
 
-        waiting_for_vbl = 1;
-        while (waiting_for_vbl) {}
-        hardware_playfield_handle_vbl();
+        //waiting_for_vbl = 1;
+        //while (waiting_for_vbl) {}
+        //hardware_playfield_handle_vbl();
 
         //*((volatile uint16_t *)0xffff8240) = 0x400; // red
     }

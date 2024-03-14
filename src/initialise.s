@@ -42,6 +42,8 @@ dummy:
 vbl:
     movem.l d0-d7/a0-a6,-(sp)
 
+    jsr _hardware_playfield_handle_vbl
+
     move.w	#$2700,sr			; Stop all interrupts
     move.l	#timer_1,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)
@@ -65,7 +67,7 @@ vbl:
     move.w #$321,$ffff8242.w ; mountain colour 1
     move.w #$200,$ffff8244.w ; mountain colour 2
  
-    jsr _vbl_handler
+    ;jsr _vbl_handler
     movem.l (sp)+,d0-d7/a0-a6
     rte
 
