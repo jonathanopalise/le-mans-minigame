@@ -3,10 +3,11 @@
 
 #include <inttypes.h>
 
-#define SCENERY_TYPE_TERMINATE 0
-#define SCENERY_TYPE_ROUND_TREE 1
-#define SCENERY_TYPE_PINE_TREE 2
-#define SCENERY_TYPE_DEAD_TREE 3
+
+#define SCENERY_TYPE_ROUND_TREE 0
+#define SCENERY_TYPE_MICHELIN 56
+#define SCENERY_TYPE_GITANES 64
+
 #define TRACKSIDE_ITEM_COUNT 52
 
 struct TracksideItem {

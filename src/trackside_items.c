@@ -34,17 +34,17 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 60000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 160,
         .track_position = 65000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = -255,
         .track_position = 70000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 200,
         .track_position = 80000
     },
@@ -54,48 +54,48 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 90000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 200,
         .track_position = 100000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = -160,
         .track_position = 110000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 255,
         .track_position = 120000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 200,
         .track_position = 130000
     },
 
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 160,
         .track_position = 140000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = -255,
         .track_position = 150000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 255,
         .track_position = 160000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = -160,
         .track_position = 170000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 200,
         .track_position = 180000
     },
@@ -111,22 +111,22 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 200000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = -200,
         .track_position = 210000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 200,
         .track_position = 220000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = -255,
         .track_position = 230000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 160,
         .track_position = 240000
     },
@@ -149,22 +149,22 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 270000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = -255,
         .track_position = 280000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 160,
         .track_position = 290000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = -255,
         .track_position = 300000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 200,
         .track_position = 310000
     },
@@ -199,28 +199,28 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 370000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 255,
         .track_position = 380000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 200,
         .track_position = 390000
     },
 
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 160,
         .track_position = 400000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = -255,
         .track_position = 410000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 255,
         .track_position = 420000
     },
@@ -230,18 +230,18 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 430000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 200,
         .track_position = 440000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 255,
         .track_position = 450000
     },
 
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 160,
         .track_position = 460000
     },
@@ -251,22 +251,22 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
         .track_position = 47000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 200,
         .track_position = 480000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = -255,
         .track_position = 490000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_MICHELIN,
         .xpos = 160,
         .track_position = 500000
     },
     {
-        .type = SCENERY_TYPE_ROUND_TREE,
+        .type = SCENERY_TYPE_GITANES,
         .xpos = 255,
         .track_position = 510000
     },

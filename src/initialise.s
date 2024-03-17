@@ -88,7 +88,7 @@ wait_timer_1:
     move.w #$333,$ffff8250.w
     move.w #$eff,$ffff8252.w
     move.w #$005,$ffff8254.w
-    move.w #$ff0,$ffff8256.w
+    move.w #$fe0,$ffff8256.w
 
     move.l	#timer_2,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)

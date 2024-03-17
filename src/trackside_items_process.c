@@ -17,8 +17,6 @@ void trackside_items_process()
     int8_t trackside_item_scanline_index;
     struct RoadScanline *road_scanline;
     int16_t sprite_index;
-    uint16_t trackside_item_index;
-    uint32_t trackside_item_relative_position;
     int16_t screen_xpos;
 
     // TODO: player_car_track_position should be camera_track_position
@@ -40,9 +38,9 @@ void trackside_items_process()
             trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_player_relative_position];
             if (trackside_item_scanline_index != -1) {
                 road_scanline = &road_scanlines[trackside_item_scanline_index];
-                sprite_index = 7 - (trackside_item_scanline_index / 6);
-                if (sprite_index < 0) {
-                    sprite_index = 0;
+                sprite_index = (current_trackside_item->type + 7) - (trackside_item_scanline_index / 6);
+                if (sprite_index < current_trackside_item->type) {
+                    sprite_index = current_trackside_item->type;
                 }
 
                 if (current_trackside_item->xpos > 0) {

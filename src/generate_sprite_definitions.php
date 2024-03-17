@@ -78,7 +78,7 @@ $definitions = [
         'height' => 12,
     ],
 
-    // red car centre
+    // red car centre offset 8
 
     [
         'label' => 'red-car-centre-1',
@@ -137,7 +137,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // red car left
+    // red car left offset 16
 
     [
         'label' => 'red-car-left-1',
@@ -196,7 +196,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // red car right
+    // red car right offset 24
 
     [
         'label' => 'red-car-right-1',
@@ -255,7 +255,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // yellow car centre
+    // yellow car centre offset 32
 
     [
         'label' => 'yellow-car-centre-1',
@@ -314,7 +314,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // yellow car left
+    // yellow car left offset 40
 
     [
         'label' => 'yellow-car-left-1',
@@ -373,7 +373,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // yellow car right
+    // yellow car right offset 48
 
     [
         'label' => 'yellow-car-right-1',
@@ -432,6 +432,124 @@ $definitions = [
         'height' => 6,
     ],
  
+    // michelin offset 56
+
+    [
+        'label' => 'michelin-1',
+        'left' => 3,
+        'top' => 331,
+        'width' => 64,
+        'height' => 16,
+    ],
+    [
+        'label' => 'michelin-2',
+        'left' => 69,
+        'top' => 331,
+        'width' => 48,
+        'height' => 12,
+    ],
+    [
+        'label' => 'michelin-3',
+        'left' => 119,
+        'top' => 331,
+        'width' => 37,
+        'height' => 9,
+    ],
+    [
+        'label' => 'michelin-4',
+        'left' => 157,
+        'top' => 331,
+        'width' => 31,
+        'height' => 8,
+    ],
+    [
+        'label' => 'michelin-5',
+        'left' => 191,
+        'top' => 331,
+        'width' => 28,
+        'height' => 7,
+    ],
+    [
+        'label' => 'michelin-6',
+        'left' => 221,
+        'top' => 331,
+        'width' => 22,
+        'height' => 6,
+    ],
+    [
+        'label' => 'michelin-7',
+        'left' => 245,
+        'top' => 331,
+        'width' => 18,
+        'height' => 4,
+    ],
+    [
+        'label' => 'michelin-8',
+        'left' => 265,
+        'top' => 331,
+        'width' => 15,
+        'height' => 4,
+    ],
+
+    // gitanes offset 64
+
+    [
+        'label' => 'gitanes-1',
+        'left' => 3,
+        'top' => 385,
+        'width' => 48,
+        'height' => 54,
+    ],
+    [
+        'label' => 'gitanes-2',
+        'left' => 56,
+        'top' => 385,
+        'width' => 37,
+        'height' => 41,
+    ],
+    [
+        'label' => 'gitanes-3',
+        'left' => 98,
+        'top' => 385,
+        'width' => 28,
+        'height' => 32,
+    ],
+    [
+        'label' => 'gitanes-4',
+        'left' => 132,
+        'top' => 385,
+        'width' => 25,
+        'height' => 28,
+    ],
+    [
+        'label' => 'gitanes-5',
+        'left' => 162,
+        'top' => 385,
+        'width' => 21,
+        'height' => 24,
+    ],
+    [
+        'label' => 'gitanes-6',
+        'left' => 188,
+        'top' => 385,
+        'width' => 17,
+        'height' => 19,
+    ],
+    [
+        'label' => 'gitanes-7',
+        'left' => 207,
+        'top' => 385,
+        'width' => 14,
+        'height' => 16,
+    ],
+    [
+        'label' => 'gitanes-8',
+        'left' => 224,
+        'top' => 385,
+        'width' => 11,
+        'height' => 12,
+    ],
+
     // blue car TBC ...
 
     [
