@@ -84,6 +84,8 @@ class Span
 
     public function canUseFxsr(int $skewed): bool
     {
+        return true;
+
         $skewCalculatorLong = 0b11111111111111110000000000000000;
 
         $endmask1 = $this->blockCollection->getBlockByOffset($this->startOffset)->getInvertedMaskWord();
@@ -340,13 +342,14 @@ class CompiledSpriteBuilder {
             $lineActiveOffsetEnd = ($sixteenPixelBlockOffset + $this->widthInSixteenPixelBlocks) - 1;
 
             $lineIsEmpty = true;
-            for ($offset = $lineActiveOffsetStart; $offset < $lineActiveOffsetEnd; $offset++) {
+            for ($offset = $lineActiveOffsetStart; $offset <= $lineActiveOffsetEnd; $offset++) {
                 if ($this->sixteenPixelBlockCollection->getBlockByOffset($offset)->getMaskWord() != 0xffff) {
                     $lineIsEmpty = false;
                 }
             }
 
             if (!$lineIsEmpty) {
+                echo("found non empty line\n");
                 while ($this->sixteenPixelBlockCollection->getBlockByOffset($lineActiveOffsetStart)->getMaskWord() == 0xffff) {
                     $lineActiveOffsetStart++;
                 }
@@ -464,7 +467,7 @@ class CompiledSpriteBuilder {
                     $blockCollection = $span->getBlockCollection();
                     $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
-                    //$useFxsr = $span->canUseFxsr($this->skewed);
+                    $useFxsr = $span->canUseFxsr($this->skewed);
 
                     $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
                     if ($useFxsr) {
@@ -590,6 +593,12 @@ class CompiledSpriteBuilder {
         }
 
         $instructions[] = 'rts';
+
+
+        if (count($instructions) == 2) {
+            echo("FAIL");
+            exit(1);
+        }
 
         return $instructions;
     }

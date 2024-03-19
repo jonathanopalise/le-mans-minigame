@@ -27,7 +27,7 @@ void game_loop()
     opponent_cars_init();
     display_list_init();
     trackside_items_process_init();
-    int16_t xpos = 0;
+    int16_t xpos = 160;
     //*((volatile uint16_t *)0xffff8242) = 0x40;
     //*((volatile uint16_t *)0xffff8244) = 0x777;
     //*((volatile uint16_t *)0xffff8246) = 0x222;
