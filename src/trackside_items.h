@@ -3,12 +3,12 @@
 
 #include <inttypes.h>
 
-
 #define SCENERY_TYPE_ROUND_TREE 0
 #define SCENERY_TYPE_MICHELIN 56
 #define SCENERY_TYPE_GITANES 64
-
-#define TRACKSIDE_ITEM_COUNT 52
+#define SCENERY_TYPE_MOTO_JOURNAL 72
+#define SCENERY_TYPE_TOTAL 80
+#define SCENERY_TYPE_LUCAS 88
 
 struct TracksideItem {
     uint16_t type;

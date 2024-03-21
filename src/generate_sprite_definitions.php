@@ -550,6 +550,183 @@ $definitions = [
         'height' => 12,
     ],
 
+    // moto offset 72
+
+    [
+        'label' => 'moto-journal-1',
+        'left' => 3,
+        'top' => 507,
+        'width' => 64,
+        'height' => 36,
+    ],
+    [
+        'label' => 'moto-journal-2',
+        'left' => 70,
+        'top' => 507,
+        'width' => 48,
+        'height' => 27,
+    ],
+    [
+        'label' => 'moto-journal-3',
+        'left' => 120,
+        'top' => 507,
+        'width' => 37,
+        'height' => 21,
+    ],
+    [
+        'label' => 'moto-journal-4',
+        'left' => 160,
+        'top' => 507,
+        'width' => 30,
+        'height' => 17,
+    ],
+    [
+        'label' => 'moto-journal-5',
+        'left' => 194,
+        'top' => 507,
+        'width' => 28,
+        'height' => 15,
+    ],
+    [
+        'label' => 'moto-journal-6',
+        'left' => 225,
+        'top' => 507,
+        'width' => 22,
+        'height' => 12,
+    ],
+    [
+        'label' => 'moto-journal-7',
+        'left' => 250,
+        'top' => 507,
+        'width' => 18,
+        'height' => 11,
+    ],
+    [
+        'label' => 'moto-journal-8',
+        'left' => 271,
+        'top' => 507,
+        'width' => 15,
+        'height' => 9,
+    ],
+
+    // total offset 80
+
+    [
+        'label' => 'total-1',
+        'left' => 3,
+        'top' => 569,
+        'width' => 48,
+        'height' => 15,
+    ],
+    [
+        'label' => 'total-2',
+        'left' => 55,
+        'top' => 569,
+        'width' => 36,
+        'height' => 11,
+    ],
+    [
+        'label' => 'total-3',
+        'left' => 95,
+        'top' => 569,
+        'width' => 27,
+        'height' => 8,
+    ],
+    [
+        'label' => 'total-4',
+        'left' => 126,
+        'top' => 569,
+        'width' => 25,
+        'height' => 8,
+    ],
+    [
+        'label' => 'total-5',
+        'left' => 155,
+        'top' => 569,
+        'width' => 21,
+        'height' => 7,
+    ],
+    [
+        'label' => 'total-6',
+        'left' => 180,
+        'top' => 569,
+        'width' => 18,
+        'height' => 5,
+    ],
+    [
+        'label' => 'total-7',
+        'left' => 201,
+        'top' => 569,
+        'width' => 15,
+        'height' => 5,
+    ],
+    [
+        'label' => 'total-8',
+        'left' => 219,
+        'top' => 569,
+        'width' => 12,
+        'height' => 4,
+    ],
+
+    // lucas offset 88
+
+    [
+        'label' => 'lucas-1',
+        'left' => 3,
+        'top' => 352,
+        'width' => 64,
+        'height' => 27,
+    ],
+    [
+        'label' => 'lucas-2',
+        'left' => 69,
+        'top' => 352,
+        'width' => 48,
+        'height' => 20,
+    ],
+    [
+        'label' => 'lucas-3',
+        'left' => 119,
+        'top' => 352,
+        'width' => 37,
+        'height' => 16,
+    ],
+    [
+        'label' => 'lucas-4',
+        'left' => 157,
+        'top' => 352,
+        'width' => 30,
+        'height' => 13,
+    ],
+    [
+        'label' => 'lucas-5',
+        'left' => 191,
+        'top' => 352,
+        'width' => 28,
+        'height' => 12,
+    ],
+    [
+        'label' => 'lucas-6',
+        'left' => 221,
+        'top' => 352,
+        'width' => 22,
+        'height' => 10,
+    ],
+    [
+        'label' => 'lucas-7',
+        'left' => 245,
+        'top' => 352,
+        'width' => 18,
+        'height' => 8,
+    ],
+    [
+        'label' => 'lucas-8',
+        'left' => 265,
+        'top' => 352,
+        'width' => 15,
+        'height' => 7,
+    ],
+
     // blue car TBC ...
 
     [

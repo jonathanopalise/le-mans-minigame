@@ -349,7 +349,6 @@ class CompiledSpriteBuilder {
             }
 
             if (!$lineIsEmpty) {
-                echo("found non empty line\n");
                 while ($this->sixteenPixelBlockCollection->getBlockByOffset($lineActiveOffsetStart)->getMaskWord() == 0xffff) {
                     $lineActiveOffsetStart++;
                 }
@@ -596,7 +595,7 @@ class CompiledSpriteBuilder {
 
 
         if (count($instructions) == 2) {
-            echo("FAIL");
+            echo("FAIL2");
             exit(1);
         }
 

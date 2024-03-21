@@ -15,13 +15,13 @@ OBJECT_FILES =\
     src/road_movement.o\
     src/movement_update_inner.o\
     src/track_segments.o\
-    src/trackside_items.o\
     src/trackside_items_process.o\
     src/mountains_render.o\
     src/road_render.o\
     src/player_car.o\
     src/opponent_cars.o\
     src/display_list.o\
+    src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
@@ -62,9 +62,6 @@ src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inn
 src/track_segments.o: src/track_segments.c src/track_segments.h
 	$(CC) $(CFLAGS) -c src/track_segments.c -o src/track_segments.o
 
-src/trackside_items.o: src/trackside_items.c src/trackside_items.h
-	$(CC) $(CFLAGS) -c src/trackside_items.c -o src/trackside_items.o
-
 src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items_process.h src/trackside_items.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h
 	$(CC) $(CFLAGS) -c src/trackside_items_process.c -o src/trackside_items_process.o
 
@@ -82,6 +79,12 @@ src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h sr
 
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
+
+src/generated/trackside_items.c: src/generate_trackside_items.php
+	$(PHP) src/generate_trackside_items.php src/generated/trackside_items.c
+
+src/generated/trackside_items.o: src/generated/trackside_items.c src/trackside_items.h
+	$(CC) $(CFLAGS) -c src/generated/trackside_items.c -o src/generated/trackside_items.o
 
 src/generated/road_geometry.o: src/generated/road_geometry.c src/road_geometry.h
 	$(CC) $(CFLAGS) -c src/generated/road_geometry.c -o src/generated/road_geometry.o

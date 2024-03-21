@@ -33,7 +33,7 @@ void trackside_items_process()
     current_trackside_item = trackside_items;
     int32_t current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
 
-    while (current_trackside_item_player_relative_position < 45000) {
+    while (current_trackside_item_player_relative_position < 35000) {
         if (current_trackside_item_player_relative_position >= 0) {
             trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_player_relative_position];
             if (trackside_item_scanline_index != -1) {
