@@ -1,7 +1,7 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -g -Os -fomit-frame-pointer -m68000 -Wl,--traditional-format -Wall
+CFLAGS = -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -g -Os -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
-VASM_OPTS = -no-opt
+VASM_OPTS =
 VLINK = vlink
 PHP = php
 
@@ -21,18 +21,20 @@ OBJECT_FILES =\
     src/player_car.o\
     src/opponent_cars.o\
     src/display_list.o\
+    src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
     src/generated/sprite_definitions.o\
-	src/initialise.o
+	src/initialise.o\
+	src/nf_asmv.o
 
 ASSETS_GIF = assets/round-tree.gif
 
 bin/lemans.prg: $(OBJECT_FILES)
 	$(CC) -o src/lemans.elf libcxx/brownboot.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerolibc.o libcxx/zerocrtfini.o $(OBJECT_FILES) -g -Os -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
-	brownout -s -i src/lemans.elf -o bin/lemans.prg
+	brownout -x -i src/lemans.elf -o bin/lemans.prg
 	chmod +x bin/lemans.prg
 
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
@@ -80,6 +82,9 @@ src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h sr
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
+src/natfeats.o: src/natfeats.c src/natfeats.h
+	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o
+
 src/generated/trackside_items.c: src/generate_trackside_items.php
 	$(PHP) src/generate_trackside_items.php src/generated/trackside_items.c
 
@@ -112,4 +117,7 @@ src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/libr
 
 src/initialise.o: src/initialise.s
 	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o
+
+src/nf_asmv.o: src/nf_asmv.s
+	$(VASM) $(VASM_OPTS) src/nf_asmv.s -Felf -o src/nf_asmv.o
 

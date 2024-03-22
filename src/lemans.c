@@ -1,6 +1,7 @@
 #include <mint/osbind.h>
 #include <mint/sysbind.h>
 #include "game_loop.h"
+#include "natfeats.h"
 
 void main_supervisor() {
     game_loop();

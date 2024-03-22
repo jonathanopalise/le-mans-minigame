@@ -150,6 +150,11 @@ $definitions = [
     ],
 ];
 
+function cmp($a, $b)
+{
+    return $a["track_position"] > $b["track_position"];
+}
+
 $tracksideItems = [];
 foreach ($definitions as $definition) {
     $trackPosition = $definition['track_position'];
@@ -173,7 +178,7 @@ foreach ($definitions as $definition) {
     }
 }
 
-// TODO: sort trackside items by track_position
+usort($tracksideItems, "cmp");
 
 ob_start();
 require('trackside_items_template.php');

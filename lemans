@@ -1,1 +1,1 @@
-hatari --parse debug.txt bin/lemans.prg
+hatari --natfeats true --trace natfeats --parse debug.txt bin/lemans.prg

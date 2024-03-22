@@ -13,12 +13,19 @@
 #include "display_list.h"
 #include "opponent_cars.h"
 #include "draw_compiled_sprite.h"
+#include "natfeats.h"
 
 void game_loop()
 {
     uint16_t player_car_sprite_definition_offset;
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
+
+    if (!nf_init()) {
+        while (1==1) {}
+    }
+
+    nf_print("hello from lemans!");
 
     hardware_playfield_init();
     initialise();
