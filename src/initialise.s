@@ -49,7 +49,7 @@ vbl:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#(80+34)-29,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#(80+4)-29,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
@@ -96,7 +96,7 @@ wait_timer_1:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#24,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#54,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25

@@ -71,6 +71,8 @@ void hardware_playfield_erase_sprites()
                 *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
                 *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
 
+                *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
+
                 *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address;
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
@@ -79,6 +81,8 @@ void hardware_playfield_erase_sprites()
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
+                *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
+
                 *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 4;
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
@@ -86,6 +90,7 @@ void hardware_playfield_erase_sprites()
                 *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 6;
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+
 
                 destination_address = current_bitplane_draw_record->destination_address + (160 * lines_to_draw);
                 lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
