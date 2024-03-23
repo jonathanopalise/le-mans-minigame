@@ -734,56 +734,56 @@ $definitions = [
         'left' => 3,
         'top' => 956,
         'width' => 16,
-        'height' => 72,
+        'height' => 123,
     ],
     [
         'label' => 'lamppost-2',
         'left' => 24,
         'top' => 956,
         'width' => 13,
-        'height' => 61,
+        'height' => 96,
     ],
     [
         'label' => 'lamppost-3',
         'left' => 41,
         'top' => 956,
         'width' => 10,
-        'height' => 46,
+        'height' => 73,
     ],
     [
         'label' => 'lamppost-4',
         'left' => 53,
         'top' => 956,
-        'width' => 8,
-        'height' => 40,
+        'width' => 9,
+        'height' => 65,
     ],
     [
         'label' => 'lamppost-5',
         'left' => 67,
         'top' => 956,
-        'width' => 7,
-        'height' => 35,
+        'width' => 8,
+        'height' => 58,
     ],
     [
         'label' => 'lamppost-6',
         'left' => 79,
         'top' => 956,
         'width' => 7,
-        'height' => 32,
+        'height' => 50,
     ],
     [
         'label' => 'lamppost-7',
         'left' => 90,
         'top' => 956,
         'width' => 6,
-        'height' => 26,
+        'height' => 42,
     ],
     [
         'label' => 'lamppost-8',
         'left' => 100,
         'top' => 956,
         'width' => 5,
-        'height' => 22,
+        'height' => 35,
     ],
 
     // left arrow offset 104
@@ -845,7 +845,7 @@ $definitions = [
         'height' => 12,
     ],
 
-    // right arrow offset 104
+    // right arrow offset 112
 
     [
         'label' => 'right-arrow-1',
@@ -904,7 +904,123 @@ $definitions = [
         'height' => 12,
     ],
 
+    // konami offset 120
 
+    [
+        'label' => 'konami-1',
+        'left' => 3,
+        'top' => 591,
+        'width' => 48,
+        'height' => 62,
+    ],
+    [
+        'label' => 'konami-2',
+        'left' => 55,
+        'top' => 591,
+        'width' => 36,
+        'height' => 47,
+    ],
+    [
+        'label' => 'konami-3',
+        'left' => 95,
+        'top' => 591,
+        'width' => 27,
+        'height' => 34,
+    ],
+    [
+        'label' => 'konami-4',
+        'left' => 126,
+        'top' => 591,
+        'width' => 25,
+        'height' => 32,
+    ],
+    [
+        'label' => 'konami-5',
+        'left' => 155,
+        'top' => 591,
+        'width' => 21,
+        'height' => 27,
+    ],
+    [
+        'label' => 'konami-6',
+        'left' => 180,
+        'top' => 591,
+        'width' => 18,
+        'height' => 23,
+    ],
+    [
+        'label' => 'konami-7',
+        'left' => 201,
+        'top' => 591,
+        'width' => 15,
+        'height' => 19,
+    ],
+    [
+        'label' => 'konami-8',
+        'left' => 219,
+        'top' => 591,
+        'width' => 12,
+        'height' => 15,
+    ],
+
+    // bp offset 128
+
+    [
+        'label' => 'bp-1',
+        'left' => 3,
+        'top' => 659,
+        'width' => 48,
+        'height' => 56,
+    ],
+    [
+        'label' => 'bp-2',
+        'left' => 55,
+        'top' => 659,
+        'width' => 36,
+        'height' => 42,
+    ],
+    [
+        'label' => 'bp-3',
+        'left' => 95,
+        'top' => 659,
+        'width' => 27,
+        'height' => 32,
+    ],
+    [
+        'label' => 'bp-4',
+        'left' => 126,
+        'top' => 659,
+        'width' => 25,
+        'height' => 29,
+    ],
+    [
+        'label' => 'bp-5',
+        'left' => 155,
+        'top' => 659,
+        'width' => 21,
+        'height' => 25,
+    ],
+    [
+        'label' => 'bp-6',
+        'left' => 180,
+        'top' => 659,
+        'width' => 18,
+        'height' => 21,
+    ],
+    [
+        'label' => 'bp-7',
+        'left' => 201,
+        'top' => 659,
+        'width' => 15,
+        'height' => 17,
+    ],
+    [
+        'label' => 'bp-8',
+        'left' => 219,
+        'top' => 659,
+        'width' => 12,
+        'height' => 14,
+    ],
 
     // blue car TBC ...
 

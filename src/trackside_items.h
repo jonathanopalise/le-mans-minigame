@@ -12,6 +12,8 @@
 #define SCENERY_TYPE_LAMPPOST 96
 #define SCENERY_TYPE_LEFT_ARROW 104
 #define SCENERY_TYPE_RIGHT_ARROW 112
+#define SCENERY_TYPE_KONAMI 120
+#define SCENERY_TYPE_BP 128
 
 struct TracksideItem {
     uint16_t type;

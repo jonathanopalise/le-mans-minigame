@@ -139,8 +139,8 @@ sky_gradient:
     dc.w $03f
     dc.w $0af
     dc.w $02f
-    dc.w $08f
-    dc.w $00f
+    dc.w $09f
+    dc.w $01f
 
 newikbd:
     move d0,-(sp)

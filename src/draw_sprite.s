@@ -12,6 +12,9 @@ original_height_in_lines:
 source_data_address:
     dc.l 0
 
+final_ypos:
+    dc.w 0
+
 _draw_sprite:
 
     ; inputs:
@@ -193,6 +196,10 @@ label_7a374:
     asl.w     #2,d6            ; d6 = d6 * 4 (final value of destination bytes to skip after each line)
 
     add.w     d2,d2            ; d2 = d2 * 2
+
+    ; is d5 here the final ypos of the sprite?
+    move.w d5,final_ypos
+
     move.w    d5,d0            ; begin expression...
     add.w     d0,d0            ; ...
     add.w     d0,d0            ; ...
@@ -211,6 +218,7 @@ label_7a374:
     beq       alldone
 
     move.l    a1,(a4)  ; set BitplaneDrawRecord destination_address
+    move.w    final_ypos,10(a4)
  
     ; end of modified lotus code and start of new blitter code
     moveq.l #10,d5

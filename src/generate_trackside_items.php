@@ -65,14 +65,14 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_LUCAS'],
+        'types' => ['SCENERY_TYPE_BP'],
         'xpos' => -200,
         'track_position' => 190000,
         'count' => 5,
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_TOTAL'],
+        'types' => ['SCENERY_TYPE_KONAMI'],
         'xpos' => 200,
         'track_position' => 210000,
         'count' => 5,
@@ -128,14 +128,14 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_ROUND_TREE'],
+        'types' => ['SCENERY_TYPE_BP'],
         'xpos' => 200,
         'track_position' => 370000,
         'count' => 5,
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_GITANES'],
+        'types' => ['SCENERY_TYPE_KONAMI'],
         'xpos' => -200,
         'track_position' => 390000,
         'count' => 5,

@@ -6,6 +6,7 @@ struct BitplaneDrawRecord {
     int16_t destination_y_increment;  // offset 4
     uint16_t x_count;                 // offset 6
     uint16_t y_count;                 // offset 8
+    int16_t ypos;                    // offset 10
 };
 
 #endif
