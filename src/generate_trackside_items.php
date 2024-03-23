@@ -23,7 +23,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_LAMPPOST'],
+        'types' => ['SCENERY_TYPE_LEFT_ARROW'],
         'xpos' => -200,
         'track_position' => 70000,
         'count' => 5,
@@ -58,7 +58,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_MOTO_JOURNAL'],
+        'types' => ['SCENERY_TYPE_RIGHT_ARROW'],
         'xpos' => 200,
         'track_position' => 170000,
         'count' => 5,
@@ -121,7 +121,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_ROUND_TREE'],
+        'types' => ['SCENERY_TYPE_LEFT_ARROW'],
         'xpos' => -200,
         'track_position' => 350000,
         'count' => 5,

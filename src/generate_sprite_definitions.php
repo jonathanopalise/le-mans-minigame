@@ -786,6 +786,125 @@ $definitions = [
         'height' => 22,
     ],
 
+    // left arrow offset 104
+
+    [
+        'label' => 'left-arrow-1',
+        'left' => 3,
+        'top' => 899,
+        'width' => 48,
+        'height' => 49,
+    ],
+    [
+        'label' => 'left-arrow-2',
+        'left' => 56,
+        'top' => 899,
+        'width' => 36,
+        'height' => 37,
+    ],
+    [
+        'label' => 'left-arrow-3',
+        'left' => 98,
+        'top' => 899,
+        'width' => 27,
+        'height' => 28,
+    ],
+    [
+        'label' => 'left-arrow-4',
+        'left' => 132,
+        'top' => 899,
+        'width' => 25,
+        'height' => 25,
+    ],
+    [
+        'label' => 'left-arrow-5',
+        'left' => 162,
+        'top' => 899,
+        'width' => 21,
+        'height' => 21,
+    ],
+    [
+        'label' => 'left-arrow-6',
+        'left' => 187,
+        'top' => 899,
+        'width' => 17,
+        'height' => 17,
+    ],
+    [
+        'label' => 'left-arrow-7',
+        'left' => 207,
+        'top' => 899,
+        'width' => 14,
+        'height' => 14,
+    ],
+    [
+        'label' => 'left-arrow-8',
+        'left' => 224,
+        'top' => 899,
+        'width' => 11,
+        'height' => 12,
+    ],
+
+    // right arrow offset 104
+
+    [
+        'label' => 'right-arrow-1',
+        'left' => 3,
+        'top' => 449,
+        'width' => 48,
+        'height' => 49,
+    ],
+    [
+        'label' => 'right-arrow-2',
+        'left' => 56,
+        'top' => 449,
+        'width' => 36,
+        'height' => 37,
+    ],
+    [
+        'label' => 'right-arrow-3',
+        'left' => 98,
+        'top' => 449,
+        'width' => 27,
+        'height' => 28,
+    ],
+    [
+        'label' => 'right-arrow-4',
+        'left' => 132,
+        'top' => 449,
+        'width' => 25,
+        'height' => 25,
+    ],
+    [
+        'label' => 'right-arrow-5',
+        'left' => 162,
+        'top' => 449,
+        'width' => 21,
+        'height' => 21,
+    ],
+    [
+        'label' => 'right-arrow-6',
+        'left' => 187,
+        'top' => 449,
+        'width' => 17,
+        'height' => 17,
+    ],
+    [
+        'label' => 'right-arrow-7',
+        'left' => 207,
+        'top' => 449,
+        'width' => 14,
+        'height' => 14,
+    ],
+    [
+        'label' => 'right-arrow-8',
+        'left' => 224,
+        'top' => 449,
+        'width' => 11,
+        'height' => 12,
+    ],
+
+
 
     // blue car TBC ...
 

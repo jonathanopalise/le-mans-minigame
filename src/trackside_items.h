@@ -10,6 +10,8 @@
 #define SCENERY_TYPE_TOTAL 80
 #define SCENERY_TYPE_LUCAS 88
 #define SCENERY_TYPE_LAMPPOST 96
+#define SCENERY_TYPE_LEFT_ARROW 104
+#define SCENERY_TYPE_RIGHT_ARROW 112
 
 struct TracksideItem {
     uint16_t type;
