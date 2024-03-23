@@ -23,14 +23,14 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_TOTAL'],
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
         'xpos' => -200,
         'track_position' => 70000,
         'count' => 5,
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_MICHELIN'],
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
         'xpos' => 200,
         'track_position' => 90000,
         'count' => 5,

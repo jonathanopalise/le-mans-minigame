@@ -727,6 +727,66 @@ $definitions = [
         'height' => 7,
     ],
 
+    // lamppost offset 96
+
+    [
+        'label' => 'lamppost-1',
+        'left' => 3,
+        'top' => 956,
+        'width' => 16,
+        'height' => 72,
+    ],
+    [
+        'label' => 'lamppost-2',
+        'left' => 24,
+        'top' => 956,
+        'width' => 13,
+        'height' => 61,
+    ],
+    [
+        'label' => 'lamppost-3',
+        'left' => 41,
+        'top' => 956,
+        'width' => 10,
+        'height' => 46,
+    ],
+    [
+        'label' => 'lamppost-4',
+        'left' => 53,
+        'top' => 956,
+        'width' => 8,
+        'height' => 40,
+    ],
+    [
+        'label' => 'lamppost-5',
+        'left' => 67,
+        'top' => 956,
+        'width' => 7,
+        'height' => 35,
+    ],
+    [
+        'label' => 'lamppost-6',
+        'left' => 79,
+        'top' => 956,
+        'width' => 7,
+        'height' => 32,
+    ],
+    [
+        'label' => 'lamppost-7',
+        'left' => 90,
+        'top' => 956,
+        'width' => 6,
+        'height' => 26,
+    ],
+    [
+        'label' => 'lamppost-8',
+        'left' => 100,
+        'top' => 956,
+        'width' => 5,
+        'height' => 22,
+    ],
+
+
     // blue car TBC ...
 
     [
