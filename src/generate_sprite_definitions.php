@@ -1022,6 +1022,125 @@ $definitions = [
         'height' => 14,
     ],
 
+    // tall tree offset 136
+
+    [
+        'label' => 'tall-tree-1',
+        'left' => 3,
+        'top' => 721,
+        'width' => 32,
+        'height' => 94,
+    ],
+    [
+        'label' => 'tall-tree-2',
+        'left' => 39,
+        'top' => 721,
+        'width' => 23,
+        'height' => 66,
+    ],
+    [
+        'label' => 'tall-tree-3',
+        'left' => 65,
+        'top' => 721,
+        'width' => 19,
+        'height' => 54,
+    ],
+    [
+        'label' => 'tall-tree-4',
+        'left' => 86,
+        'top' => 721,
+        'width' => 17,
+        'height' => 48,
+    ],
+    [
+        'label' => 'tall-tree-5',
+        'left' => 106,
+        'top' => 721,
+        'width' => 15,
+        'height' => 41,
+    ],
+    [
+        'label' => 'tall-tree-6',
+        'left' => 123,
+        'top' => 721,
+        'width' => 12,
+        'height' => 35,
+    ],
+    [
+        'label' => 'tall-tree-7',
+        'left' => 138,
+        'top' => 721,
+        'width' => 11,
+        'height' => 30,
+    ],
+    [
+        'label' => 'tall-tree-8',
+        'left' => 151,
+        'top' => 721,
+        'width' => 9,
+        'height' => 25,
+    ],
+
+    // short tree offset 144
+
+    [
+        'label' => 'short-tree-1',
+        'left' => 3,
+        'top' => 820,
+        'width' => 48,
+        'height' => 72,
+    ],
+    [
+        'label' => 'short-tree-2',
+        'left' => 55,
+        'top' => 820,
+        'width' => 37,
+        'height' => 55,
+    ],
+    [
+        'label' => 'short-tree-3',
+        'left' => 95,
+        'top' => 820,
+        'width' => 29,
+        'height' => 43,
+    ],
+    [
+        'label' => 'short-tree-4',
+        'left' => 127,
+        'top' => 820,
+        'width' => 25,
+        'height' => 37,
+    ],
+    [
+        'label' => 'short-tree-5',
+        'left' => 155,
+        'top' => 820,
+        'width' => 21,
+        'height' => 31,
+    ],
+    [
+        'label' => 'short-tree-6',
+        'left' => 179,
+        'top' => 820,
+        'width' => 18,
+        'height' => 27,
+    ],
+    [
+        'label' => 'short-tree-7',
+        'left' => 200,
+        'top' => 820,
+        'width' => 15,
+        'height' => 23,
+    ],
+    [
+        'label' => 'short-tree-8',
+        'left' => 219,
+        'top' => 820,
+        'width' => 13,
+        'height' => 18,
+    ],
+
+
     // blue car TBC ...
 
     [

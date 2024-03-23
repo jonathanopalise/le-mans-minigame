@@ -51,7 +51,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_GITANES'],
+        'types' => ['SCENERY_TYPE_TALL_TREE'],
         'xpos' => -200,
         'track_position' => 150000,
         'count' => 5,
@@ -65,7 +65,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_BP'],
+        'types' => ['SCENERY_TYPE_SHORT_TREE'],
         'xpos' => -200,
         'track_position' => 190000,
         'count' => 5,
@@ -86,14 +86,14 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_ROUND_TREE'],
+        'types' => ['SCENERY_TYPE_TALL_TREE'],
         'xpos' => 200,
         'track_position' => 250000,
         'count' => 5,
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_GITANES'],
+        'types' => ['SCENERY_TYPE_SHORT_TREE'],
         'xpos' => -200,
         'track_position' => 270000,
         'count' => 5,
@@ -142,7 +142,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_MOTO_JOURNAL'],
+        'types' => ['SCENERY_TYPE_TALL_TREE'],
         'xpos' => 200,
         'track_position' => 410000,
         'count' => 5,
