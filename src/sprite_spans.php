@@ -84,7 +84,7 @@ class Span
 
     public function canUseFxsr(int $skewed): bool
     {
-        return true;
+        //return true;
 
         $skewCalculatorLong = 0b11111111111111110000000000000000;
 
