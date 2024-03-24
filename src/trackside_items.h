@@ -20,7 +20,7 @@
 struct TracksideItem {
     uint16_t type;
     int32_t xpos;
-    uint32_t track_position;
+    int32_t track_position;
 };
 
 extern struct TracksideItem trackside_items[];

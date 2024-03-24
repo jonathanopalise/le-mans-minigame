@@ -22,19 +22,19 @@ void trackside_items_process()
     // TODO: player_car_track_position should be camera_track_position
     // we'll need to derive player_car_track_position for collision calcs
 
-    if (player_car_track_position > current_nearest_trackside_item->track_position) {
+    while (player_car_track_position > current_nearest_trackside_item->track_position) {
         current_nearest_trackside_item++;
         if (current_nearest_trackside_item->track_position == 0xffffffff) {
             current_nearest_trackside_item = trackside_items;
+            break;
         }
     }
 
     struct TracksideItem *current_trackside_item = current_nearest_trackside_item;
-    current_trackside_item = trackside_items;
     int32_t current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
 
-    while (current_trackside_item_player_relative_position < 35000) {
-        if (current_trackside_item_player_relative_position >= 0) {
+    while (current_trackside_item_player_relative_position >=0 && current_trackside_item_player_relative_position < 35000) {
+        //if (current_trackside_item_player_relative_position >= 0) {
             trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_player_relative_position];
             if (trackside_item_scanline_index != -1) {
                 road_scanline = &road_scanlines[trackside_item_scanline_index];
@@ -57,17 +57,13 @@ void trackside_items_process()
                 );
             }
 
-        }
+        //}
 
-        // TODO: fix bodge - we should be able to draw scenery from both the end and start
-        // of the track in the same frame
         current_trackside_item++;
-        if (current_trackside_item->track_position == 0xffffffff) {
-            current_trackside_item = trackside_items;
-            current_trackside_item_player_relative_position = 57000;
-        } else {
-            current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
-        }
+        current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
+        /*if (current_trackside_item->track_position == 0xffffffff) {
+            break;
+        }*/
     }
 }
 
