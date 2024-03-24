@@ -163,8 +163,8 @@ void hardware_playfield_init()
 
     uint16_t *phys_base = Physbase();
     hardware_playfields[0].buffer = phys_base;
-    hardware_playfields[1].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES;
-    hardware_playfields[2].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES * 2;
+    hardware_playfields[1].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES / 2;
+    hardware_playfields[2].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES;
 
     for (uint16_t index = 0; index < HARDWARE_PLAYFIELD_COUNT; index++) {
         hardware_playfield_init_playfield(&hardware_playfields[index]);

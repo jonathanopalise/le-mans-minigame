@@ -279,6 +279,9 @@ label_7a374:
     lea $ffff8a3c.w,a6        ; cache control register
     moveq.l #-1,d7
 
+    move.l a1,(a4) ; set lower and upper half of dest address
+    addq.l #2,a4
+
     jsr (a2)
 
     bra alldone

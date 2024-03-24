@@ -488,7 +488,7 @@ class CompiledSpriteBuilder {
                         'lea.l %d(a1),a1 ; calc destination address into a1',
                         $destinationOffset - $oldDestinationOffset
                     );
-                    $instructions[] = 'move.l a1,(a4) ; set destination address';
+                    $instructions[] = 'move.w a1,(a4) ; set destination address';
                     $instructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
 
                     $oldDestinationOffset = $destinationOffset;
