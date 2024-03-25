@@ -263,6 +263,11 @@ label_7a374:
     move.w d1,d2               ; copy blitter control
     or.w #$80,d2               ; d2 has fxsr
 
+    move.w d1,d3               ; d1 has nfsr only
+    or.w #$40,d3
+    move.w d2,d4               ; d4 has fxsr and nfsr
+    or.w #$40,d4
+
     add.w d0,d0
     add.w d0,d0
     move.l (a2,d0),a2
