@@ -102,6 +102,8 @@ class Span
 
     public function canUseNfsr(int $skewed): bool
     {
+        return false;
+
         if (!$skewed) {
             return false;
         }
