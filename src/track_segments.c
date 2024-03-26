@@ -108,7 +108,7 @@ struct TrackSegment track_segments[] = (struct TrackSegment[]) {
 
     // 0.39 - 0.40: transition to 7/10 left:
     {
-        .change_frequency = 256,
+        .change_frequency = 128,
         .change_direction = DIRECTION_LEFT,
         .change_count = 420
     },
@@ -122,14 +122,14 @@ struct TrackSegment track_segments[] = (struct TrackSegment[]) {
 
     // 0.41 - 0.42 transition to 7/10 right
     {
-        .change_frequency = 256,
+        .change_frequency = 128,
         .change_direction = DIRECTION_RIGHT,
         .change_count = 840
     },
 
     // 0.42 - 0.43 transition to straight
     {
-        .change_frequency = 256,
+        .change_frequency = 128,
         .change_direction = DIRECTION_LEFT,
         .change_count = 420
     },

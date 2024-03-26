@@ -7,7 +7,7 @@ if ($argc < 2) {
 
 $outputFilename = $argv[1];
 
-$definitions = [
+/*$definitions = [
     [
         'types' => ['SCENERY_TYPE_ROUND_TREE'],
         'xpos' => -200,
@@ -44,7 +44,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_TOTAL'],
+        'types' => ['SCENERY_TYPE_GITANES'],
         'xpos' => 200,
         'track_position' => 130000,
         'count' => 5,
@@ -93,7 +93,7 @@ $definitions = [
         'gap' => 3500,
     ],
     [
-        'types' => ['SCENERY_TYPE_SHORT_TREE'],
+        'types' => ['SCENERY_TYPE_GITANES'],
         'xpos' => -200,
         'track_position' => 270000,
         'count' => 5,
@@ -148,7 +148,202 @@ $definitions = [
         'count' => 5,
         'gap' => 3500,
     ],
+];*/
+
+$definitions = [
+    [
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
+        'xpos' => -200,
+        'track_position' => 9000,
+        'count' => 9,
+        'gap' => 6000,
+    ],
+    [
+        'types' => ['SCENERY_TYPE_GITANES'],
+        'xpos' => -200,
+        'track_position' => 60000,
+        'count' => 4,
+        'gap' => 6000,
+    ],
+    [
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
+        'xpos' => -200,
+        'track_position' => 90000,
+        'count' => 13,
+        'gap' => 7000,
+    ],
+    [
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
+        'xpos' => 200,
+        'track_position' => 90000,
+        'count' => 13,
+        'gap' => 7000,
+    ],
+    [
+        'types' => ['SCENERY_TYPE_RIGHT_ARROW'],
+        'xpos' => -200,
+        'track_position' => 240000,
+        'count' => 7,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_GITANES',
+            'SCENERY_TYPE_MICHELIN',
+            'SCENERY_TYPE_TOTAL',
+            'SCENERY_TYPE_KONAMI',
+            'SCENERY_TYPE_BP',
+        ],
+        'xpos' => -200,
+        'track_position' => 280000,
+        'count' => 5,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_MOTO_JOURNAL',
+            'SCENERY_TYPE_LUCAS'
+        ],
+        'xpos' => 200,
+        'track_position' => 290000,
+        'count' => 2,
+        'gap' => 5000,
+    ],
+    [
+        'types' => ['SCENERY_TYPE_BP'],
+        'xpos' => 200,
+        'track_position' => 310000,
+        'count' => 8,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 310000,
+        'count' => 8,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 370000,
+        'count' => 1,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 390000,
+        'count' => 8,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 445000,
+        'count' => 3,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 475000,
+        'count' => 6,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_LEFT_ARROW',
+        ],
+        'xpos' => 200,
+        'track_position' => 525000,
+        'count' => 7,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 550000,
+        'count' => 8,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 630000,
+        'count' => 10,
+        'gap' => 10000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 680000,
+        'count' => 4,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 740000,
+        'count' => 7,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_LUCAS',
+        ],
+        'xpos' => 200,
+        'track_position' => 790000,
+        'count' => 4,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 800000,
+        'count' => 7,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 850000,
+        'count' => 6,
+        'gap' => 7000,
+    ],
 ];
+
+
 
 function cmp($a, $b)
 {

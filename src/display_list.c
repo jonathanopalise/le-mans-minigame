@@ -3,7 +3,7 @@
 
 #include "hardware_playfield.h"
 
-#define DISPLAY_LIST_SIZE 16
+#define DISPLAY_LIST_SIZE 24
 
 struct DisplayListItem {
     struct SpriteDefinition *sprite_definition;
