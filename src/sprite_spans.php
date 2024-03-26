@@ -460,6 +460,7 @@ class CompiledSpriteBuilder {
         $oldDestinationOffset = 0;
 
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
+        $loopIndex = 1;
         foreach ($uniqueSpanLengths as $length) {
             $instructions[] = '';
 
@@ -503,45 +504,21 @@ class CompiledSpriteBuilder {
                         );
                     }
 
-                    foreach ($spans as $span) {
+                    foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
+
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
-                        $useFxsr = $span->canUseFxsr($this->skewed);
-
-                        $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
-                        if ($useFxsr) {
-                            $sourceOffset -= 10;
-                        }
-
-                        $instructions[] = '';
-                        $instructions[] = sprintf(
-                            'lea.l %d(a0),a0 ; calc source address into a0',
-                            $sourceOffset - $oldSourceOffset
-                        );
-                        $instructions[] = 'move.l a0,(a3) ; set source address';
-
-                        $oldSourceOffset = $sourceOffset;
-
-
-                        $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
-                        $instructions[] = sprintf(
-                            'lea.l %d(a1),a1 ; calc destination address into a1',
-                            $destinationOffset - $oldDestinationOffset
-                        );
-                        $instructions[] = 'move.w a1,(a4) ; set destination address';
-                        $instructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
-
-                        $oldDestinationOffset = $destinationOffset;
+                        $endmaskInstructions = [];
 
                         switch ($length) {
                             case 1:
                                 // length = 1, only endmask1 used
                                 if ($endmask1 != $oldEndmask1) {
                                     if ($endmask1 == 0xffff) {
-                                        $instructions[] = 'move.w d7,(a2) ; set endmask1';
+                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,(a2) ; set endmask1',
                                             $endmask1
                                         );
@@ -554,9 +531,9 @@ class CompiledSpriteBuilder {
 
                                 if ($endmask1 != $oldEndmask1) {
                                     if ($endmask1 == 0xffff) {
-                                        $instructions[] = 'move.w d7,(a2) ; set endmask1';
+                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,(a2) ; set endmask1',
                                             $endmask1
                                         );
@@ -564,9 +541,9 @@ class CompiledSpriteBuilder {
                                 }
                                 if ($endmask3 != $oldEndmask3) {
                                     if ($endmask3 == 0xffff) {
-                                        $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
+                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,$ffff8a2c.w ; set endmask3',
                                             $endmask3
                                         );
@@ -580,9 +557,9 @@ class CompiledSpriteBuilder {
 
                                 if ($endmask1 != $oldEndmask1) {
                                     if ($endmask1 == 0xffff) {
-                                        $instructions[] = 'move.w d7,(a2) ; set endmask1';
+                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,(a2) ; set endmask1',
                                             $endmask1
                                         );
@@ -590,27 +567,27 @@ class CompiledSpriteBuilder {
                                 }
                                 if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
                                     if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
-                                        $instructions[] = 'move.l d7,$ffff8a2a.w ; set endmask2 and endmask3';
+                                        $endmaskInstructions[] = 'move.l d7,$ffff8a2a.w ; set endmask2 and endmask3';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
                                             (($endmask2 << 16) | $endmask3) & 0xffffffff
                                         );
                                     }
                                 } elseif ($endmask2 != $oldEndmask2) {
                                     if ($endmask2 == 0xffff) {
-                                        $instructions[] = 'move.w d7,$ffff8a2a.w ; set endmask2';
+                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2a.w ; set endmask2';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,$ffff8a2a.w ; set endmask2',
                                             $endmask2
                                         );
                                     }
                                 } elseif ($endmask3 != $oldEndmask3) {
                                     if ($endmask3 == 0xffff) {
-                                        $instructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
+                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
                                     } else {
-                                        $instructions[] = sprintf(
+                                        $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,$ffff8a2c.w ; set endmask3',
                                             $endmask3
                                         );
@@ -623,19 +600,108 @@ class CompiledSpriteBuilder {
                         $oldEndmask2 = $endmask2;
                         $oldEndmask3 = $endmask3;
 
+                        $useFxsr = $span->canUseFxsr($this->skewed);
+
+                        $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
+                        if ($useFxsr) {
+                            $sourceOffset -= 10;
+                        }
+
+                        $copyInstructions = [];
+                        $copyInstructions[] = sprintf(
+                            'lea.l %d(a0),a0 ; calc source address into a0',
+                            $sourceOffset - $oldSourceOffset
+                        );
+                        $copyInstructions[] = 'move.l a0,(a3) ; set source address';
+
+                        $oldSourceOffset = $sourceOffset;
+
+                        $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
+                        $copyInstructions[] = sprintf(
+                            'lea.l %d(a1),a1 ; calc destination address into a1',
+                            $destinationOffset - $oldDestinationOffset
+                        );
+                        $copyInstructions[] = 'move.w a1,(a4) ; set destination address';
+                        $copyInstructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
+
+                        $oldDestinationOffset = $destinationOffset;
+
                         if ($useNfsr) {
                             if ($useFxsr) {
-                                $instructions[] = 'move.w d4,(a6) ; set blitter control, fxsr = true, nfsr = true';
+                                $copyInstructions[] = 'move.w d4,(a6) ; set blitter control, fxsr = true, nfsr = true';
                             } else {
-                                $instructions[] = 'move.w d3,(a6) ; set blitter control, fxsr = false, nfsr = true';
+                                $copyInstructions[] = 'move.w d3,(a6) ; set blitter control, fxsr = false, nfsr = true';
                             }
                         } else {
                             if ($useFxsr) {
-                                $instructions[] = 'move.w d2,(a6) ; set blitter control, fxsr = true, nfsr = false';
+                                $copyInstructions[] = 'move.w d2,(a6) ; set blitter control, fxsr = true, nfsr = false';
                             } else {
-                                $instructions[] = 'move.w d1,(a6) ; set blitter control, fxsr = false, nfsr = false';
+                                $copyInstructions[] = 'move.w d1,(a6) ; set blitter control, fxsr = false, nfsr = false';
                             }
                         }
+
+                        if ($key == array_key_first($spans)) {
+                            $loopStartEndmaskInstructions = $endmaskInstructions;
+                            $loopStartCopyInstructions = $copyInstructions;
+                            $copyInstructionIterations = 1;
+                        } else {
+                            if ($copyInstructions != $loopStartCopyInstructions || !empty($endmaskInstructions)) {
+                                $instructions[] = '';
+                                $instructions[] = '; encountered break';
+
+                                foreach ($loopStartEndmaskInstructions as $endmaskInstruction) {
+                                    $instructions[] = $endmaskInstruction;
+                                }
+
+                                if ($copyInstructionIterations > 1) {
+                                    $instructions[] = 'moveq.l #'.($copyInstructionIterations - 1).',d6';
+                                    $instructions[] = '.loop'.$loopIndex.':';
+
+                                    foreach ($loopStartCopyInstructions as $copyInstruction) {
+                                        $instructions[] = $copyInstruction;
+                                    }
+
+                                    $instructions[] = 'dbra d6,.loop'.$loopIndex;
+                                    $loopIndex++;
+                                } else {
+                                    foreach ($loopStartCopyInstructions as $copyInstruction) {
+                                        $instructions[] = $copyInstruction;
+                                    }
+                                }
+
+                                $loopStartEndmaskInstructions = $endmaskInstructions;
+                                $loopStartCopyInstructions = $copyInstructions;
+                                $copyInstructionIterations = 1;
+                            } else {
+                                $copyInstructionIterations++;
+                            }
+                        }
+
+                        if ($key == array_key_last($spans)) {
+                            $instructions[] = '';
+                            $instructions[] = '; LAST SPAN';
+                            foreach ($loopStartEndmaskInstructions as $endmaskInstruction) {
+                                $instructions[] = $endmaskInstruction;
+                            }
+                            if ($copyInstructionIterations > 1) {
+                                $instructions[] = '';
+                                $instructions[] = 'moveq.l #'.($copyInstructionIterations - 1).',d6';
+                                $instructions[] = '.loop'.$loopIndex.':';
+
+                                foreach ($loopStartCopyInstructions as $copyInstruction) {
+                                    $instructions[] = $copyInstruction;
+                                }
+
+                                $instructions[] = 'dbra d6,.loop'.$loopIndex;
+                                $loopIndex++;
+                            } else {
+                                foreach ($loopStartCopyInstructions as $copyInstruction) {
+                                    $instructions[] = $copyInstruction;
+                                }
+                            }
+                        }
+
+
                     }
                 } // end
 
