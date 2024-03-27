@@ -5,6 +5,7 @@
 #include "hardware_playfield.h"
 #include "blitter.h"
 #include "draw_sprite.h"
+#include "natfeats.h"
 
 #define HARDWARE_PLAYFIELD_COUNT 3
 
@@ -24,6 +25,8 @@ void hardware_playfield_handle_vbl()
             hardware_playfields[drawing_index].buffer,
             -1
         );
+    } else {
+        nf_print("Frame dropped :(");
     }
 }
 
