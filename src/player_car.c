@@ -46,11 +46,11 @@ void player_car_handle_inputs()
 
     if (joy_up) {
         player_car_speed += 2;
-        if (player_car_speed > 800) {
-            player_car_speed = 800;
+        if (player_car_speed > 1000) {
+            player_car_speed = 1000;
         }
     } else if (joy_down) {
-        player_car_speed -= 6;
+        player_car_speed -= 8;
         if (player_car_speed < 0) {
             player_car_speed = 0;
         }
