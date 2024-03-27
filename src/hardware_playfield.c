@@ -9,7 +9,7 @@
 #define HARDWARE_PLAYFIELD_COUNT 3
 
 static int16_t visible_index;
-static int16_t ready_index;
+volatile static int16_t ready_index;
 static int16_t drawing_index;
 
 struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
@@ -173,19 +173,19 @@ void hardware_playfield_init()
 
 static void hardware_playfield_error()
 {
-    while(0) {};
+    while(1) {};
 }
 
 void hardware_playfield_frame_complete()
 {
-    if (ready_index >= 0) {
-        hardware_playfield_error();
-    } else {
-        ready_index = drawing_index;
-        drawing_index++;
-        if (drawing_index == HARDWARE_PLAYFIELD_COUNT) {
-            drawing_index = 0;
-        }
+    // is there already a frame ready?
+    // if so, wait until the vbl has happened
+    while (ready_index >= 0) {}
+
+    ready_index = drawing_index;
+    drawing_index++;
+    if (drawing_index == HARDWARE_PLAYFIELD_COUNT) {
+        drawing_index = 0;
     }
 }
 
