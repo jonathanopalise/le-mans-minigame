@@ -1,5 +1,6 @@
     public _initialise
     public _joy_data
+    public _sky_gradient
 
 _initialise:
 
@@ -55,18 +56,18 @@ vbl:
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
     move.w	#$2300,sr			; Interrupts back on
 
-    lea.l sky_gradient,a0
+    lea.l _sky_gradient,a0
     lea.l $ffff8246.w,a1
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.w (a0)+,(a1)+
     move.w #$321,$ffff8242.w ; mountain colour 1
     move.w #$200,$ffff8244.w ; mountain colour 2
- 
+    move.l (a0)+,(a1)+ ; sky gradient start
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.w (a0)+,(a1)+ ; sky gradient end
+
     ;jsr _vbl_handler
     movem.l (sp)+,d0-d7/a0-a6
     rte
@@ -74,6 +75,7 @@ vbl:
     ; timer 1 - top of mountains
 
 timer_1:
+    movem.l a0-a1,-(sp)
     move.w	#$2700,sr			;Stop all interrupts
 
 wait_timer_1:
@@ -81,16 +83,24 @@ wait_timer_1:
 	bne.s		wait_timer_1
 	clr.b	$fffffa1b.w			;Timer B control (stop)
 
-    move.w #$133,$ffff8248.w
-    move.w #$3dc,$ffff824a.w
-    move.w #$dde,$ffff824c.w
-    move.w #$d00,$ffff824e.w
-    move.w #$333,$ffff8250.w
-    move.w #$eff,$ffff8252.w
-    move.w #$005,$ffff8254.w
-    move.w #$fe0,$ffff8256.w
-    move.w #$ca1,$ffff8258.w
-    move.w #$1b6,$ffff825a.w
+    ; scenery colours
+    lea scenery_colours,a0
+    lea $ffff8248.w,a1
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    ;move.w #$133,$ffff8248.w
+    ;move.w #$3dc,$ffff824a.w
+    ;move.w #$dde,$ffff824c.w
+    ;move.w #$d00,$ffff824e.w
+    ;move.w #$333,$ffff8250.w
+    ;move.w #$eff,$ffff8252.w
+    ;move.w #$005,$ffff8254.w
+    ;move.w #$fe0,$ffff8256.w
+    ;move.w #$ca1,$ffff8258.w
+    ;move.w #$1b6,$ffff825a.w
 
     move.l	#timer_2,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)
@@ -101,9 +111,11 @@ wait_timer_1:
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
 	move.w	#$2300,sr			;Interrupts back on
+    movem.l (sp)+,a0-a1
     rte
 
 timer_2:
+    movem.l a0-a1,-(sp)
     move.w	#$2700,sr			;Stop all interrupts
 	;move.l	#timer_2,$120.w			;Install our own Timer B
 	;clr.b	$fffffa1b.w			;Timer B control (stop)
@@ -118,16 +130,19 @@ wait_timer_2:
     ;move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
     ;move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
 
-    move.w #$221,$ffff8242.w ; grass
-    move.w #$777,$ffff8244.w ; lines
-    move.w #$222,$ffff8246.w ; road
+    lea ground_colours,a0
+    lea $ffff8242.w,a1
+    move.l (a0)+,(a1)+
+    move.w (a0)+,(a1)+
+    ;move.w #$221,$ffff8242.w ; grass
+    ;move.w #$777,$ffff8244.w ; lines
+    ;move.w #$222,$ffff8246.w ; road
 
 	move.w	#$2300,sr			;Interrupts back on
+    movem.l (sp)+,a0-a1
     rte
 
-
-
-sky_gradient:
+_sky_gradient:
     dc.w $07f
     dc.w $0ef
     dc.w $06f
@@ -141,6 +156,23 @@ sky_gradient:
     dc.w $02f
     dc.w $09f
     dc.w $01f
+
+scenery_colours:
+    dc.w $133
+    dc.w $3dc
+    dc.w $dde
+    dc.w $d00
+    dc.w $333
+    dc.w $eff
+    dc.w $005
+    dc.w $fe0
+    dc.w $ca1
+    dc.w $1b6
+
+ground_colours:
+    dc.w $221 ; grass
+    dc.w $777 ; lines
+    dc.w $222 ; road
 
 newikbd:
     move d0,-(sp)

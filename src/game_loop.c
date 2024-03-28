@@ -13,11 +13,14 @@
 #include "display_list.h"
 #include "opponent_cars.h"
 #include "draw_compiled_sprite.h"
+#include "time_of_day.h"
 #include "natfeats.h"
 
 void game_loop()
 {
     uint16_t player_car_sprite_definition_offset;
+    uint32_t quarter_hour_countdown = 60*2;
+    uint32_t time_of_day_offset = 0;
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
@@ -39,7 +42,51 @@ void game_loop()
     //*((volatile uint16_t *)0xffff8244) = 0x777;
     //*((volatile uint16_t *)0xffff8246) = 0x222;
 
+    uint16_t *src = &time_of_day[time_of_day_offset];
+    uint16_t *dest = &sky_gradient;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+
+
+
     while (1) {
+        quarter_hour_countdown--;
+        if (quarter_hour_countdown == 0) {
+
+            quarter_hour_countdown = 60*2;
+            time_of_day_offset += 13;
+            if (time_of_day_offset == 13*96) {
+                time_of_day_offset = 0;
+            }
+
+            src = &time_of_day[time_of_day_offset];
+            dest = &sky_gradient;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+        }
+
         //*((volatile uint16_t *)0xffff8240) = 0x0;
         player_car_handle_inputs();
         opponent_cars_update();

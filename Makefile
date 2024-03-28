@@ -27,6 +27,7 @@ OBJECT_FILES =\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
     src/generated/sprite_definitions.o\
+    src/generated/time_of_day.o\
 	src/initialise.o\
 	src/nf_asmv.o
 
@@ -114,6 +115,12 @@ src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprit
 
 src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/library.php src/sprite_spans.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
 	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
+
+src/generated/time_of_day.o: src/generated/time_of_day.c src/time_of_day.h
+	$(CC) $(CFLAGS) -c src/generated/time_of_day.c -o src/generated/time_of_day.o
+
+src/generated/time_of_day.c: src/generate_time_of_day.php
+	$(PHP) src/generate_time_of_day.php src/generated/time_of_day.c
 
 src/initialise.o: src/initialise.s
 	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o

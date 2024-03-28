@@ -16,7 +16,7 @@ void opponent_cars_init()
 
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->xpos = -90;
-    current_opponent_car->speed = 350;
+    current_opponent_car->speed = 600;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
 
@@ -24,7 +24,7 @@ void opponent_cars_init()
 
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->xpos = 0;
-    current_opponent_car->speed = 400;
+    current_opponent_car->speed = 650;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
 
@@ -32,7 +32,7 @@ void opponent_cars_init()
 
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->xpos = 90;
-    current_opponent_car->speed = 450;
+    current_opponent_car->speed = 700;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
 }
@@ -42,7 +42,7 @@ void opponent_cars_update()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
-    int32_t curvature_max_speed = 450 - (corner_sharpness >> 8);
+    int32_t curvature_max_speed = 700 - (corner_sharpness >> 8);
     int32_t normalised_opponent_car_speed;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {

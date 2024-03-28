@@ -6,5 +6,6 @@
 void initialise();
 
 extern uint8_t joy_data;
+extern uint16_t sky_gradient;
 
 #endif
