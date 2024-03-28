@@ -338,7 +338,287 @@ $definitions = [
         ],
         'xpos' => -200,
         'track_position' => 850000,
+        'count' => 9,
+        'gap' => 6000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 800000,
+        'count' => 7,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 970000,
+        'count' => 10,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 1050000,
+        'count' => 8,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => 255,
+        'track_position' => 1120000,
+        'count' => 2,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 1123500,
+        'count' => 1,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 1160000,
+        'count' => 10,
+        'gap' => 10000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => 255,
+        'track_position' => 1165000,
+        'count' => 9,
+        'gap' => 10000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => 255,
+        'track_position' => 1165000,
+        'count' => 9,
+        'gap' => 10000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -250,
+        'track_position' => 1200000,
+        'count' => 5,
+        'gap' => 14000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 1285000,
+        'count' => 5,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+            'SCENERY_TYPE_ROUND_TREE',
+            'SCENERY_TYPE_SHORT_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 1325000,
+        'count' => 8,
+        'gap' => 14000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => -255,
+        'track_position' => 1332000,
+        'count' => 7,
+        'gap' => 14000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => -255,
+        'track_position' => 1332000,
+        'count' => 7,
+        'gap' => 14000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 1450000,
+        'count' => 4,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 1453500,
+        'count' => 4,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 1482500,
         'count' => 6,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_LAMPPOST',
+        ],
+        'xpos' => -200,
+        'track_position' => 1660000,
+        'count' => 5,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 1710000,
+        'count' => 20,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_LUCAS',
+            'SCENERY_TYPE_MOTO_JOURNAL',
+            'SCENERY_TYPE_MICHELIN',
+            'SCENERY_TYPE_TOTAL',
+        ],
+        'xpos' => 200,
+        'track_position' => 1770000,
+        'count' => 4,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_MICHELIN',
+        ],
+        'xpos' => 200,
+        'track_position' => 1860000,
+        'count' => 4,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_GITANES',
+        ],
+        'xpos' => -200,
+        'track_position' => 1895000,
+        'count' => 10,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 1970000,
+        'count' => 10,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_KONAMI',
+        ],
+        'xpos' => 200,
+        'track_position' => 2030000,
+        'count' => 4,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_KONAMI',
+        ],
+        'xpos' => -200,
+        'track_position' => 2040000,
+        'count' => 4,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+            'SCENERY_TYPE_ROUND_TREE',
+        ],
+        'xpos' => -250,
+        'track_position' => 2065000,
+        'count' => 3,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_SHORT_TREE',
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 250,
+        'track_position' => 2070000,
+        'count' => 2,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_RIGHT_ARROW',
+        ],
+        'xpos' => -200,
+        'track_position' => 2091000,
+        'count' => 8,
+        'gap' => 5000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 2131000,
+        'count' => 10,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => 200,
+        'track_position' => 2208000,
+        'count' => 10,
+        'gap' => 7000,
+    ],
+    [
+        'types' => [
+            'SCENERY_TYPE_TALL_TREE',
+        ],
+        'xpos' => -200,
+        'track_position' => 2285000,
+        'count' => 10,
         'gap' => 7000,
     ],
 ];
