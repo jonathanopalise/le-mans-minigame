@@ -44,6 +44,9 @@ void game_loop()
 
     uint16_t *src = &time_of_day[time_of_day_offset];
     uint16_t *dest = &sky_gradient;
+    *dest++ = *src++; // 2 colours for mountains
+    *dest++ = *src++;
+    *dest++ = *src++; // remaining colours for sky
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
@@ -56,22 +59,21 @@ void game_loop()
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
-    *dest++ = *src++;
-
-
 
     while (1) {
         quarter_hour_countdown--;
         if (quarter_hour_countdown == 0) {
 
             quarter_hour_countdown = 60*2;
-            time_of_day_offset += 13;
-            if (time_of_day_offset == 13*96) {
+            time_of_day_offset += 15;
+            if (time_of_day_offset == 15*96) {
                 time_of_day_offset = 0;
             }
 
             src = &time_of_day[time_of_day_offset];
             dest = &sky_gradient;
+            *dest++ = *src++;
+            *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;

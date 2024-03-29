@@ -64,6 +64,11 @@ const PM_8 = [
     SKY_BOTTOM => [47,38,11],
 ];
 
+const MOUNTAIN_COLOURS = [
+    [96,64,32],
+    [64,0,0],
+];
+
 $timeOfDayColours = array_fill(0, 96, null);
 $timeOfDayColours[4] = PM_4;
 $timeOfDayColours[12] = PM_6;
@@ -195,16 +200,57 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $green = intval(round($topGreen + (($bottomGreen - $topGreen) * $gradientIndex / 12)));
         $blue = intval(round($topBlue + (($bottomBlue - $topBlue) * $gradientIndex / 12)));
 
-        //echo("red: ".$red."\n");
-
         $skyGradientColours[] = [$red, $green, $blue];
     }
 
     $timeOfDayColours[$key]['skyGradientColours'] = array_reverse($skyGradientColours);
+
+    //$skyTopRed = $timeOfDayColour[SKY_TOP][RED];
+    //$skyTopGreen = $timeOfDayColour[SKY_TOP][GREEN];
+    //$skyTopBlue = $timeOfDayColour[SKY_TOP][BLUE];
+
+    $skyBottomRed = $timeOfDayColour[SKY_BOTTOM][RED];
+    $skyBottomGreen = $timeOfDayColour[SKY_BOTTOM][GREEN];
+    $skyBottomBlue = $timeOfDayColour[SKY_BOTTOM][BLUE];
+
+    //$skyAverageRed = intval(round($skyTopRed + (($skyBottomRed - $skyTopRed) / 2)));
+    //$skyAverageGreen = intval(round($skyTopGreen + (($skyBottomGreen - $skyTopGreen) / 2)));
+    //$skyAverageBlue = intval(round($skyTopBlue + (($skyBottomBlue - $skyTopBlue) / 2)));
+
+    $adjustedMountainColours = [];
+    foreach (MOUNTAIN_COLOURS as $mountainColour) {
+        $naturalMountainRed = $mountainColour[RED];
+        $naturalMountainGreen = $mountainColour[GREEN];
+        $naturalMountainBlue = $mountainColour[BLUE];
+
+        $adjustedMountainRed = $naturalMountainRed * $skyBottomRed / 255;
+        $adjustedMountainGreen = $naturalMountainGreen * $skyBottomGreen / 255;
+        $adjustedMountainBlue = $naturalMountainBlue * $skyBottomBlue / 255;
+
+        $adjustedMountainColours[] = [$adjustedMountainRed, $adjustedMountainGreen, $adjustedMountainBlue];
+    }
+
+    $timeOfDayColours[$key]['adjustedMountainColours'] = $adjustedMountainColours;
+
+    //$timeOfDaycolours[$key]['skyAverageColour'] = [$skyAverageRed, $skyAverageGreen, $skyAverageBlue];
 }
 
 $outputWords = [];
 foreach ($timeOfDayColours as $timeOfDayColour) {
+    // mountain colours
+    foreach ($timeOfDayColour['adjustedMountainColours'] as $rgbArray) {
+        $red = $rgbArray[RED];
+        $green = $rgbArray[GREEN];
+        $blue = $rgbArray[BLUE];
+
+        //$red = 128;
+        //$green = 128;
+        //$blue = 128;
+
+        $outputWords[] = generateStePaletteWord($red, $green, $blue);
+    }
+
+    // sky gradient
     foreach ($timeOfDayColour['skyGradientColours'] as $rgbArray) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
@@ -212,6 +258,7 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
     }
+
 }
 
 $lines = [
