@@ -19,7 +19,7 @@
 void game_loop()
 {
     uint16_t player_car_sprite_definition_offset;
-    uint32_t quarter_hour_countdown = 60*2;
+    uint32_t quarter_hour_countdown = 60*1;
     uint32_t time_of_day_offset = 0;
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
@@ -72,13 +72,18 @@ void game_loop()
     *dest++ = *src++;
     *dest++ = *src++;
 
+    dest = &ground_colours;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+
     while (1) {
         quarter_hour_countdown--;
         if (quarter_hour_countdown == 0) {
 
-            quarter_hour_countdown = 60*2;
-            time_of_day_offset += 25;
-            if (time_of_day_offset == 25*96) {
+            quarter_hour_countdown = 60*1;
+            time_of_day_offset += 28;
+            if (time_of_day_offset == 28*96) {
                 time_of_day_offset = 0;
             }
 
@@ -108,6 +113,11 @@ void game_loop()
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+
+            dest = &ground_colours;
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;

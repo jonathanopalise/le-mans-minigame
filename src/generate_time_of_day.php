@@ -82,6 +82,11 @@ const SCENERY_COLOURS = [
     [42, 124, 192],
 ];
 
+const GROUND_COLOURS = [
+    [100, 111, 54],
+    [255, 255, 255],
+    [64, 64, 64],
+];
 
 $timeOfDayColours = array_fill(0, 96, null);
 $timeOfDayColours[4] = PM_4;
@@ -237,9 +242,9 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $naturalMountainGreen = $mountainColour[GREEN];
         $naturalMountainBlue = $mountainColour[BLUE];
 
-        $adjustedMountainRed = $naturalMountainRed * $skyBottomRed / 255;
-        $adjustedMountainGreen = $naturalMountainGreen * $skyBottomGreen / 255;
-        $adjustedMountainBlue = $naturalMountainBlue * $skyBottomBlue / 255;
+        $adjustedMountainRed = intval(round($naturalMountainRed * $skyBottomRed / 255));
+        $adjustedMountainGreen = intval(round($naturalMountainGreen * $skyBottomGreen / 255));
+        $adjustedMountainBlue = intval(round($naturalMountainBlue * $skyBottomBlue / 255));
 
         $adjustedMountainColours[] = [$adjustedMountainRed, $adjustedMountainGreen, $adjustedMountainBlue];
     }
@@ -252,17 +257,42 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $naturalSceneryGreen = $sceneryColour[GREEN];
         $naturalSceneryBlue = $sceneryColour[BLUE];
 
-        $adjustedSceneryRed = $naturalSceneryRed * $skyBottomRed / 255;
-        $adjustedSceneryGreen = $naturalSceneryGreen * $skyBottomGreen / 255;
-        $adjustedSceneryBlue = $naturalSceneryBlue * $skyBottomBlue / 255;
+        $normalisedSkyBottomRed = $skyBottomRed < 112 ? 112 : $skyBottomRed;
+        $normalisedSkyBottomGreen = $skyBottomGreen < 112 ? 112 : $skyBottomGreen;
+        $normalisedSkyBottomBlue = $skyBottomBlue < 112 ? 112 : $skyBottomBlue;
+
+        $adjustedSceneryRed = intval(round($naturalSceneryRed * $normalisedSkyBottomRed / 255));
+        $adjustedSceneryGreen = intval(round($naturalSceneryGreen * $normalisedSkyBottomGreen / 255));
+        $adjustedSceneryBlue = intval(round($naturalSceneryBlue * $normalisedSkyBottomBlue / 255));
 
         $adjustedSceneryColours[] = [$adjustedSceneryRed, $adjustedSceneryGreen, $adjustedSceneryBlue];
     }
 
     $timeOfDayColours[$key]['adjustedSceneryColours'] = $adjustedSceneryColours;
 
+    $adjustedGroundColours = [];
+    foreach (GROUND_COLOURS as $groundColourKey => $groundColour) {
+        $naturalGroundRed = $groundColour[RED];
+        $naturalGroundGreen = $groundColour[GREEN];
+        $naturalGroundBlue = $groundColour[BLUE];
 
-    //$timeOfDaycolours[$key]['skyAverageColour'] = [$skyAverageRed, $skyAverageGreen, $skyAverageBlue];
+        $minimumValue = 128;
+        if ($groundColourKey == array_key_first(GROUND_COLOURS)) {
+            $minimumValue = 64;
+        }
+
+        $normalisedSkyBottomRed = $skyBottomRed < $minimumValue ? $minimumValue : $skyBottomRed;
+        $normalisedSkyBottomGreen = $skyBottomGreen < $minimumValue ? $minimumValue : $skyBottomGreen;
+        $normalisedSkyBottomBlue = $skyBottomBlue < $minimumValue ? $minimumValue : $skyBottomBlue;
+
+        $adjustedGroundRed = intval(round($naturalGroundRed * $normalisedSkyBottomRed / 255));
+        $adjustedGroundGreen = intval(round($naturalGroundGreen * $normalisedSkyBottomGreen / 255));
+        $adjustedGroundBlue = intval(round($naturalGroundBlue * $normalisedSkyBottomBlue / 255));
+
+        $adjustedGroundColours[] = [$adjustedGroundRed, $adjustedGroundGreen, $adjustedGroundBlue];
+    }
+
+    $timeOfDayColours[$key]['adjustedGroundColours'] = $adjustedGroundColours;
 }
 
 $outputWords = [];
@@ -286,6 +316,14 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
     }
 
     foreach ($timeOfDayColour['adjustedSceneryColours'] as $rgbArray) {
+        $red = $rgbArray[RED];
+        $green = $rgbArray[GREEN];
+        $blue = $rgbArray[BLUE];
+
+        $outputWords[] = generateStePaletteWord($red, $green, $blue);
+    }
+
+    foreach ($timeOfDayColour['adjustedGroundColours'] as $rgbArray) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
         $blue = $rgbArray[BLUE];

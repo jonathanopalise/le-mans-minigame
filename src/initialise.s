@@ -2,6 +2,7 @@
     public _joy_data
     public _sky_gradient
     public _scenery_colours
+    public _ground_colours
 
 _initialise:
 
@@ -85,7 +86,7 @@ wait_timer_1:
 	bne.s		wait_timer_1
 	clr.b	$fffffa1b.w			;Timer B control (stop)
 
-    ; scenery colours
+    ; scenery colours, then tail light
     lea _scenery_colours,a0
     lea $ffff8248.w,a1
     move.l (a0)+,(a1)+
@@ -93,6 +94,9 @@ wait_timer_1:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
+
+    move.w #$f00,$ffff825c.w ; tail lights
+
     ;move.w #$133,$ffff8248.w
     ;move.w #$3dc,$ffff824a.w
     ;move.w #$dde,$ffff824c.w
@@ -132,7 +136,7 @@ wait_timer_2:
     ;move.w #$321,$ffff8244.w ; colour 10 = 474 hud laptime
     ;move.w #$200,$ffff8246.w ; colour 10 = 474 hud laptime
 
-    lea ground_colours,a0
+    lea _ground_colours,a0
     lea $ffff8242.w,a1
     move.l (a0)+,(a1)+
     move.w (a0)+,(a1)+
@@ -173,7 +177,7 @@ _scenery_colours:
     dc.w $ca1
     dc.w $1b6
 
-ground_colours:
+_ground_colours:
     dc.w $221 ; grass
     dc.w $777 ; lines
     dc.w $222 ; road
