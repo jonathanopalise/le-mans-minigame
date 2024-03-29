@@ -1,6 +1,7 @@
     public _initialise
     public _joy_data
     public _sky_gradient
+    public _scenery_colours
 
 _initialise:
 
@@ -85,7 +86,7 @@ wait_timer_1:
 	clr.b	$fffffa1b.w			;Timer B control (stop)
 
     ; scenery colours
-    lea scenery_colours,a0
+    lea _scenery_colours,a0
     lea $ffff8248.w,a1
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
@@ -144,8 +145,8 @@ wait_timer_2:
     rte
 
 _sky_gradient:
-    dc.w 321f
-    dc.w 200f
+    dc.w $321f
+    dc.w $200f
     dc.w $07f
     dc.w $0ef
     dc.w $06f
@@ -160,7 +161,7 @@ _sky_gradient:
     dc.w $09f
     dc.w $01f
 
-scenery_colours:
+_scenery_colours:
     dc.w $133
     dc.w $3dc
     dc.w $dde

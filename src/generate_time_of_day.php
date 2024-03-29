@@ -69,6 +69,20 @@ const MOUNTAIN_COLOURS = [
     [64,0,0],
 ];
 
+const SCENERY_COLOURS = [
+    [36, 109, 109],
+    [109, 182, 145],
+    [182, 182, 218],
+    [182, 0, 0],
+    [109, 109, 109],
+    [218, 255, 255],
+    [2, 0, 175],
+    [255, 218, 0],
+    [151, 91, 37],
+    [42, 124, 192],
+];
+
+
 $timeOfDayColours = array_fill(0, 96, null);
 $timeOfDayColours[4] = PM_4;
 $timeOfDayColours[12] = PM_6;
@@ -232,6 +246,22 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
 
     $timeOfDayColours[$key]['adjustedMountainColours'] = $adjustedMountainColours;
 
+    $adjustedSceneryColours = [];
+    foreach (SCENERY_COLOURS as $sceneryColour) {
+        $naturalSceneryRed = $sceneryColour[RED];
+        $naturalSceneryGreen = $sceneryColour[GREEN];
+        $naturalSceneryBlue = $sceneryColour[BLUE];
+
+        $adjustedSceneryRed = $naturalSceneryRed * $skyBottomRed / 255;
+        $adjustedSceneryGreen = $naturalSceneryGreen * $skyBottomGreen / 255;
+        $adjustedSceneryBlue = $naturalSceneryBlue * $skyBottomBlue / 255;
+
+        $adjustedSceneryColours[] = [$adjustedSceneryRed, $adjustedSceneryGreen, $adjustedSceneryBlue];
+    }
+
+    $timeOfDayColours[$key]['adjustedSceneryColours'] = $adjustedSceneryColours;
+
+
     //$timeOfDaycolours[$key]['skyAverageColour'] = [$skyAverageRed, $skyAverageGreen, $skyAverageBlue];
 }
 
@@ -242,10 +272,6 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
         $blue = $rgbArray[BLUE];
-
-        //$red = 128;
-        //$green = 128;
-        //$blue = 128;
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
     }
@@ -259,6 +285,13 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
     }
 
+    foreach ($timeOfDayColour['adjustedSceneryColours'] as $rgbArray) {
+        $red = $rgbArray[RED];
+        $green = $rgbArray[GREEN];
+        $blue = $rgbArray[BLUE];
+
+        $outputWords[] = generateStePaletteWord($red, $green, $blue);
+    }
 }
 
 $lines = [

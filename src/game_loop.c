@@ -60,13 +60,25 @@ void game_loop()
     *dest++ = *src++;
     *dest++ = *src++;
 
+    dest = &scenery_colours;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+    *dest++ = *src++;
+
     while (1) {
         quarter_hour_countdown--;
         if (quarter_hour_countdown == 0) {
 
             quarter_hour_countdown = 60*2;
-            time_of_day_offset += 15;
-            if (time_of_day_offset == 15*96) {
+            time_of_day_offset += 25;
+            if (time_of_day_offset == 25*96) {
                 time_of_day_offset = 0;
             }
 
@@ -77,6 +89,18 @@ void game_loop()
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+            *dest++ = *src++;
+
+            dest = &scenery_colours;
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
