@@ -1208,13 +1208,17 @@ foreach ($definitions as $definition) {
         printf("skew is %d\n", $skew);
         printf("width in 16 pixel blocks: %d\n", $widthIn16PixelBlocks);
 
-        $builder = new CompiledSpriteBuilder(
-            $skewedCharData,
-            $widthIn16PixelBlocks,
-            $skewedMaskedSprite->getHeight(),
-            $skew
-        );
-        $instructions = $builder->runFirstPass();
+        if (str_contains($definition['label'], 'yellow-car') || str_contains($definition['label'], 'blue-car')) {
+            $instructions = ['rts'];
+        } else {
+            $builder = new CompiledSpriteBuilder(
+                $skewedCharData,
+                $widthIn16PixelBlocks,
+                $skewedMaskedSprite->getHeight(),
+                $skew
+            );
+            $instructions = $builder->runFirstPass();
+        }
 
         $processedInstructions = [];
         foreach ($instructions as $instruction) {
