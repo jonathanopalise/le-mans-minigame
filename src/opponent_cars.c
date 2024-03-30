@@ -10,6 +10,33 @@ struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 #define RED_CAR_BASE_INDEX 15
 #define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 24)
 
+void rewrite_compiled_sprite_pointers(struct SpriteDefinition *destination_definition)
+{
+    struct SpriteDefinition *source_definition = &sprite_definitions[RED_CAR_BASE_INDEX - 7];
+
+    for (uint16_t index = 0; index < 24; index++) {
+        destination_definition->compiled_sprite_0 = source_definition->compiled_sprite_0;
+        destination_definition->compiled_sprite_1 = source_definition->compiled_sprite_1;
+        destination_definition->compiled_sprite_2 = source_definition->compiled_sprite_2;
+        destination_definition->compiled_sprite_3 = source_definition->compiled_sprite_3;
+        destination_definition->compiled_sprite_4 = source_definition->compiled_sprite_4;
+        destination_definition->compiled_sprite_5 = source_definition->compiled_sprite_5;
+        destination_definition->compiled_sprite_6 = source_definition->compiled_sprite_6;
+        destination_definition->compiled_sprite_7 = source_definition->compiled_sprite_7;
+        destination_definition->compiled_sprite_8 = source_definition->compiled_sprite_8;
+        destination_definition->compiled_sprite_9 = source_definition->compiled_sprite_9;
+        destination_definition->compiled_sprite_10 = source_definition->compiled_sprite_10;
+        destination_definition->compiled_sprite_11 = source_definition->compiled_sprite_11;
+        destination_definition->compiled_sprite_12 = source_definition->compiled_sprite_12;
+        destination_definition->compiled_sprite_13 = source_definition->compiled_sprite_13;
+        destination_definition->compiled_sprite_14 = source_definition->compiled_sprite_14;
+        destination_definition->compiled_sprite_15 = source_definition->compiled_sprite_15;
+
+        source_definition++;
+        destination_definition++;
+    }
+}
+
 void opponent_cars_init()
 {
     struct OpponentCar *current_opponent_car = opponent_cars;
@@ -35,6 +62,8 @@ void opponent_cars_init()
     current_opponent_car->speed = 700;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
+
+    rewrite_compiled_sprite_pointers(&sprite_definitions[YELLOW_CAR_BASE_INDEX - 7]);
 }
 
 void opponent_cars_update()
