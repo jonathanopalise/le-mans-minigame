@@ -432,6 +432,183 @@ $definitions = [
         'height' => 6,
     ],
  
+    // blue car centre offset 8
+
+    [
+        'label' => 'blue-car-centre-1',
+        'left' => 3,
+        'top' => 1445,
+        'width' => 48,
+        'height' => 25,
+    ],
+    [
+        'label' => 'blue-car-centre-2',
+        'left' => 54,
+        'top' => 1445,
+        'width' => 36,
+        'height' => 19,
+    ],
+    [
+        'label' => 'blue-car-centre-3',
+        'left' => 93,
+        'top' => 1445,
+        'width' => 28,
+        'height' => 15,
+    ],
+    [
+        'label' => 'blue-car-centre-4',
+        'left' => 124,
+        'top' => 1445,
+        'width' => 23,
+        'height' => 12,
+    ],
+    [
+        'label' => 'blue-car-centre-5',
+        'left' => 150,
+        'top' => 1445,
+        'width' => 20,
+        'height' => 10,
+    ],
+    [
+        'label' => 'blue-car-centre-6',
+        'left' => 173,
+        'top' => 1445,
+        'width' => 16,
+        'height' => 8,
+    ],
+    [
+        'label' => 'blue-car-centre-7',
+        'left' => 192,
+        'top' => 1445,
+        'width' => 14,
+        'height' => 7,
+    ],
+    [
+        'label' => 'blue-car-centre-8',
+        'left' => 209,
+        'top' => 1445,
+        'width' => 11,
+        'height' => 6,
+    ],
+
+    // blue car left offset 16
+
+    [
+        'label' => 'blue-car-left-1',
+        'left' => 3,
+        'top' => 1534,
+        'width' => 64,
+        'height' => 26,
+    ],
+    [
+        'label' => 'blue-car-left-2',
+        'left' => 69,
+        'top' => 1534,
+        'width' => 48,
+        'height' => 20,
+    ],
+    [
+        'label' => 'blue-car-left-3',
+        'left' => 119,
+        'top' => 1534,
+        'width' => 38,
+        'height' => 15,
+    ],
+    [
+        'label' => 'blue-car-left-4',
+        'left' => 159,
+        'top' => 1534,
+        'width' => 31,
+        'height' => 13,
+    ],
+    [
+        'label' => 'blue-car-left-5',
+        'left' => 192,
+        'top' => 1534,
+        'width' => 28,
+        'height' => 11,
+    ],
+    [
+        'label' => 'blue-car-left-6',
+        'left' => 222,
+        'top' => 1534,
+        'width' => 22,
+        'height' => 9,
+    ],
+    [
+        'label' => 'blue-car-left-7',
+        'left' => 246,
+        'top' => 1534,
+        'width' => 18,
+        'height' => 7,
+    ],
+    [
+        'label' => 'blue-car-left-8',
+        'left' => 266,
+        'top' => 1534,
+        'width' => 14,
+        'height' => 6,
+    ],
+
+    // blue car right offset 24
+
+    [
+        'label' => 'blue-car-right-1',
+        'left' => 3,
+        'top' => 1624,
+        'width' => 64,
+        'height' => 26,
+    ],
+    [
+        'label' => 'blue-car-right-2',
+        'left' => 69,
+        'top' => 1624,
+        'width' => 48,
+        'height' => 20,
+    ],
+    [
+        'label' => 'blue-car-right-3',
+        'left' => 119,
+        'top' => 1624,
+        'width' => 38,
+        'height' => 15,
+    ],
+    [
+        'label' => 'blue-car-right-4',
+        'left' => 159,
+        'top' => 1624,
+        'width' => 31,
+        'height' => 13,
+    ],
+    [
+        'label' => 'blue-car-right-5',
+        'left' => 192,
+        'top' => 1624,
+        'width' => 28,
+        'height' => 11,
+    ],
+    [
+        'label' => 'blue-car-right-6',
+        'left' => 222,
+        'top' => 1624,
+        'width' => 22,
+        'height' => 9,
+    ],
+    [
+        'label' => 'blue-car-right-7',
+        'left' => 246,
+        'top' => 1624,
+        'width' => 18,
+        'height' => 7,
+    ],
+    [
+        'label' => 'blue-car-right-8',
+        'left' => 266,
+        'top' => 1624,
+        'width' => 14,
+        'height' => 6,
+    ],
+
     // michelin offset 56
 
     [

@@ -9,6 +9,7 @@ struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
 #define RED_CAR_BASE_INDEX 15
 #define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 24)
+#define BLUE_CAR_BASE_INDEX (YELLOW_CAR_BASE_INDEX + 24)
 
 void rewrite_compiled_sprite_pointers(struct SpriteDefinition *destination_definition)
 {
@@ -61,9 +62,10 @@ void opponent_cars_init()
     current_opponent_car->xpos = 90;
     current_opponent_car->speed = 700;
     current_opponent_car->active = 1;
-    current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
+    current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
 
     rewrite_compiled_sprite_pointers(&sprite_definitions[YELLOW_CAR_BASE_INDEX - 7]);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[BLUE_CAR_BASE_INDEX - 7]);
 }
 
 void opponent_cars_update()
