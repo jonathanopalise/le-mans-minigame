@@ -71,6 +71,7 @@ void game_loop()
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
+    *dest++ = *src++;
 
     dest = &ground_colours;
     *dest++ = *src++;
@@ -82,8 +83,8 @@ void game_loop()
         if (quarter_hour_countdown == 0) {
 
             quarter_hour_countdown = 60*1;
-            time_of_day_offset += 28;
-            if (time_of_day_offset == 28*96) {
+            time_of_day_offset += 29;
+            if (time_of_day_offset == 29*96) {
                 time_of_day_offset = 0;
             }
 
@@ -106,6 +107,7 @@ void game_loop()
             *dest++ = *src++;
 
             dest = &scenery_colours;
+            *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;

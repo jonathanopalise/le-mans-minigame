@@ -268,6 +268,18 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $adjustedSceneryColours[] = [$adjustedSceneryRed, $adjustedSceneryGreen, $adjustedSceneryBlue];
     }
 
+    // tail lights switch on and off depending upon time of day
+    $tailLightsRed = 74;
+    $tailLightsGreen = 22;
+    $tailLightsBlue = 22;
+    if ($key > 8 && $key < 54) {
+        $tailLightsRed = 255;
+        $tailLightsGreen = 0;
+        $tailLightsBlue = 0;
+    }
+
+    $adjustedSceneryColours[] = [$tailLightsRed, $tailLightsGreen, $tailLightsBlue];
+
     $timeOfDayColours[$key]['adjustedSceneryColours'] = $adjustedSceneryColours;
 
     $adjustedGroundColours = [];

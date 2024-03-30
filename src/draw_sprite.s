@@ -108,7 +108,7 @@ _draw_sprite:
     move.w    d0,rightclipped
 
     move.l a3,d0                       ; get desired xpos of scenery object
-    and.l #$f,d0                       ; convert to skew value for blitter
+    and.l #$e,d0                       ; convert to skew value for blitter
 
     beq.s zeroskew
 
@@ -256,7 +256,7 @@ label_7a374:
 ;    bra.s boo
 
     move.l a3,d0               ; get desired xpos of scenery object
-    and.w #$f,d0               ; convert to skew value for blitter
+    and.w #$e,d0               ; convert to skew value for blitter
 
     move.w #$c000,d1           ; blitter control
     or.w d0,d1                 ; apply skew
@@ -302,7 +302,7 @@ compiled_not_usable:
     move.w #$201,($ffff8a3a).w ; hop/op: read from source, source & destination
 
     move.l a3,d0               ; get desired xpos of scenery object
-    and.w #$f,d0               ; convert to skew value for blitter
+    and.w #$e,d0               ; convert to skew value for blitter
 
     move.w d0,d1
     beq.s nonfsr               ; if skew is zero, we can't use nfsr

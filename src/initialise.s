@@ -94,8 +94,9 @@ wait_timer_1:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
+    move.w (a0)+,(a1)+
 
-    move.w #$f00,$ffff825c.w ; tail lights
+    ;move.w #$f00,(a1)+ ; tail lights
 
     ;move.w #$133,$ffff8248.w
     ;move.w #$3dc,$ffff824a.w
@@ -176,6 +177,7 @@ _scenery_colours:
     dc.w $fe0
     dc.w $ca1
     dc.w $1b6
+    dc.w $f00
 
 _ground_colours:
     dc.w $221 ; grass
