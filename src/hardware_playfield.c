@@ -26,7 +26,7 @@ void hardware_playfield_handle_vbl()
             -1
         );
     } else {
-        nf_print("Frame dropped :(");
+        //nf_print("Frame dropped :(");
     }
 }
 
@@ -93,7 +93,6 @@ void hardware_playfield_erase_sprites()
                 *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 6;
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
-
 
                 destination_address = current_bitplane_draw_record->destination_address + (160 * lines_to_draw);
                 lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;

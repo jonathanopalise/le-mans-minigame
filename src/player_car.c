@@ -34,7 +34,7 @@ void player_car_handle_inputs()
 
     char strbuf[256];
 
-    if (joy_fire) {
+    /*if (joy_fire) {
         snprintf(
             strbuf,
             256,
@@ -42,7 +42,7 @@ void player_car_handle_inputs()
             player_car_track_position
         );
         nf_print(strbuf);
-    }
+    }*/
 
     if (joy_up) {
         player_car_speed += 2;

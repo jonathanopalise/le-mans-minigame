@@ -24,11 +24,11 @@ void game_loop()
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
-    if (!nf_init()) {
+    /*if (!nf_init()) {
         while (1==1) {}
-    }
+    }*/
 
-    nf_print("hello from lemans!");
+    //nf_print("hello from lemans!");
 
     hardware_playfield_init();
     initialise();
