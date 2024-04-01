@@ -24,6 +24,14 @@ class IndexedBitmapPixel
         return $this->visible;
     }
 
+    // something very wrong here!
+    // i think visible and invisible are inverted
+    public function makeVisible(int $colourIndex)
+    {
+        $this->visible = false;
+        $this->setColourIndex($colourIndex);
+    }
+
     public function setColourIndex(int $colourIndex)
     {
         $this->validateColourIndex($colourIndex);
@@ -191,17 +199,24 @@ class IndexedBitmap {
     public function putPixel($x, $y, $colourIndex)
     {
         if (!isset($this->lines[$y])) {
-            var_dump(array_keys($this->lines));
             throw new RuntimeException('y value '.$y.' out of range');
         }
 
         $this->lines[$y]->getPixel($x)->setColourIndex($colourIndex);
     }
 
+    public function getPixelObject($x, $y)
+    {
+        if (!isset($this->lines[$y])) {
+            throw new RuntimeException('y value '.$y.' out of range');
+        }
+
+        return $this->lines[$y]->getPixel($x);
+    }
+
     public function getPixel($x, $y)
     {
         if (!isset($this->lines[$y])) {
-            var_dump(array_keys($this->lines));
             throw new RuntimeException('y value '.$y.' out of range');
         }
 

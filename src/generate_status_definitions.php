@@ -22,6 +22,7 @@ $definitions = [
         'top' => 1152,
         'width' => 39,
         'height' => 9,
+        'targetLine' => 8,
     ],
     [
         'label' => 'caption-score',
@@ -29,13 +30,23 @@ $definitions = [
         'top' => 1141,
         'width' => 49,
         'height' => 9,
+        'targetLine' => 8,
     ],
     [
+        'label' => 'caption-high',
+        'left' => 3,
+        'top' => 1163,
+        'width' => 39,
+        'height' => 9,
+        'targetLine' => 8,
+    ],
+     [
         'label' => 'large-digit-0',
         'left' => 183,
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-1',
@@ -43,6 +54,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-2',
@@ -50,6 +62,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-3',
@@ -57,6 +70,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-4',
@@ -64,6 +78,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-5',
@@ -71,6 +86,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-6',
@@ -78,6 +94,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-7',
@@ -85,6 +102,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-8',
@@ -92,6 +110,7 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
     [
         'label' => 'large-digit-9',
@@ -99,11 +118,27 @@ $definitions = [
         'top' => 1092,
         'width' => 18,
         'height' => 18,
+        'targetLine' => 19,
     ],
 ];
 
 $indexedBitmap = IndexedBitmap::loadGif($inputFilename);
 $exportedSprites = [];
+
+$gradientColours = [
+    15,15,15,15,15,
+    14,14,14,14,14,
+    13,13,13,13,13,
+    12,12,12,12,12,
+    11,11,11,11,11,
+    10,10,10,10,10,
+    9,9,9,9,9,
+    8,8,8,8,8,
+    7,7,7,7,7,
+    6,6,6,6,6,
+    5,5,5,5,5,
+    4,4,4,4,4,
+];
 
 foreach ($definitions as $definition) {
     $croppedIndexedBitmap = $indexedBitmap->extractRegionToIndexedBitmap(
@@ -112,6 +147,18 @@ foreach ($definitions as $definition) {
         $definition['width'],
         $definition['height'],
     )->getCopyRoundedTo16PixelDivisibleWidth();
+
+    $targetLineIndex = $definition['targetLine'];
+    for ($ypos = 0; $ypos < $croppedIndexedBitmap->getHeight(); $ypos++) {
+        for ($xpos = 0; $xpos < $croppedIndexedBitmap->getWidth(); $xpos++) {
+            $pixel = $croppedIndexedBitmap->getPixelObject($xpos, $ypos);
+            // something very wrong needs to be fixed in library here
+            if ($pixel->getVisible()) {
+                $pixel->makeVisible($gradientColours[$targetLineIndex]);
+            }
+        }
+        $targetLineIndex++;
+    }
 
     $bitplaneMergedWords = [];
     for ($line = 0; $line < $definition['height']; $line++) {

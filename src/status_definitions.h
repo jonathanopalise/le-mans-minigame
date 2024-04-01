@@ -3,7 +3,11 @@
 
 #include <inttypes.h>
 
-#define STATUS_DEFS_LARGE_DIGITS_BASE 2
+#define STATUS_DEFS_LARGE_DIGITS_BASE 3
+#define STATUS_DEFS_TIME 0
+#define STATUS_DEFS_SCORE 1
+#define STATUS_DEFS_HIGH 2
+
 
 struct StatusDefinition {
     uint16_t source_data_width_pixels;

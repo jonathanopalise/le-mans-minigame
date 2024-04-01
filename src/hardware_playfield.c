@@ -159,11 +159,27 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
     }
 
     draw_status(
-        status_definitions[0].words, // confirmed correct
+        status_definitions[STATUS_DEFS_TIME].words, // confirmed correct
         &hardware_playfield->buffer[160 * 8 + (8 * 8)],
-        status_definitions[0].source_data_width_pixels,
-        status_definitions[0].source_data_height_lines,
+        status_definitions[STATUS_DEFS_TIME].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_TIME].source_data_height_lines,
         13
+    );
+
+    draw_status(
+        status_definitions[STATUS_DEFS_HIGH].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 8 + (1 * 8)],
+        status_definitions[STATUS_DEFS_HIGH].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_HIGH].source_data_height_lines,
+        0
+    );
+
+    draw_status(
+        status_definitions[STATUS_DEFS_SCORE].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 8 + (14 * 8)],
+        status_definitions[STATUS_DEFS_SCORE].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_SCORE].source_data_height_lines,
+        0
     );
 
     draw_status(
