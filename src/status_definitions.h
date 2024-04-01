@@ -3,6 +3,8 @@
 
 #include <inttypes.h>
 
+#define STATUS_DEFS_LARGE_DIGITS_BASE 2
+
 struct StatusDefinition {
     uint16_t source_data_width_pixels;
     uint16_t source_data_height_lines;
