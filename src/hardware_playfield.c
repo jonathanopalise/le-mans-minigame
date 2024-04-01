@@ -174,21 +174,13 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         13 // 128 + 13 = 141
     );
 
-    //draw_status(
-    //    status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].words, // confirmed correct
-    //    &hardware_playfield->buffer[160 * 19 + (10 * 8)],
-    //    status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_width_pixels,
-    //    status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_height_lines,
-    //    2 // 160 + 2 = 162
-    //);
-
-    /*draw_status(
-        0x12345678,
-        0xdeadbeef,
-        0xf00d,
-        0x9999,
-        0x3333
-    );*/
+    draw_status(
+        status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 19 + (10 * 8)],
+        status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_height_lines,
+        2 // 160 + 2 = 162
+    );
 }
 
 void hardware_playfield_init()

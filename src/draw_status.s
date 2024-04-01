@@ -15,8 +15,6 @@ _draw_status:
     tst.w d6
     beq _noskew
 
-    moveq.l #0,d4
-    add.w #16,d2
 
 _noskew:
 
@@ -31,7 +29,23 @@ _noskew:
     lea _rightendmasks,a2     ; could just advance existing a2 pointer here
     move.w d2,d0              ; data width pixels into d0
     add.w d6,d0               ; calculate skewed sprite width
-    and.w #$f,d0              ; endmask3 lookup table index
+
+    move.w d2,d1              ; copy unskewed sprite width to d1
+    add.w #15,d1
+    lsr.w #4,d1               ; number of 16 pixel blocks required by unskewed sprite
+    move.w d0,d5              ; copy skewed sprite width to d5
+    add.w #15,d5
+    lsr.w #4,d5               ; number of 16 pixel blocks required by skewed sprite
+    cmp.w d1,d5               ; do the unskewed and skewed sprites need the same number of 16 pixel blocks?
+    beq.s _no_block_add
+
+    moveq.l #0,d4             ; adjust source y increment
+
+_no_block_add:
+
+    ; d5 should be xcount
+
+    and.w #$f,d0              ; endmask3 lookup table index from skewed width
     add.w d0,d0               ; endmask3 lookup table offset
     move.w (a2,d0),d0         ; endmask3 value
     move.w d0,$ffff8a2c.w     ; set endmask3
@@ -43,19 +57,15 @@ _noskew:
     move.w d4,$ffff8a22.w     ; source y increment DOUBLE CHECK!
     move.w #8,$ffff8a2e.w     ; dest x increment = 8
 
-    move.w d2,d0              ; data width pixels into d0
-    add.w #15,d0              ; double check this
-    and.w #$fff0,d0           ; not sure if this is necessary
-    lsr.w #4,d0               ; width in 16 pixel blocks
-    move.w d0,$ffff8a36.w     ; x count
+    move.w d5,$ffff8a36.w     ; x count
 
     ; so we are trying to do 4 blitter passes
     ; each pass draws all words on all lines within a single plane
     ; so it'll be something like 160 - (xcount * 8)
 
     move.w #168,d1
-    lsl.w #3,d0               ; existing xcount value - this can be tidied up
-    sub.w d0,d1               ; compute dest x increment
+    lsl.w #3,d5               ; existing xcount value - this can be tidied up
+    sub.w d5,d1               ; compute dest y increment
     move.w d1,$ffff8a30.w     ; set dest y increment
 
     move.w #$0203,$ffff8a3a.w ; set hop/op
