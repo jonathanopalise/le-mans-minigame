@@ -60,7 +60,7 @@ vbl:
 
     lea.l _sky_gradient,a0
 
-    move.w #$dd2,$ffff8242.w
+    move.w #$ee1,$ffff8242.w ; status panel colour
 
     lea.l $ffff8246.w,a1
     ;move.w #$321,$ffff8242.w ; mountain colour 1
