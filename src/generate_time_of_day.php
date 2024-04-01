@@ -309,8 +309,8 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
 
 $outputWords = [];
 foreach ($timeOfDayColours as $timeOfDayColour) {
-    // mountain colours
-    foreach ($timeOfDayColour['adjustedMountainColours'] as $rgbArray) {
+    // sky gradient
+    foreach ($timeOfDayColour['skyGradientColours'] as $rgbArray) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
         $blue = $rgbArray[BLUE];
@@ -318,8 +318,8 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
     }
 
-    // sky gradient
-    foreach ($timeOfDayColour['skyGradientColours'] as $rgbArray) {
+    // mountain colours
+    foreach ($timeOfDayColour['adjustedMountainColours'] as $rgbArray) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
         $blue = $rgbArray[BLUE];

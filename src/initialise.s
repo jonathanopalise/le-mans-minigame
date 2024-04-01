@@ -59,10 +59,10 @@ vbl:
     move.w	#$2300,sr			; Interrupts back on
 
     lea.l _sky_gradient,a0
-    lea.l $ffff8242.w,a1
+    lea.l $ffff8246.w,a1
     ;move.w #$321,$ffff8242.w ; mountain colour 1
     ;move.w #$200,$ffff8244.w ; mountain colour 2
-    move.l (a0)+,(a1)+ ; mountains start
+    ;move.l (a0)+,(a1)+ ; mountain colours 1 & 2 - 8242 and 8244
     move.l (a0)+,(a1)+ ; sky gradient start
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
@@ -88,14 +88,17 @@ wait_timer_1:
 
     ; scenery colours, then tail light
     lea _scenery_colours,a0
+    lea $ffff8242.w,a1
+    move.l (a0)+,(a1)+ ; mountain colours 1, 2
     lea $ffff8248.w,a1
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.w (a0)+,(a1)+
+    move.l (a0)+,(a1)+ ; indexes 4, 5
+    move.l (a0)+,(a1)+ ; indexes 6, 7
+    move.l (a0)+,(a1)+ ; indexes 8, 9
+    move.l (a0)+,(a1)+ ; indexes 10, 11
+    move.l (a0)+,(a1)+ ; indexes 12, 13
+    move.w (a0)+,(a1)+ ; index 14
 
+    ; tail lights should be at index 14
     ;move.w #$f00,(a1)+ ; tail lights
 
     ;move.w #$133,$ffff8248.w
@@ -150,8 +153,6 @@ wait_timer_2:
     rte
 
 _sky_gradient:
-    dc.w $321f
-    dc.w $200f
     dc.w $07f
     dc.w $0ef
     dc.w $06f
@@ -167,6 +168,8 @@ _sky_gradient:
     dc.w $01f
 
 _scenery_colours:
+    dc.w $321f
+    dc.w $200f
     dc.w $133
     dc.w $3dc
     dc.w $dde

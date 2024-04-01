@@ -44,8 +44,6 @@ void game_loop()
 
     uint16_t *src = &time_of_day[time_of_day_offset];
     uint16_t *dest = &sky_gradient;
-    *dest++ = *src++; // 2 colours for mountains
-    *dest++ = *src++;
     *dest++ = *src++; // remaining colours for sky
     *dest++ = *src++;
     *dest++ = *src++;
@@ -61,6 +59,8 @@ void game_loop()
     *dest++ = *src++;
 
     dest = &scenery_colours;
+    *dest++ = *src++; // 2 colours for mountains
+    *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
@@ -103,10 +103,10 @@ void game_loop()
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
-            *dest++ = *src++;
-            *dest++ = *src++;
 
             dest = &scenery_colours;
+            *dest++ = *src++;
+            *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
             *dest++ = *src++;
