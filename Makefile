@@ -10,6 +10,7 @@ OBJECT_FILES =\
 	src/game_loop.o\
 	src/hardware_playfield.o\
     src/draw_sprite.o\
+    src/draw_status.o\
     src/draw_compiled_sprite.o\
 	src/vbl_handler.o\
     src/road_movement.o\
@@ -27,6 +28,7 @@ OBJECT_FILES =\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
     src/generated/sprite_definitions.o\
+    src/generated/status_definitions.o\
     src/generated/time_of_day.o\
 	src/initialise.o\
 	src/nf_asmv.o
@@ -44,11 +46,14 @@ src/lemans.o: src/lemans.c $(OBJECT_FILES)
 src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/opponent_cars.h src/draw_compiled_sprite.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
-src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/sprite_definitions.h src/bitplane_draw_record.h src/natfeats.h
+src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/hardware_playfield.c -o src/hardware_playfield.o
 
 src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
 	$(VASM) $(VASM_OPTS) src/draw_sprite.s -Felf -o src/draw_sprite.o
+
+src/draw_status.o: src/draw_status.s src/draw_status.h
+	$(VASM) $(VASM_OPTS) src/draw_status.s -Felf -o src/draw_status.o
 
 src/draw_compiled_sprite.o: src/draw_compiled_sprite.s src/draw_compiled_sprite.h
 	$(VASM) $(VASM_OPTS) src/draw_compiled_sprite.s -Felf -o src/draw_compiled_sprite.o
@@ -115,6 +120,12 @@ src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprit
 
 src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/library.php src/sprite_spans.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
 	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
+
+src/generated/status_definitions.o: src/generated/status_definitions.c src/status_definitions.h
+	$(CC) $(CFLAGS) -c src/generated/status_definitions.c -o src/generated/status_definitions.o
+
+src/generated/status_definitions.c: src/generate_status_definitions.php $(ASSETS_GIF) src/status_definitions_template.php src/library.php
+	$(PHP) src/generate_status_definitions.php $(ASSETS_GIF) src/generated/status_definitions.c
 
 src/generated/time_of_day.o: src/generated/time_of_day.c src/time_of_day.h
 	$(CC) $(CFLAGS) -c src/generated/time_of_day.c -o src/generated/time_of_day.o

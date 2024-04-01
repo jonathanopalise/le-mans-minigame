@@ -5,6 +5,8 @@
 #include "hardware_playfield.h"
 #include "blitter.h"
 #include "draw_sprite.h"
+#include "draw_status.h"
+#include "status_definitions.h"
 #include "natfeats.h"
 
 #define HARDWARE_PLAYFIELD_COUNT 3
@@ -155,6 +157,31 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
             current_dest++;
         }
     }
+
+    draw_status(
+        status_definitions[0].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 8 + (8 * 8)],
+        status_definitions[0].source_data_width_pixels,
+        status_definitions[0].source_data_height_lines,
+        13
+    );
+
+    draw_status(
+        status_definitions[1].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 28 + (16*4)],
+        status_definitions[1].source_data_width_pixels,
+        status_definitions[1].source_data_height_lines,
+        0
+    );
+
+
+    /*draw_status(
+        0x12345678,
+        0xdeadbeef,
+        0xf00d,
+        0x9999,
+        0x3333
+    );*/
 }
 
 void hardware_playfield_init()
