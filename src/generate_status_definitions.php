@@ -155,6 +155,10 @@ foreach ($definitions as $definition) {
             // something very wrong needs to be fixed in library here
             if ($pixel->getVisible()) {
                 $pixel->makeVisible($gradientColours[$targetLineIndex]);
+            } else {
+                if ($pixel->getColourIndex() == 9) {
+                    $pixel->setColourIndex(1);
+                }
             }
         }
         $targetLineIndex++;

@@ -59,6 +59,9 @@ vbl:
     move.w	#$2300,sr			; Interrupts back on
 
     lea.l _sky_gradient,a0
+
+    move.w #$dd2,$ffff8242.w
+
     lea.l $ffff8246.w,a1
     ;move.w #$321,$ffff8242.w ; mountain colour 1
     ;move.w #$200,$ffff8244.w ; mountain colour 2
