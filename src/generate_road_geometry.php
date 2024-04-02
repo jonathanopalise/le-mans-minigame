@@ -49,7 +49,7 @@ $yVector = $farVisibleScanlineYVector;
 $scanlines = [];
 
 $unnormalisedSkewAddValuesMultiplier = 10;
-$requiredObjectXPositions = [0,50,100,225,250,275];
+$requiredObjectXPositions = [0,45,120,225,250,275];
 
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
@@ -60,7 +60,7 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
     $unnormalisedSkewAddValues = [];
     $objectXposValues = [];
 
-    for ($index = 0; $index < 255; $index++) {
+    for ($index = 0; $index <= 275; $index++) {
         $value = intval((floatval($index) * 211.408) * $unnormalisedSkewAddValuesMultiplier);
         if ($index < 64) {
             $unnormalisedSkewAddValues[] = $value;

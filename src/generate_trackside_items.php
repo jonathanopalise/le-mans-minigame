@@ -231,7 +231,7 @@ $definitions = [
             'SCENERY_TYPE_TALL_TREE',
             'SCENERY_TYPE_ROUND_TREE',
         ],
-        'xpos' => 255,
+        'xpos' => 5,
         'track_position' => 1120000,
         'count' => 2,
         'gap' => 7000,
@@ -259,7 +259,7 @@ $definitions = [
         'types' => [
             'SCENERY_TYPE_ROUND_TREE',
         ],
-        'xpos' => 255,
+        'xpos' => 5,
         'track_position' => 1165000,
         'count' => 9,
         'gap' => 10000,
@@ -268,7 +268,7 @@ $definitions = [
         'types' => [
             'SCENERY_TYPE_ROUND_TREE',
         ],
-        'xpos' => 255,
+        'xpos' => 5,
         'track_position' => 1165000,
         'count' => 9,
         'gap' => 10000,
@@ -307,7 +307,7 @@ $definitions = [
         'types' => [
             'SCENERY_TYPE_ROUND_TREE',
         ],
-        'xpos' => -255,
+        'xpos' => -5,
         'track_position' => 1332000,
         'count' => 7,
         'gap' => 14000,
@@ -316,7 +316,7 @@ $definitions = [
         'types' => [
             'SCENERY_TYPE_ROUND_TREE',
         ],
-        'xpos' => -255,
+        'xpos' => -5,
         'track_position' => 1332000,
         'count' => 7,
         'gap' => 14000,
