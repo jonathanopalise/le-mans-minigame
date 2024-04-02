@@ -19,6 +19,8 @@ struct HardwarePlayfield {
     uint16_t sprites_drawn;
 };
 
+extern uint16_t hardware_playfield_shaking;
+
 void hardware_playfield_handle_vbl();
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos);
 void hardware_playfield_erase_sprites();

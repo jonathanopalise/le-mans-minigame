@@ -1,6 +1,7 @@
 #include <inttypes.h>
 #include "player_car.h"
 #include "initialise.h"
+#include "hardware_playfield.h"
 #include <stdio.h>
 
 struct TrackSegment *player_car_current_track_segment;
@@ -83,6 +84,18 @@ void player_car_handle_inputs()
 
     player_car_track_position += player_car_speed;
     player_car_logical_xpos += player_car_steering * player_car_speed;
+
+    if ((player_car_logical_xpos > 11500000 || player_car_logical_xpos < -11500000)) {
+        if (player_car_speed > 100) {
+            player_car_speed -= 8;
+        }
+        if (player_car_speed < 0) {
+            player_car_speed = 0;
+        }
+        hardware_playfield_shaking = (player_car_speed > 0);
+    } else {
+        hardware_playfield_shaking = 0;
+    }
 
     if (player_car_logical_xpos > 15000000) {
         player_car_logical_xpos = 15000000;

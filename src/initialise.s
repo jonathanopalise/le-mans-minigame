@@ -3,6 +3,7 @@
     public _sky_gradient
     public _scenery_colours
     public _ground_colours
+    public _vertical_shift
 
 _initialise:
 
@@ -52,7 +53,9 @@ vbl:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#(80+4)-29,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.w  #((80+4)-29),d0
+    add.w   _vertical_shift,d0
+    move.b	d0,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
     move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
@@ -206,5 +209,8 @@ joy_on:
     dc.b $14,$12
 
 _joy_data:
+    dc.w 1
+
+_vertical_shift:
     dc.w 1
 

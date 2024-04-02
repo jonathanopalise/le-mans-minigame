@@ -6,6 +6,7 @@
 void initialise();
 
 extern uint8_t joy_data;
+extern uint16_t vertical_shift;
 extern uint16_t sky_gradient;
 extern uint16_t scenery_colours;
 extern uint16_t ground_colours;

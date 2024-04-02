@@ -8,12 +8,16 @@
 #include "draw_status.h"
 #include "status_definitions.h"
 #include "natfeats.h"
+#include "random.h"
+#include "initialise.h"
 
 #define HARDWARE_PLAYFIELD_COUNT 3
 
 static int16_t visible_index;
 volatile static int16_t ready_index;
 static int16_t drawing_index;
+
+uint16_t hardware_playfield_shaking = 0;
 
 struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 
@@ -22,11 +26,34 @@ void hardware_playfield_handle_vbl()
 	if (ready_index >= 0) {
 		visible_index = ready_index;
 		ready_index = -1;
-		Setscreen(
+
+        if (hardware_playfield_shaking) {
+            vertical_shift = random() & 3;
+        } else {
+            vertical_shift = 0;
+        }
+
+        // no idea why we specify drawing_index here
+        uint32_t visible_buffer_address = hardware_playfields[visible_index].buffer;
+        if (vertical_shift != 0) {
+            visible_buffer_address -= vertical_shift * 160;
+        }
+        uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
+        uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
+        uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
+
+        *((volatile uint8_t *)0xffff8201) = address_high_byte;
+        *((volatile uint8_t *)0xffff8203) = address_mid_byte;
+        *((volatile uint8_t *)0xffff820d) = address_low_byte;
+
+        *((volatile uint8_t *)0xffff8205) = address_high_byte;
+        *((volatile uint8_t *)0xffff8207) = address_mid_byte;
+        *((volatile uint8_t *)0xffff8209) = address_low_byte;
+		/*Setscreen(
             hardware_playfields[visible_index].buffer,
             hardware_playfields[drawing_index].buffer,
             -1
-        );
+        );*/
     } else {
         //nf_print("Frame dropped :(");
     }
@@ -201,6 +228,8 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
 
 void hardware_playfield_init()
 {
+    hardware_playfield_shaking = 0;
+
     visible_index = 0;
     ready_index = -1;
     drawing_index = 1;
