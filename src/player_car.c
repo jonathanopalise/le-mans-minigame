@@ -50,12 +50,12 @@ void player_car_handle_inputs()
             player_car_speed = 1000;
         }
     } else if (joy_down) {
-        player_car_speed -= 8;
+        player_car_speed -= 12;
         if (player_car_speed < 0) {
             player_car_speed = 0;
         }
     } else {
-        player_car_speed -= 1;
+        player_car_speed -= 2;
         if (player_car_speed < 0) {
             player_car_speed = 0;
         }

@@ -81,7 +81,7 @@ void road_corners_update() {
     }
 
     current_road_curvature -= total_change_to_apply;
-    player_car_logical_xpos += current_road_curvature * ((player_car_speed * player_car_speed) / 500);
+    player_car_logical_xpos += current_road_curvature * ((player_car_speed * player_car_speed) / 375);
 
     mountains_shift += current_road_curvature * player_car_speed;
     if (mountains_shift < 0) {

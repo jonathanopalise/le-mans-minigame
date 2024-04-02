@@ -22,6 +22,7 @@ OBJECT_FILES =\
     src/player_car.o\
     src/opponent_cars.o\
     src/display_list.o\
+    src/random.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -82,11 +83,14 @@ src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/r
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
-src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h
+src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h
 	$(CC) $(CFLAGS) -c src/opponent_cars.c -o src/opponent_cars.o
 
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
+
+src/random.o: src/random.c src/random.h
+	$(CC) $(CFLAGS) -c src/random.c -o src/random.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o
