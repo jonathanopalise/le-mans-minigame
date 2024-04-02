@@ -48,6 +48,7 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->lane = 1;
     current_opponent_car->speed = 600;
+    current_opponent_car->max_speed = 600;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
 
@@ -56,6 +57,7 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->lane = 2;
     current_opponent_car->speed = 650;
+    current_opponent_car->max_speed = 650;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
 
@@ -64,6 +66,7 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 10000;
     current_opponent_car->lane = 3;
     current_opponent_car->speed = 700;
+    current_opponent_car->max_speed = 700;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
 
@@ -77,7 +80,6 @@ void opponent_cars_update()
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 855 - corner_sharpness;
-    int32_t normalised_opponent_car_speed;
     uint32_t random_number;
     uint16_t car_selector;
     uint16_t lane_status[4];
@@ -86,12 +88,16 @@ void opponent_cars_update()
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
 
-        normalised_opponent_car_speed = current_opponent_car->speed;
-        if (normalised_opponent_car_speed > curvature_max_speed) {
-            normalised_opponent_car_speed = curvature_max_speed;
+        if (current_opponent_car->speed > curvature_max_speed) {
+            current_opponent_car->speed = curvature_max_speed;
+        } else {
+            current_opponent_car->speed += 2;
+            if (current_opponent_car->speed > current_opponent_car->max_speed) {
+                current_opponent_car->speed = current_opponent_car->max_speed;
+            }
         }
 
-        current_opponent_car->player_relative_track_position += normalised_opponent_car_speed;
+        current_opponent_car->player_relative_track_position += current_opponent_car->speed;
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->player_relative_track_position > 65536) {
@@ -116,7 +122,7 @@ void opponent_cars_update()
             current_opponent_car->base_sprite_index = base_sprite_index;
 
             // speed - 8 bits
-            current_opponent_car->speed = 300 + ((random_number >> 3) & 511);
+            current_opponent_car->speed = current_opponent_car->max_speed = 300 + ((random_number >> 3) & 511);
 
             for (uint16_t index = 0; index < 4; index++) {
                 lane_status[index] = 0; // empty

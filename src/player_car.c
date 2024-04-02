@@ -84,9 +84,9 @@ void player_car_handle_inputs()
     player_car_track_position += player_car_speed;
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
-    if (player_car_logical_xpos > 13000000) {
-        player_car_logical_xpos = 13000000;
-    } else if (player_car_logical_xpos < -13000000) {
-        player_car_logical_xpos = -13000000;
+    if (player_car_logical_xpos > 15000000) {
+        player_car_logical_xpos = 15000000;
+    } else if (player_car_logical_xpos < -15000000) {
+        player_car_logical_xpos = -15000000;
     }
 }

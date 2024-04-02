@@ -9,6 +9,7 @@ struct OpponentCar {
     int32_t player_relative_track_position;
     uint16_t lane;
     uint32_t speed;
+    uint32_t max_speed;
     uint16_t active;
     uint16_t base_sprite_index;
 };
