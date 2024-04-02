@@ -49,6 +49,8 @@ $yVector = $farVisibleScanlineYVector;
 $scanlines = [];
 
 $unnormalisedSkewAddValuesMultiplier = 10;
+$requiredObjectXPositions = [0,50,100,225,250,275];
+
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
     $xVector -= $scanlineXVectorAddQuantity;
@@ -56,13 +58,22 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
 
     // note the magic number to make sure that normalisedSkewAddValues[1] on the player car scanline is exactly 65536
     $unnormalisedSkewAddValues = [];
-    for ($index = 0; $index < 256; $index++) {
-        $unnormalisedSkewAddValues[] = intval((floatval($index) * 211.408) * $unnormalisedSkewAddValuesMultiplier);
+    $objectXposValues = [];
+
+    for ($index = 0; $index < 255; $index++) {
+        $value = intval((floatval($index) * 211.408) * $unnormalisedSkewAddValuesMultiplier);
+        if ($index < 64) {
+            $unnormalisedSkewAddValues[] = $value;
+        }
+        if (in_array($index, $requiredObjectXPositions)) {
+            $objectXposValues[] = $value;
+        }
     }
 
     $scanlines[] = [
         'distanceAlongRoad' => $distanceAlongRoad,
         'unnormalisedSkewAddValues' => $unnormalisedSkewAddValues,
+        'objectXposValues' => $objectXposValues,
     ];
 
     $unnormalisedSkewAddValuesMultiplier+=4;
@@ -73,7 +84,7 @@ $cornerAddValue = 0;
 // start from player scanline and go up
 for ($scanlineIndex = PLAYER_CAR_SCANLINE; $scanlineIndex >= 0; $scanlineIndex--) {
     $unnormalisedCornerAddValues = [];
-    for ($index = 0; $index < 256; $index++) {
+    for ($index = 0; $index < 64; $index++) {
         $unnormalisedCornerAddValues[] = $cornerValue * $index;
     }
     $scanlines[$scanlineIndex]['unnormalisedCornerAddValues'] = $unnormalisedCornerAddValues;
@@ -129,6 +140,11 @@ foreach ($scanlines as $key => $scanline) {
     $lines[] = sprintf(
         '       .logical_xpos_add_values = {%s},',
         implode(', ', $scanline['unnormalisedSkewAddValues'])
+    );
+
+    $lines[] = sprintf(
+        '       .object_xpos_add_values = {%s},',
+        implode(', ', $scanline['objectXposValues'])
     );
 
     $lines[] = sprintf(

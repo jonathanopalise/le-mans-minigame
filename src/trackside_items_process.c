@@ -44,9 +44,9 @@ void trackside_items_process()
                 }
 
                 if (current_trackside_item->xpos > 0) {
-                    screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[current_trackside_item->xpos]) >> 16));
+                    screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->object_xpos_add_values[current_trackside_item->xpos]) >> 16));
                 } else {
-                    screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->logical_xpos_add_values[-current_trackside_item->xpos]) >> 16));
+                    screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->object_xpos_add_values[-current_trackside_item->xpos]) >> 16));
                 }
                 screen_xpos += 160;
 

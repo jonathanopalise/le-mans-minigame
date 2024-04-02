@@ -11,9 +11,10 @@ struct RoadScanline {
     // when the camera shifts to the left or right
     // e.g. to shift the camera 128 units to the right:
     // unnormalised_skew += current_scanline->unnormalised_skew_add_values[128]; 
-    int32_t logical_xpos_add_values[256];
+    int32_t logical_xpos_add_values[64];
+    int32_t object_xpos_add_values[5];
 
-    int32_t logical_xpos_corner_add_values[256];
+    int32_t logical_xpos_corner_add_values[64];
 
     // runtime values
     int32_t current_logical_xpos;

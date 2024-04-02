@@ -43,7 +43,7 @@ void opponent_cars_init()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->xpos = -90;
+    current_opponent_car->xpos = -1;
     current_opponent_car->speed = 600;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
@@ -51,7 +51,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->xpos = 0;
+    current_opponent_car->xpos = -2;
     current_opponent_car->speed = 650;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
@@ -59,7 +59,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->xpos = 90;
+    current_opponent_car->xpos = 1;
     current_opponent_car->speed = 700;
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
@@ -121,9 +121,9 @@ void opponent_cars_process()
                 }
 
                 if (current_opponent_car->xpos > 0) {
-                    screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->logical_xpos_add_values[current_opponent_car->xpos]) >> 16));
+                    screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->object_xpos_add_values[current_opponent_car->xpos]) >> 16));
                 } else {
-                    screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->logical_xpos_add_values[-current_opponent_car->xpos]) >> 16));
+                    screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->object_xpos_add_values[-current_opponent_car->xpos]) >> 16));
                 }
 
                 sprite_aspect = (screen_xpos << 1) - (current_road_curvature >> 1);
