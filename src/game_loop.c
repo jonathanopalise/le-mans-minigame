@@ -144,20 +144,24 @@ void game_loop()
         opponent_cars_process();
         //*((volatile uint16_t *)0xffff8240) = 0x400; // red
 
-        player_car_sprite_definition_offset = 8;
+        player_car_sprite_definition_offset = player_car_get_sprite_definition();
+
+        /*player_car_sprite_definition_offset = 8;
         if (player_car_speed > 0) {
             if (player_car_steering <= -250) {
                 player_car_sprite_definition_offset += 16;
             } else if (player_car_steering >= 250) {
                 player_car_sprite_definition_offset += 8;
             }
-        }
+        }*/
 
-        display_list_add_sprite(
-            &sprite_definitions[player_car_sprite_definition_offset],
-            160,
-            194
-        );
+        if (player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) {
+            display_list_add_sprite(
+                &sprite_definitions[player_car_sprite_definition_offset],
+                160,
+                194 - (player_car_altitude >> 8)
+            );
+        }
 
         //*((volatile uint16_t *)0xffff8240) = 0x333; // grey
 

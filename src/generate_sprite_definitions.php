@@ -1316,6 +1316,54 @@ $definitions = [
         'width' => 13,
         'height' => 18,
     ],
+    [
+        'label' => 'red-car-flip-1',
+        'left' => 3,
+        'top' => 1724,
+        'width' => 105,
+        'height' => 41,
+    ],
+    [
+        'label' => 'red-car-flip-2',
+        'left' => 111,
+        'top' => 1724,
+        'width' => 108,
+        'height' => 37,
+    ],
+    [
+        'label' => 'red-car-flip-3',
+        'left' => 118,
+        'top' => 1766,
+        'width' => 111,
+        'height' => 51,
+    ],
+    [
+        'label' => 'red-car-flip-4',
+        'left' => 118,
+        'top' => 1830,
+        'width' => 108,
+        'height' => 37,
+    ],
+    [
+        'label' => 'red-car-flip-5',
+        'left' => 3,
+        'top' => 1828,
+        'width' => 105,
+        'height' => 39,
+    ],
+    [
+        'label' => 'red-car-flip-6',
+        'left' => 3,
+        'top' => 1766,
+        'width' => 112,
+        'height' => 59,
+    ],
+
+
+
+
+
+
 
 
     // blue car TBC ...

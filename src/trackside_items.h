@@ -16,6 +16,7 @@
 #define SCENERY_TYPE_BP (128 + 24)
 #define SCENERY_TYPE_TALL_TREE (136 + 24)
 #define SCENERY_TYPE_SHORT_TREE (144 + 24)
+#define SCENERY_TYPE_RED_CAR_FLIP (152 + 24)
 
 struct TracksideItem {
     uint16_t type;

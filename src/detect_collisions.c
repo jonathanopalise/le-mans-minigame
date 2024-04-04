@@ -28,8 +28,7 @@ void detect_collisions()
             current_trackside_item_logical_xpos > (player_car_logical_xpos - 4000000) && 
             current_trackside_item_logical_xpos < (player_car_logical_xpos + 4000000)
         ) {
-            // collision
-            nf_print("COLLISION!");
+            player_car_crash();
         }
 
         current_trackside_item++;
