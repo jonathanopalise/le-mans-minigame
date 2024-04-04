@@ -24,6 +24,7 @@ static int nf_ok;
 /* handles for NF features that may be used more frequently */
 static long nfid_print, nfid_debugger, nfid_fastforward;
 
+char nf_strbuf[256];
 
 /* API documentation is in natfeats.h header */
 

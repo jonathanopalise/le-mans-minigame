@@ -27,6 +27,7 @@ long CDECL nf_call(long ID, ...);
 /* call only from Supervisor mode */
 int CDECL detect_nf(void);
 
+extern char nf_strbuf[256];
 
 /* natfeats.c public prototypes */
 

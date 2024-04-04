@@ -38,7 +38,7 @@ void road_render()
 
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
 
-        if ((current_road_scanline->distance_along_road + player_car_track_position) & 2048) {
+        if ((current_road_scanline->distance_along_road + camera_track_position) & 2048) {
             // draw two textured bitplanes
             *((volatile int16_t *)BLITTER_Y_COUNT) = 2; // 8a38
             *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = (line_start_source - 2) - skew_adjust; // 8a24, -4 bytes

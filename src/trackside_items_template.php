@@ -13,7 +13,7 @@ struct TracksideItem trackside_items[] = (struct TracksideItem[]) {
     {
         .type = 0,
         .xpos = 0,
-        .track_position = -1
+        .track_position = 0x7fffffff
     }
 };
  

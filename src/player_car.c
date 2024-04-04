@@ -2,13 +2,14 @@
 #include "player_car.h"
 #include "initialise.h"
 #include "hardware_playfield.h"
+#include "natfeats.h"
 #include <stdio.h>
 
 struct TrackSegment *player_car_current_track_segment;
 uint32_t player_car_current_track_segment_start_position;
 uint32_t player_car_current_track_segment_end_position;
 uint16_t player_car_current_track_segment_changes_applied;
-uint32_t player_car_track_position;
+int32_t camera_track_position;
 int32_t player_car_logical_xpos;
 int32_t player_car_speed;
 int32_t player_car_steering;
@@ -19,7 +20,7 @@ void player_car_initialise()
     player_car_current_track_segment_start_position = 0;
     player_car_current_track_segment_end_position = (player_car_current_track_segment->change_frequency * player_car_current_track_segment->change_count);
     player_car_current_track_segment_changes_applied = 0;
-    player_car_track_position = 0;
+    camera_track_position = 0;
     player_car_logical_xpos = 0;
     player_car_speed = 0;
     player_car_steering = 0;
@@ -35,15 +36,22 @@ void player_car_handle_inputs()
 
     char strbuf[256];
 
-    /*if (joy_fire) {
+    if (joy_fire) {
         snprintf(
-            strbuf,
+            nf_strbuf,
             256,
             "track_position: %d\n",
-            player_car_track_position
+            camera_track_position
         );
-        nf_print(strbuf);
-    }*/
+        nf_print(nf_strbuf);
+        snprintf(
+            nf_strbuf,
+            256,
+            "logical_xpos: %d\n",
+            player_car_logical_xpos
+        );
+        nf_print(nf_strbuf);
+    }
 
     if (joy_up) {
         player_car_speed += 2;
@@ -82,7 +90,7 @@ void player_car_handle_inputs()
 
     // TODO: slowdown when on grass
 
-    player_car_track_position += player_car_speed;
+    camera_track_position += player_car_speed;
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
     if ((player_car_logical_xpos > 11500000 || player_car_logical_xpos < -11500000)) {

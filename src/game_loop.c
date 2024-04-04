@@ -14,6 +14,7 @@
 #include "opponent_cars.h"
 #include "draw_compiled_sprite.h"
 #include "time_of_day.h"
+#include "detect_collisions.h"
 #include "natfeats.h"
 
 void game_loop()
@@ -24,11 +25,11 @@ void game_loop()
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
-    /*if (!nf_init()) {
+    if (!nf_init()) {
         while (1==1) {}
-    }*/
+    }
 
-    //nf_print("hello from lemans!");
+    nf_print("hello from lemans!");
 
     hardware_playfield_init();
     initialise();
@@ -128,6 +129,7 @@ void game_loop()
         //*((volatile uint16_t *)0xffff8240) = 0x0;
         player_car_handle_inputs();
         opponent_cars_update();
+        detect_collisions();
         //*((volatile uint16_t *)0xffff8240) = 0x740; // yellow - road geometry calculations
         road_corners_update();
         //*((volatile uint16_t *)0xffff8240) = 0x044; // turqoise - render mountains
@@ -137,6 +139,7 @@ void game_loop()
         //*((volatile uint16_t *)0xffff8240) = 0x004; // blue - erase sprites
         hardware_playfield_erase_sprites();
         //*((volatile uint16_t *)0xffff8240) = 0x040; // green - add trackside items to display list
+        trackside_items_update_nearest();
         trackside_items_process();
         opponent_cars_process();
         //*((volatile uint16_t *)0xffff8240) = 0x400; // red

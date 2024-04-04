@@ -22,6 +22,7 @@ OBJECT_FILES =\
     src/player_car.o\
     src/opponent_cars.o\
     src/display_list.o\
+    src/detect_collisions.o\
     src/random.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
@@ -44,7 +45,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/opponent_cars.h src/draw_compiled_sprite.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/draw_compiled_sprite.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h
@@ -89,13 +90,16 @@ src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h sr
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
+src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h
+	$(CC) $(CFLAGS) -c src/detect_collisions.c -o src/detect_collisions.o
+
 src/random.o: src/random.c src/random.h
 	$(CC) $(CFLAGS) -c src/random.c -o src/random.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o
 
-src/generated/trackside_items.c: src/generate_trackside_items.php
+src/generated/trackside_items.c: src/generate_trackside_items.php src/trackside_items_template.php
 	$(PHP) src/generate_trackside_items.php src/generated/trackside_items.c
 
 src/generated/trackside_items.o: src/generated/trackside_items.c src/trackside_items.h

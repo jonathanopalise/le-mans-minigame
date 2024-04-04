@@ -12,6 +12,19 @@ void trackside_items_process_init()
     current_nearest_trackside_item = trackside_items;
 }
 
+void trackside_items_update_nearest()
+{
+    while (camera_track_position > current_nearest_trackside_item->track_position) {
+        current_nearest_trackside_item++;
+        if (current_nearest_trackside_item->track_position == 0x3fffffff) {
+            // so once we get to this point, the nearest trackside item is behind the player!
+            // this is why we need the > 0 check in the loop below
+            current_nearest_trackside_item = trackside_items;
+            break;
+        }
+    }
+}
+
 void trackside_items_process()
 {
     int8_t trackside_item_scanline_index;
@@ -19,23 +32,18 @@ void trackside_items_process()
     int16_t sprite_index;
     int16_t screen_xpos;
 
-    // TODO: player_car_track_position should be camera_track_position
-    // we'll need to derive player_car_track_position for collision calcs
-
-    while (player_car_track_position > current_nearest_trackside_item->track_position) {
-        current_nearest_trackside_item++;
-        if (current_nearest_trackside_item->track_position == 0xffffffff) {
-            current_nearest_trackside_item = trackside_items;
-            break;
-        }
-    }
+    // TODO: camera_track_position should be camera_track_position
+    // we'll need to derive camera_track_position for collision calcs
 
     struct TracksideItem *current_trackside_item = current_nearest_trackside_item;
-    int32_t current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
+    int32_t current_trackside_item_camera_relative_position = current_trackside_item->track_position - camera_track_position;
 
-    while (current_trackside_item_player_relative_position >=0 && current_trackside_item_player_relative_position < 35000) {
-        //if (current_trackside_item_player_relative_position >= 0) {
-            trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_player_relative_position];
+    if (current_trackside_item_camera_relative_position < 0) {
+        return;
+    }
+
+    while (current_trackside_item_camera_relative_position < 35000) {
+            trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
             if (trackside_item_scanline_index != -1) {
                 road_scanline = &road_scanlines[trackside_item_scanline_index];
                 sprite_index = (current_trackside_item->type + 7) - (trackside_item_scanline_index / 6);
@@ -57,10 +65,8 @@ void trackside_items_process()
                 );
             }
 
-        //}
-
         current_trackside_item++;
-        current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
+        current_trackside_item_camera_relative_position = current_trackside_item->track_position - camera_track_position;
         /*if (current_trackside_item->track_position == 0xffffffff) {
             break;
         }*/

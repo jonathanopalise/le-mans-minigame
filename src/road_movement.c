@@ -32,7 +32,7 @@ void road_corners_update() {
     int32_t total_change_to_apply = 0;
     uint16_t current_segment_changes_passed;
 
-    if (player_car_track_position > player_car_current_track_segment_end_position) {
+    if (camera_track_position > player_car_current_track_segment_end_position) {
         // apply all changes from old track segment before moving onto new one
         segment_changes_to_apply = player_car_current_track_segment->change_count - player_car_current_track_segment_changes_applied;
         if (player_car_current_track_segment->change_direction == DIRECTION_LEFT) {
@@ -45,7 +45,7 @@ void road_corners_update() {
 
         // if new track segment has no changes, wrap back to start of track
         if (player_car_current_track_segment->change_count == 0) {
-            player_car_track_position -= player_car_current_track_segment_end_position;
+            camera_track_position -= player_car_current_track_segment_end_position;
             player_car_current_track_segment = track_segments;
             player_car_current_track_segment_start_position = 0;
         } else {
@@ -55,7 +55,7 @@ void road_corners_update() {
         player_car_current_track_segment_changes_applied = 0;
     }
 
-    current_segment_changes_passed = (player_car_track_position - player_car_current_track_segment_start_position) / player_car_current_track_segment->change_frequency;
+    current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) / player_car_current_track_segment->change_frequency;
     segment_changes_to_apply = (current_segment_changes_passed - player_car_current_track_segment_changes_applied);
     player_car_current_track_segment_changes_applied = current_segment_changes_passed;
 
