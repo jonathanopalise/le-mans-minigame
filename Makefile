@@ -24,6 +24,7 @@ OBJECT_FILES =\
     src/display_list.o\
     src/detect_collisions.o\
     src/random.o\
+    src/time_of_day_process.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -95,6 +96,9 @@ src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/pla
 
 src/random.o: src/random.c src/random.h
 	$(CC) $(CFLAGS) -c src/random.c -o src/random.o
+
+src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h
+	$(CC) $(CFLAGS) -c src/time_of_day_process.c -o src/time_of_day_process.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o
