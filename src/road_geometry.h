@@ -7,6 +7,9 @@ struct RoadScanline {
     // how far into the distance this scanline is
     uint16_t distance_along_road;
 
+    // value to add to sprite index for this scanline
+    uint16_t sprite_index_adjust;
+
     // pre-multipled values for modifying the unnormalised_skew value
     // when the camera shifts to the left or right
     // e.g. to shift the camera 128 units to the right:

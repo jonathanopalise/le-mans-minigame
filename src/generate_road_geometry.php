@@ -52,6 +52,11 @@ $unnormalisedSkewAddValuesMultiplier = 10;
 $requiredObjectXPositions = [0,45,120,225,250,275];
 
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
+    $spriteIndexAdjust = 7 - round($scanlineIndex / 6);
+    if ($spriteIndexAdjust < 0) {
+        $spriteIndexAdjust = 0;
+    }
+
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
     $xVector -= $scanlineXVectorAddQuantity;
     $yVector -= $scanlineYVectorAddQuantity;
@@ -71,6 +76,7 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
     }
 
     $scanlines[] = [
+        'spriteIndexAdjust' => $spriteIndexAdjust,
         'distanceAlongRoad' => $distanceAlongRoad,
         'unnormalisedSkewAddValues' => $unnormalisedSkewAddValues,
         'objectXposValues' => $objectXposValues,
@@ -135,6 +141,11 @@ foreach ($scanlines as $key => $scanline) {
     $lines[] = sprintf(
         '       .distance_along_road = %d,',
         $scanline['distanceAlongRoad']
+    );
+
+    $lines[] = sprintf(
+        '       .sprite_index_adjust = %d,',
+        $scanline['spriteIndexAdjust']
     );
 
     $lines[] = sprintf(

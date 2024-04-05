@@ -43,27 +43,24 @@ void trackside_items_process()
     }
 
     while (current_trackside_item_camera_relative_position < 35000) {
-            trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
-            if (trackside_item_scanline_index != -1) {
-                road_scanline = &road_scanlines[trackside_item_scanline_index];
-                sprite_index = (current_trackside_item->type + 7) - (trackside_item_scanline_index / 6);
-                if (sprite_index < current_trackside_item->type) {
-                    sprite_index = current_trackside_item->type;
-                }
+        trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
+        if (trackside_item_scanline_index != -1) {
+            road_scanline = &road_scanlines[trackside_item_scanline_index];
+            sprite_index = current_trackside_item->type + road_scanline->sprite_index_adjust;
 
-                if (current_trackside_item->xpos > 0) {
-                    screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->object_xpos_add_values[current_trackside_item->xpos]) >> 16));
-                } else {
-                    screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->object_xpos_add_values[-current_trackside_item->xpos]) >> 16));
-                }
-                screen_xpos += 160;
-
-                display_list_add_sprite(
-                    &sprite_definitions[sprite_index],
-                    screen_xpos,
-                    (119 + trackside_item_scanline_index)
-                );
+            if (current_trackside_item->xpos > 0) {
+                screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->object_xpos_add_values[current_trackside_item->xpos]) >> 16));
+            } else {
+                screen_xpos = (((road_scanline->current_logical_xpos - road_scanline->object_xpos_add_values[-current_trackside_item->xpos]) >> 16));
             }
+            screen_xpos += 160;
+
+            display_list_add_sprite(
+                &sprite_definitions[sprite_index],
+                screen_xpos,
+                (119 + trackside_item_scanline_index)
+            );
+        }
 
         current_trackside_item++;
         current_trackside_item_camera_relative_position = current_trackside_item->track_position - camera_track_position;
