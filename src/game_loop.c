@@ -12,7 +12,6 @@
 #include "trackside_items_process.h"
 #include "display_list.h"
 #include "opponent_cars.h"
-#include "draw_compiled_sprite.h"
 #include "time_of_day_process.h"
 #include "detect_collisions.h"
 #include "natfeats.h"
@@ -35,43 +34,22 @@ void game_loop()
     opponent_cars_init();
     display_list_init();
     trackside_items_process_init();
-    int16_t xpos = 160;
-    //*((volatile uint16_t *)0xffff8242) = 0x40;
-    //*((volatile uint16_t *)0xffff8244) = 0x777;
-    //*((volatile uint16_t *)0xffff8246) = 0x222;
-
     time_of_day_init();
 
     while (1) {
         time_of_day_update();
-        //*((volatile uint16_t *)0xffff8240) = 0x0;
         player_car_handle_inputs();
         opponent_cars_update();
         detect_collisions();
-        //*((volatile uint16_t *)0xffff8240) = 0x740; // yellow - road geometry calculations
         road_corners_update();
-        //*((volatile uint16_t *)0xffff8240) = 0x044; // turqoise - render mountains
         mountains_render();
-        //*((volatile uint16_t *)0xffff8240) = 0x770; // yellow - render road
         road_render();
-        //*((volatile uint16_t *)0xffff8240) = 0x004; // blue - erase sprites
         hardware_playfield_erase_sprites();
-        //*((volatile uint16_t *)0xffff8240) = 0x040; // green - add trackside items to display list
         trackside_items_update_nearest();
         trackside_items_process();
         opponent_cars_process();
-        //*((volatile uint16_t *)0xffff8240) = 0x400; // red
 
         player_car_sprite_definition_offset = player_car_get_sprite_definition();
-
-        /*player_car_sprite_definition_offset = 8;
-        if (player_car_speed > 0) {
-            if (player_car_steering <= -250) {
-                player_car_sprite_definition_offset += 16;
-            } else if (player_car_steering >= 250) {
-                player_car_sprite_definition_offset += 8;
-            }
-        }*/
 
         if (player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) {
             display_list_add_sprite(
@@ -81,20 +59,7 @@ void game_loop()
             );
         }
 
-        //*((volatile uint16_t *)0xffff8240) = 0x333; // grey
-
         display_list_execute();
         hardware_playfield_frame_complete();
-
-
-        //draw_compiled_sprite(hidden_hardware_playfield->buffer);
-
-        //*((volatile uint16_t *)0xffff8240) = 0x070; // green
-
-        //waiting_for_vbl = 1;
-        //while (waiting_for_vbl) {}
-        //hardware_playfield_handle_vbl();
-
-        //*((volatile uint16_t *)0xffff8240) = 0x400; // red
     }
 }
