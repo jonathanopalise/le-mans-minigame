@@ -9,6 +9,7 @@ struct RoadScanline {
 
     // value to add to sprite index for this scanline
     uint16_t sprite_index_adjust;
+    uint8_t *line_start_source;
 
     // pre-multipled values for modifying the unnormalised_skew value
     // when the camera shifts to the left or right

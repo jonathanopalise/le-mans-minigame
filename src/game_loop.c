@@ -35,6 +35,7 @@ void game_loop()
     display_list_init();
     trackside_items_process_init();
     time_of_day_init();
+    road_render_init();
 
     while (1) {
         time_of_day_update();
