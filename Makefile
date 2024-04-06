@@ -39,7 +39,7 @@ ASSETS_GIF = assets/round-tree.gif
 
 bin/lemans.prg: $(OBJECT_FILES)
 	$(CC)  -o src/lemans.elf libcxx/vsnprint.o libcxx/brownboot.o libcxx/zerolibc.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerocrtfini.o $(OBJECT_FILES)  -Os -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
-	brownout -i src/lemans.elf -o bin/lemans.prg
+	brownout -x -i src/lemans.elf -o bin/lemans.prg
 	chmod +x bin/lemans.prg
 
 src/lemans.o: src/lemans.c $(OBJECT_FILES)

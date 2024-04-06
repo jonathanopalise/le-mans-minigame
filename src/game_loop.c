@@ -40,12 +40,12 @@ void game_loop()
         time_of_day_update();
         player_car_handle_inputs();
         opponent_cars_update();
+        trackside_items_update_nearest();
         detect_collisions();
         road_corners_update();
         mountains_render();
         road_render();
         hardware_playfield_erase_sprites();
-        trackside_items_update_nearest();
         trackside_items_process();
         opponent_cars_process();
 

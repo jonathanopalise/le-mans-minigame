@@ -29,8 +29,6 @@ void road_render()
     uint16_t blitter_control_word;
 
     for (uint16_t index = 0; index < 80; index++) {
-        // TODO: rather than maintaining current_byte_offset and current_road_scanline,
-        // could we integrate road graphics data into road_scanlines?
         line_start_source = ((uint8_t *)(&gfx_data[*current_byte_offset >> 1])) - 2;
         current_skew = current_road_scanline->current_logical_xpos >> 16;
         skew_adjust = (current_skew >> 2) & 0xfffffffc;
