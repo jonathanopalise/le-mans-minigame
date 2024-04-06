@@ -124,7 +124,7 @@ for ($index = 0; $index < 80; $index++) {
     // move to centre of graphics data
     // move 160 pixels back
 
-    $byteOffsets[] = ((count($outputWords) * 2) + ($roundedPixelWidth / 8)) - (160/4);
+    $byteOffsets[] = (((count($outputWords) * 2) + ($roundedPixelWidth / 8)) - (160/4)) / 2;
 
     $outputWords = array_merge($outputWords, $bitplaneMergedWords);
     $outputWordLines[] = $bitplaneMergedWords;
