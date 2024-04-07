@@ -4,12 +4,14 @@
 #include <inttypes.h>
 
 struct RoadScanline {
+    uint8_t *line_start_source;
+    int32_t current_logical_xpos;
+
     // how far into the distance this scanline is
     uint16_t distance_along_road;
 
     // value to add to sprite index for this scanline
     uint16_t sprite_index_adjust;
-    uint8_t *line_start_source;
 
     // pre-multipled values for modifying the unnormalised_skew value
     // when the camera shifts to the left or right
@@ -19,9 +21,6 @@ struct RoadScanline {
     int32_t object_xpos_add_values[6];
 
     int32_t logical_xpos_corner_add_values[64];
-
-    // runtime values
-    int32_t current_logical_xpos;
 };
 
 extern struct RoadScanline road_scanlines[];

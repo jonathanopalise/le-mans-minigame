@@ -18,6 +18,7 @@ OBJECT_FILES =\
     src/trackside_items_process.o\
     src/mountains_render.o\
     src/road_render.o\
+    src/road_render_fast.o\
     src/player_car.o\
     src/opponent_cars.o\
     src/display_list.o\
@@ -77,6 +78,9 @@ src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mounta
 
 src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
+
+src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h
+	$(VASM) $(VASM_OPTS) src/road_render_fast.s -Felf -o src/road_render_fast.o
 
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
