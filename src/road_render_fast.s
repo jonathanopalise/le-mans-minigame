@@ -54,8 +54,16 @@ _road_render_fast:
     asr.w #2,d1
     and.w #$fffc,d1 ; d1 = skew_adjust
 
+    ; generate control word
+    and.b #15,d0
+    or.w #$c080,d0
+
     ; *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
     move.l d4,(a1)
+
+    ; decision point here
+
+
     
     move.w #2,(a2)    ; *((volatile int16_t *)BLITTER_Y_COUNT) = 2; 
     move.l (a5),d3    ; get current_road_scanline->line_start_source
@@ -63,8 +71,6 @@ _road_render_fast:
     sub.l d1,d3       ; line_start_source - skew_adjust
     move.l d3,(a0)    ; set source
 
-    and.b #15,d0
-    or.w #$c080,d0
     move.w d0,(a4)    ; set control word
 
     lea 548(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
