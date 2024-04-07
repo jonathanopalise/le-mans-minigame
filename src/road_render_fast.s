@@ -27,6 +27,7 @@ _road_render_fast:
     move.w #8,(a6)+        ; dest x increment 8a2e
     move.w #-150,(a6)+     ; dest y increment 8a30
     move.l a6,a1           ; store 8a32 address in a1
+    move.l d4,(a1)
     addq.l #4,a6
     move.w #20,(a6)+       ; x count 8a36
     move.l a6,a2           ; store y count address 8a38 in a2
@@ -36,6 +37,10 @@ _road_render_fast:
     move.l a6,a4           ; store blitter control 8a3c
 
     lea _road_scanlines,a5
+    lea 2(a1),a1
+    move.w _camera_track_position+2,d2
+    moveq.l #1,d5
+    moveq.l #$f,d6
 
     ; a0 = source address
     ; a1 = dest address
@@ -45,14 +50,13 @@ _road_render_fast:
     ; a5 = road_scanlines
     ; a6 = unused
 
-    move.l d4,(a1) ; set both upper and lower word of destination
+    ;move.l d4,(a1) ; set both upper and lower word of destination
 
     move.w #79,d7
 
 _line:
     ; current_skew = current_road_scanline->current_logical_xpos >> 16;
-    move.l 4(a5),d0
-    swap d0 ; d0 now contains current skew
+    move.w 4(a5),d0
 
     ; skew_adjust = (current_skew >> 2) & 0xfffc;
     move.w d0,d1
@@ -61,28 +65,27 @@ _line:
     and.w #$fffc,d1 ; d1 = skew_adjust
 
     ; generate control word
-    and.b #15,d0
+    and.b d6,d0
     or.w #$c080,d0
 
     ; *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
-    move.l d4,(a1)
+    move.w d4,(a1)
 
-    move.w 8(a5),d5 
-    move.w _camera_track_position+2,d6 ; get lower word of camera track position
-    add.w d5,d6
-    and.w #2048,d6
+    move.w d2,d3 ; get lower word of camera track position
+    add.w 8(a5),d3
+    and.w #2048,d3
     bne.s _double_texture
 
 _single_texture:
 
-    move.w #1,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
-    move.w #$f,(a3)    ; hop/op = f
+    move.w d5,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
+    move.w d6,(a3)     ; hop/op = f
     move.w d0,(a4)     ; set control word
     move.w #$0203,(a3) ; hop/op = 0203
     move.l (a5),d3     ; get current_road_scanline->line_start_source
     sub.l d1,d3        ; line_start_source - skew_adjust
     move.l d3,(a0)     ; set source
-    move.w #1,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
+    move.w d5,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
     move.w d0,(a4)     ; set control word
 
     endline
@@ -93,8 +96,8 @@ _double_texture:
     
     move.w #2,(a2)    ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
     move.l (a5),d3    ; get current_road_scanline->line_start_source
-    subq.l #2,d3      ; line_start_source - 2
     sub.l d1,d3       ; line_start_source - skew_adjust
+    subq.l #2,d3      ; line_start_source - 2
     move.l d3,(a0)    ; set source
     move.w d0,(a4)    ; set control word
 
