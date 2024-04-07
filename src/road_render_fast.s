@@ -43,7 +43,7 @@ _road_render_fast:
 
     move.w #79,d7
 
-.line:
+_line:
     ; current_skew = current_road_scanline->current_logical_xpos >> 16;
     move.l 4(a5),d0
     swap d0 ; d0 now contains current skew
@@ -61,21 +61,44 @@ _road_render_fast:
     ; *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
     move.l d4,(a1)
 
+    moveq.l #0,d5
+    move.w 8(a5),d5 
+    move.l _camera_track_position,d6
+    add.l d5,d6
+    and.l #2048,d6
+    bne.s _double_texture
+
     ; decision point here
+    ;bra.s _double_texture
 
+single_texture:
 
+    move.w #1,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
+    move.w #$f,(a3)    ; hop/op = f
+    move.w d0,(a4)     ; set control word
+    move.w #$0203,(a3) ; hop/op = f
+    move.l (a5),d3     ; get current_road_scanline->line_start_source
+    sub.l d1,d3        ; line_start_source - skew_adjust
+    move.l d3,(a0)     ; set source
+    move.w #1,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
+    move.w d0,(a4)     ; set control word
+
+    bra.s _next_line
+
+_double_texture:
     
-    move.w #2,(a2)    ; *((volatile int16_t *)BLITTER_Y_COUNT) = 2; 
+    move.w #2,(a2)    ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
     move.l (a5),d3    ; get current_road_scanline->line_start_source
     subq.l #2,d3      ; line_start_source - 2
     sub.l d1,d3       ; line_start_source - skew_adjust
     move.l d3,(a0)    ; set source
-
     move.w d0,(a4)    ; set control word
+
+_next_line:
 
     lea 548(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
     add.l #160,d4     ; move destination address to next line - I want to change this to a .w
-    dbra d7,.line
+    dbra d7,_line
 
     movem.l (sp)+,d0-d7/a0-a6
     rts
