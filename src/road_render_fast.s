@@ -29,8 +29,6 @@ _road_render_fast:
     addq.l #2,a6
     move.l a6,a4           ; store blitter control 8a3c
 
-    move.w #$c080,d2       ; blitter control word
-
     lea _road_scanlines,a5
 
     ; a0 = source address
@@ -66,13 +64,11 @@ _road_render_fast:
     move.l d3,(a0)    ; set source
 
     and.b #15,d0
-    move.w #$c080,d2
-    or.b d0,d2
-    ;move.b d0,d2      ; update control word
-    move.w d2,(a4)    ; set control word
+    or.w #$c080,d0
+    move.w d0,(a4)    ; set control word
 
-    lea 548(a5),a5     ; next road scanline, NOTE: 24 depends on size of struct
-    add.w #160,d4     ; move destination address to next line
+    lea 548(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
+    add.l #160,d4     ; move destination address to next line - I want to change this to a .w
     dbra d7,.line
 
     movem.l (sp)+,d0-d7/a0-a6
