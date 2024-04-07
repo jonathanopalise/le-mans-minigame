@@ -4,11 +4,11 @@
 #include <inttypes.h>
 
 struct RoadScanline {
-    uint8_t *line_start_source;
     int32_t current_logical_xpos;
-
     // how far into the distance this scanline is
     uint16_t distance_along_road;
+
+    uint8_t *line_start_source;
 
     // value to add to sprite index for this scanline
     uint16_t sprite_index_adjust;

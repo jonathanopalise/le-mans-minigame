@@ -56,7 +56,7 @@ _road_render_fast:
 
 _line:
     ; current_skew = current_road_scanline->current_logical_xpos >> 16;
-    move.w 4(a5),d0
+    move.w (a5),d0
 
     ; skew_adjust = (current_skew >> 2) & 0xfffc;
     move.w d0,d1
@@ -72,7 +72,7 @@ _line:
     move.w d4,(a1)
 
     move.w d2,d3 ; get lower word of camera track position
-    add.w 8(a5),d3
+    add.w 4(a5),d3
     and.w #2048,d3
     bne.s _double_texture
 
@@ -82,7 +82,7 @@ _single_texture:
     move.w d6,(a3)     ; hop/op = f
     move.w d0,(a4)     ; set control word
     move.w #$0203,(a3) ; hop/op = 0203
-    move.l (a5),d3     ; get current_road_scanline->line_start_source
+    move.l 6(a5),d3     ; get current_road_scanline->line_start_source
     sub.l d1,d3        ; line_start_source - skew_adjust
     move.l d3,(a0)     ; set source
     move.w d5,(a2)     ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1; 
@@ -95,7 +95,7 @@ _single_texture:
 _double_texture:
     
     move.w #2,(a2)    ; *((volatile int16_t *)BLITTER_Y_COUNT) = 1;
-    move.l (a5),d3    ; get current_road_scanline->line_start_source
+    move.l 6(a5),d3    ; get current_road_scanline->line_start_source
     sub.l d1,d3       ; line_start_source - skew_adjust
     subq.l #2,d3      ; line_start_source - 2
     move.l d3,(a0)    ; set source
