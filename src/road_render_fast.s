@@ -46,8 +46,6 @@ _road_render_fast:
     move.w #79,d7
 
 .line:
-    ; current_skew = current_road_scanline->current_logical_xpos >> 16
-
     ; current_skew = current_road_scanline->current_logical_xpos >> 16;
     move.l 4(a5),d0
     swap d0 ; d0 now contains current skew
@@ -55,7 +53,7 @@ _road_render_fast:
     ; skew_adjust = (current_skew >> 2) & 0xfffc;
     move.w d0,d1
     ext.l d1
-    asr.l #2,d1
+    asr.w #2,d1
     and.w #$fffc,d1 ; d1 = skew_adjust
 
     ; *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest;
@@ -67,7 +65,10 @@ _road_render_fast:
     sub.l d1,d3       ; line_start_source - skew_adjust
     move.l d3,(a0)    ; set source
 
-    move.b d0,d2      ; update control word
+    and.b #15,d0
+    move.w #$c080,d2
+    or.b d0,d2
+    ;move.b d0,d2      ; update control word
     move.w d2,(a4)    ; set control word
 
     lea 548(a5),a5     ; next road scanline, NOTE: 24 depends on size of struct
