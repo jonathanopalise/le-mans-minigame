@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define OPPONENT_CAR_COUNT 5
+#define OPPONENT_CAR_COUNT 4
 
 struct OpponentCar {
     int32_t player_relative_track_position;

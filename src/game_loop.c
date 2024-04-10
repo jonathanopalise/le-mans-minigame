@@ -46,7 +46,6 @@ void game_loop()
         detect_collisions();
         road_corners_update();
         mountains_render();
-        //road_render();
         road_render_fast();
         hardware_playfield_erase_sprites();
         trackside_items_process();

@@ -5,6 +5,8 @@
 #include "display_list.h"
 #include "road_movement.h"
 #include "random.h"
+#include "natfeats.h"
+#include <stdio.h>
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
@@ -79,15 +81,6 @@ void opponent_cars_init()
     current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
 
-    current_opponent_car++;
-
-    current_opponent_car->player_relative_track_position = 10000;
-    current_opponent_car->lane = 4;
-    current_opponent_car->speed = 750;
-    current_opponent_car->max_speed = 750;
-    current_opponent_car->active = 1;
-    current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
-
     rewrite_compiled_sprite_pointers(&sprite_definitions[YELLOW_CAR_BASE_INDEX - 7]);
     rewrite_compiled_sprite_pointers(&sprite_definitions[BLUE_CAR_BASE_INDEX - 7]);
 }
@@ -97,7 +90,7 @@ void opponent_cars_update()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
-    int32_t curvature_max_speed = 1300 - (corner_sharpness << 1);
+    int32_t curvature_max_speed = 900 - (corner_sharpness - 200 < 0 ? 0 : corner_sharpness - 200);
     uint32_t random_number;
     uint16_t car_selector;
     uint16_t lane_status[4];
@@ -140,7 +133,18 @@ void opponent_cars_update()
             current_opponent_car->base_sprite_index = base_sprite_index;
 
             // speed - 8 bits
-            current_opponent_car->speed = current_opponent_car->max_speed = 720 + ((random_number >> 3) & 255);
+            current_opponent_car->speed = current_opponent_car->max_speed = 650 + ((random_number >> 3) & 255);
+
+
+            snprintf(
+                nf_strbuf,
+                256,
+                "spawned opponent speed: %d\n",
+                current_opponent_car->speed
+            );
+            nf_print(nf_strbuf);
+
+
 
             for (uint16_t index = 0; index < 4; index++) {
                 lane_status[index] = 0; // empty

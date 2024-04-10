@@ -102,8 +102,6 @@ class Span
 
     public function canUseNfsr(int $skewed): bool
     {
-        return false;
-
         if (!$skewed) {
             return false;
         }
@@ -112,7 +110,7 @@ class Span
             return false;
         }
 
-        $skewCalculatorLong = 0b11111111111111110000000000000000;
+        $skewCalculatorLong = 0b00000000000000001111111111111111;
 
         $endmask = $this->blockCollection->getBlockByOffset($this->endOffset)->getInvertedMaskWord();
 
