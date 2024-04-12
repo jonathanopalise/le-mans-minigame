@@ -31,7 +31,9 @@ void mountains_render()
 
     *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source; // 8a32
     *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
-    *((volatile int16_t *)BLITTER_Y_COUNT) = 29; // 8a38
+    *((volatile int16_t *)BLITTER_Y_COUNT) = 15; // 8a38
+    *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+    *((volatile int16_t *)BLITTER_Y_COUNT) = 14; // 8a38
     *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
 
     line_start_source += 2;
@@ -39,7 +41,9 @@ void mountains_render()
 
     *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source; // 8a32
     *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
-    *((volatile int16_t *)BLITTER_Y_COUNT) = 29; // 8a38
+    *((volatile int16_t *)BLITTER_Y_COUNT) = 15; // 8a38
+    *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+    *((volatile int16_t *)BLITTER_Y_COUNT) = 14; // 8a38
     *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
 }
 

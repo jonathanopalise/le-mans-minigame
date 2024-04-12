@@ -96,6 +96,7 @@ void opponent_cars_update()
     uint16_t lane_status[4];
     int16_t xpos;
     uint16_t base_sprite_index;
+    int32_t opponent_car_advance;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
 
@@ -108,7 +109,12 @@ void opponent_cars_update()
             }
         }
 
-        current_opponent_car->player_relative_track_position += current_opponent_car->speed;
+        opponent_car_advance = current_opponent_car->speed - (current_opponent_car->player_relative_track_position >> 5);
+        if (opponent_car_advance < 250) {
+            opponent_car_advance = 250;
+        }
+
+        current_opponent_car->player_relative_track_position += opponent_car_advance;
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->player_relative_track_position > 65536) {
@@ -136,13 +142,13 @@ void opponent_cars_update()
             current_opponent_car->speed = current_opponent_car->max_speed = 650 + ((random_number >> 3) & 255);
 
 
-            snprintf(
+            /*snprintf(
                 nf_strbuf,
                 256,
                 "spawned opponent speed: %d\n",
                 current_opponent_car->speed
             );
-            nf_print(nf_strbuf);
+            nf_print(nf_strbuf);*/
 
 
 
