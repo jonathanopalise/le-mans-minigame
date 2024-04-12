@@ -43,7 +43,7 @@ class Span
         $middleMaskWords = [];
         for ($offset = $this->startOffset + 1; $offset < $this->endOffset; $offset++) {
             $middleMaskWords[] = $this->blockCollection->getBlockByOffset($offset)->getMaskWord();
-        }           
+        }
 
         $uniqueMiddleMaskWords = array_unique($middleMaskWords);
         return count($uniqueMiddleMaskWords) == 1;
@@ -616,7 +616,7 @@ class CompiledSpriteBuilder {
                             'lea.l %d(a0),a0 ; calc source address into a0',
                             $sourceOffset - $oldSourceOffset
                         );
-                        $copyInstructions[] = 'move.l a0,(a3) ; set source address';
+                        $copyInstructions[] = 'move.w a0,(a3) ; set source address';
 
                         $oldSourceOffset = $sourceOffset;
 
