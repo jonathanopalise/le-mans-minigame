@@ -283,6 +283,21 @@ class SixteenPixelBlockCollection
     }
 }
 
+class InstructionStream
+{
+    private array $instructions = [];
+
+    public function add(string $instruction)
+    {
+        $this->instructions[] = $instruction;
+    }
+
+    public function getArray(): array
+    {
+        return $this->instructions;
+    }
+}
+
 class CompiledSpriteBuilder {
 
     const FRAMEBUFFER_BYTES_PER_LINE = 160;
@@ -445,9 +460,9 @@ class CompiledSpriteBuilder {
             $spanCollection = $replacementSpanCollection;
         }
 
-       $instructions = [
-            'lea $ffff8a28.w,a2        ; cache endmask1'
-       ];
+        $instructionStream = new InstructionStream();
+
+        $instructionStream->add('lea $ffff8a28.w,a2        ; cache endmask1');
 
         // mSkewFXSR      equ  $80
         // mSkewNFSR      equ  $40
@@ -466,18 +481,22 @@ class CompiledSpriteBuilder {
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         $loopIndex = 1;
         foreach ($uniqueSpanLengths as $length) {
-            $instructions[] = '';
+            $instructionStream->add('');
 
             $destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
 
-            $instructions[] = sprintf(
-                'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
-                $destinationYIncrement
+            $instructionStream->add(
+                sprintf(
+                    'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
+                    $destinationYIncrement
+                )
             );
 
-            $instructions[] = sprintf(
-                'move.w #%d,$ffff8a36.w ; x count (per length group)',
-                $length
+            $instructionStream->add(
+                sprintf(
+                    'move.w #%d,$ffff8a36.w ; x count (per length group)',
+                    $length
+                )
             );
 
             $lengthBasedSpanCollection = $spanCollection->getSpanCollectionByLength($length);
@@ -500,11 +519,13 @@ class CompiledSpriteBuilder {
                             $sourceYIncrement += 10;
                         }
 
-                        $instructions[] = '';
+                        $instructionStream->add('');
 
-                        $instructions[] = sprintf(
-                            'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
-                            $sourceYIncrement
+                        $instructionStream->add(
+                            sprintf(
+                                'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
+                                $sourceYIncrement
+                            )
                         );
                     }
 
@@ -512,13 +533,15 @@ class CompiledSpriteBuilder {
                         $blockCollection = $span->getBlockCollection();
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
-                        $endmaskInstructions = [];
+                        $endmaskInstructionStream = new InstructionStream();
 
                         switch ($length) {
                             case 1:
                                 // length = 1, only endmask1 used
                                 if ($endmask1 != $oldEndmask1) {
-                                    $endmaskInstructions[] = $this->generateSetEndmaskInstruction($endmask1, 1);
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                                    );
                                 }
                                 break;
                             case 2:
@@ -526,24 +549,14 @@ class CompiledSpriteBuilder {
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
 
                                 if ($endmask1 != $oldEndmask1) {
-                                    if ($endmask1 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,(a2) ; set endmask1',
-                                            $endmask1
-                                        );
-                                    }
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                                    );
                                 }
                                 if ($endmask3 != $oldEndmask3) {
-                                    if ($endmask3 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
-                                            $endmask3
-                                        );
-                                    }
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask3, 3)
+                                    );
                                 }
                                 break;
                             default:
@@ -552,43 +565,29 @@ class CompiledSpriteBuilder {
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
                                 if ($endmask1 != $oldEndmask1) {
-                                    /*if ($endmask1 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,(a2) ; set endmask1',
-                                            $endmask1
-                                        );
-                                    }*/
-                                    $endmaskInstructions[] = $this->generateSetEndmaskInstruction($endmask1, 1);
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                                    );
                                 }
                                 if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
                                     if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.l d7,$ffff8a2a.w ; set endmask2 and endmask3';
+                                        $endmaskInstructionStream->add('move.l d7,$ffff8a2a.w ; set endmask2 and endmask3');
                                     } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
-                                            (($endmask2 << 16) | $endmask3) & 0xffffffff
+                                        $endmaskInstructionStream->add(
+                                            sprintf(
+                                                'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
+                                                (($endmask2 << 16) | $endmask3) & 0xffffffff
+                                            )
                                         );
                                     }
                                 } elseif ($endmask2 != $oldEndmask2) {
-                                    if ($endmask2 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2a.w ; set endmask2';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,$ffff8a2a.w ; set endmask2',
-                                            $endmask2
-                                        );
-                                    }
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask2, 2)
+                                    );
                                 } elseif ($endmask3 != $oldEndmask3) {
-                                    if ($endmask3 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,$ffff8a2c.w ; set endmask3';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,$ffff8a2c.w ; set endmask3',
-                                            $endmask3
-                                        );
-                                    }
+                                    $endmaskInstructionStream->add(
+                                        $this->generateSetEndmaskInstruction($endmask3, 3)
+                                    );
                                 }
                                 break;
                         }
@@ -604,58 +603,64 @@ class CompiledSpriteBuilder {
                             $sourceOffset -= 10;
                         }
 
-                        $copyInstructions = [];
-                        $copyInstructions[] = sprintf(
-                            'lea.l %d(a0),a0 ; calc source address into a0',
-                            $sourceOffset - $oldSourceOffset
+                        $copyInstructionStream = new InstructionStream();
+                        $copyInstructionStream->add(
+                            sprintf(
+                                'lea.l %d(a0),a0 ; calc source address into a0',
+                                $sourceOffset - $oldSourceOffset
+                            )
                         );
-                        $copyInstructions[] = 'move.w a0,(a3) ; set source address';
+                        $copyInstructionStream->add('move.w a0,(a3) ; set source address');
 
                         $oldSourceOffset = $sourceOffset;
 
                         $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
-                        $copyInstructions[] = sprintf(
-                            'lea.l %d(a1),a1 ; calc destination address into a1',
-                            $destinationOffset - $oldDestinationOffset
+                        $copyInstructionStream->add(
+                            sprintf(
+                                'lea.l %d(a1),a1 ; calc destination address into a1',
+                                $destinationOffset - $oldDestinationOffset
+                            )
                         );
-                        $copyInstructions[] = 'move.w a1,(a4) ; set destination address';
-                        $copyInstructions[] = 'move.w d0,(a5) ; set ycount (4 bitplanes)';
+                        $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
+                        $copyInstructionStream->add('move.w d0,(a5) ; set ycount (4 bitplanes)');
 
                         $oldDestinationOffset = $destinationOffset;
 
-                        $copyInstructions[] = $this->generateBlitterControlInstruction($useFxsr, $useNfsr);
+                        $copyInstructionStream->add(
+                            $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
+                        );
 
                         if ($key == array_key_first($spans)) {
-                            $loopStartEndmaskInstructions = $endmaskInstructions;
-                            $loopStartCopyInstructions = $copyInstructions;
+                            $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
+                            $loopStartCopyInstructionStream = clone $copyInstructionStream;
                             $copyInstructionIterations = 1;
                         } else {
-                            if ($copyInstructions != $loopStartCopyInstructions || !empty($endmaskInstructions)) {
-                                $instructions[] = '';
-                                $instructions[] = '; encountered break';
+                            if ($copyInstructionStream->getArray() != $loopStartCopyInstructionStream->getArray() || !empty($endmaskInstructionStream->getArray())) {
+                                $instructionStream->add('');
+                                $instructionStream->add('; encountered break');
 
-                                foreach ($loopStartEndmaskInstructions as $endmaskInstruction) {
-                                    $instructions[] = $endmaskInstruction;
+                                foreach ($loopStartEndmaskInstructionStream->getArray() as $endmaskInstruction) {
+                                    $instructionStream->add($endmaskInstruction);
                                 }
 
                                 if ($copyInstructionIterations > 1) {
-                                    $instructions[] = 'moveq.l #'.($copyInstructionIterations - 1).',d6';
-                                    $instructions[] = '.loop'.$loopIndex.':';
+                                    $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
+                                    $instructionStream->add('.loop'.$loopIndex.':');
 
-                                    foreach ($loopStartCopyInstructions as $copyInstruction) {
-                                        $instructions[] = $copyInstruction;
+                                    foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
+                                        $instructionStream->add($copyInstruction);
                                     }
 
-                                    $instructions[] = 'dbra d6,.loop'.$loopIndex;
+                                    $instructionStream->add('dbra d6,.loop'.$loopIndex);
                                     $loopIndex++;
                                 } else {
-                                    foreach ($loopStartCopyInstructions as $copyInstruction) {
-                                        $instructions[] = $copyInstruction;
+                                    foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
+                                        $instructionStream->add($copyInstruction);
                                     }
                                 }
 
-                                $loopStartEndmaskInstructions = $endmaskInstructions;
-                                $loopStartCopyInstructions = $copyInstructions;
+                                $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
+                                $loopStartCopyInstructionStream = clone $copyInstructionStream;
                                 $copyInstructionIterations = 1;
                             } else {
                                 $copyInstructionIterations++;
@@ -663,25 +668,25 @@ class CompiledSpriteBuilder {
                         }
 
                         if ($key == array_key_last($spans)) {
-                            $instructions[] = '';
-                            $instructions[] = '; LAST SPAN';
-                            foreach ($loopStartEndmaskInstructions as $endmaskInstruction) {
-                                $instructions[] = $endmaskInstruction;
+                            $instructionStream->add('');
+                            $instructionStream->add('; LAST SPAN');
+                            foreach ($loopStartEndmaskInstructionStream->getArray() as $endmaskInstruction) {
+                                $instructionStream->add($endmaskInstruction);
                             }
                             if ($copyInstructionIterations > 1) {
-                                $instructions[] = '';
-                                $instructions[] = 'moveq.l #'.($copyInstructionIterations - 1).',d6';
-                                $instructions[] = '.loop'.$loopIndex.':';
+                                $instructionStream->add('');
+                                $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
+                                $instructionStream->add('.loop'.$loopIndex.':');
 
-                                foreach ($loopStartCopyInstructions as $copyInstruction) {
-                                    $instructions[] = $copyInstruction;
+                                foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
+                                    $instructionStream->add($copyInstruction);
                                 }
 
-                                $instructions[] = 'dbra d6,.loop'.$loopIndex;
+                                $instructionStream->add('dbra d6,.loop'.$loopIndex);
                                 $loopIndex++;
                             } else {
-                                foreach ($loopStartCopyInstructions as $copyInstruction) {
-                                    $instructions[] = $copyInstruction;
+                                foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
+                                    $instructionStream->add($copyInstruction);
                                 }
                             }
                         }
@@ -695,15 +700,15 @@ class CompiledSpriteBuilder {
 
         }
 
-        $instructions[] = 'rts';
+        $instructionStream->add('rts');
 
 
-        if (count($instructions) == 2) {
+        if (count($instructionStream->getArray()) == 2) {
             echo("FAIL2");
             exit(1);
         }
 
-        return $instructions;
+        return $instructionStream->getArray();
     }
 
     private function generateBlitterControlInstruction(bool $useFxsr, bool $useNfsr): string
