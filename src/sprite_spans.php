@@ -538,66 +538,30 @@ class CompiledSpriteBuilder {
 
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
+
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
-
-                        $endmaskInstructionStream = new InstructionStream();
-
                         switch ($length) {
                             case 1:
-                                // length = 1, only endmask1 used
-                                if ($endmask1 != $oldEndmask1) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                                    );
-                                }
                                 break;
                             case 2:
-                                // length = 2, endmask 1 and endmask3 used
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-
-                                if ($endmask1 != $oldEndmask1) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                                    );
-                                }
-                                if ($endmask3 != $oldEndmask3) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask3, 3)
-                                    );
-                                }
                                 break;
                             default:
-                                // length 3+, endmask 1, 2 and 3 used
                                 $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
-
-                                if ($endmask1 != $oldEndmask1) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                                    );
-                                }
-                                if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
-                                    if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
-                                        $endmaskInstructionStream->add('move.l d7,$ffff8a2a.w ; set endmask2 and endmask3');
-                                    } else {
-                                        $endmaskInstructionStream->add(
-                                            sprintf(
-                                                'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
-                                                (($endmask2 << 16) | $endmask3) & 0xffffffff
-                                            )
-                                        );
-                                    }
-                                } elseif ($endmask2 != $oldEndmask2) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask2, 2)
-                                    );
-                                } elseif ($endmask3 != $oldEndmask3) {
-                                    $endmaskInstructionStream->add(
-                                        $this->generateSetEndmaskInstruction($endmask3, 3)
-                                    );
-                                }
                                 break;
                         }
+
+                        $endmaskInstructionStream = $this->generateEndmaskInstructionStream(
+                            $endmask1,
+                            $oldEndmask1,
+                            $endmask2,
+                            $oldEndmask2,
+                            $endmask3,
+                            $oldEndmask3,
+                            $length
+                        );
+
 
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
@@ -619,8 +583,6 @@ class CompiledSpriteBuilder {
                         );
                         $copyInstructionStream->add('move.w a0,(a3) ; set source address');
 
-                        $oldSourceOffset = $sourceOffset;
-
                         $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
                         $copyInstructionStream->add(
                             sprintf(
@@ -631,11 +593,12 @@ class CompiledSpriteBuilder {
                         $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
                         $copyInstructionStream->add('move.w d0,(a5) ; set ycount (4 bitplanes)');
 
-                        $oldDestinationOffset = $destinationOffset;
-
                         $copyInstructionStream->add(
                             $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
                         );
+
+                        $oldSourceOffset = $sourceOffset;
+                        $oldDestinationOffset = $destinationOffset;
 
                         if ($key == array_key_first($spans)) {
                             $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
@@ -644,7 +607,6 @@ class CompiledSpriteBuilder {
                         } else {
                             if ($copyInstructionStream->getArray() != $loopStartCopyInstructionStream->getArray() || !empty($endmaskInstructionStream->getArray())) {
                                 $instructionStream->add('');
-                                $instructionStream->add('; encountered break');
 
                                 $instructionStream->appendStream($loopStartEndmaskInstructionStream);
 
@@ -704,6 +666,72 @@ class CompiledSpriteBuilder {
         }
 
         return $instructionStream->getArray();
+    }
+
+    private function generateEndmaskInstructionStream(
+        $endmask1,
+        $oldEndmask1,
+        $endmask2,
+        $oldEndmask2,
+        $endmask3,
+        $oldEndmask3,
+        $length
+    ): InstructionStream {
+        $endmaskInstructionStream = new InstructionStream();
+
+        switch ($length) {
+            case 1:
+                // length = 1, only endmask1 used
+                if ($endmask1 != $oldEndmask1) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                    );
+                }
+                break;
+            case 2:
+                // length = 2, endmask 1 and endmask3 used
+                if ($endmask1 != $oldEndmask1) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                    );
+                }
+                if ($endmask3 != $oldEndmask3) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask3, 3)
+                    );
+                }
+                break;
+            default:
+                // length 3+, endmask 1, 2 and 3 used
+                if ($endmask1 != $oldEndmask1) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask1, 1)
+                    );
+                }
+                if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
+                    if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
+                        $endmaskInstructionStream->add('move.l d7,$ffff8a2a.w ; set endmask2 and endmask3');
+                    } else {
+                        $endmaskInstructionStream->add(
+                            sprintf(
+                                'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
+                                (($endmask2 << 16) | $endmask3) & 0xffffffff
+                            )
+                        );
+                    }
+                } elseif ($endmask2 != $oldEndmask2) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask2, 2)
+                    );
+                } elseif ($endmask3 != $oldEndmask3) {
+                    $endmaskInstructionStream->add(
+                        $this->generateSetEndmaskInstruction($endmask3, 3)
+                    );
+                }
+                break;
+        }
+
+        return $endmaskInstructionStream;
     }
 
     private function generateBlitterControlInstruction(bool $useFxsr, bool $useNfsr): string
