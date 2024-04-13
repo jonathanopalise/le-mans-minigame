@@ -510,7 +510,6 @@ class CompiledSpriteBuilder {
 
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
-
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
 
                         $endmaskInstructions = [];
@@ -519,14 +518,7 @@ class CompiledSpriteBuilder {
                             case 1:
                                 // length = 1, only endmask1 used
                                 if ($endmask1 != $oldEndmask1) {
-                                    if ($endmask1 == 0xffff) {
-                                        $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
-                                    } else {
-                                        $endmaskInstructions[] = sprintf(
-                                            'move.w #$%x,(a2) ; set endmask1',
-                                            $endmask1
-                                        );
-                                    }
+                                    $endmaskInstructions[] = $this->generateSetEndmaskInstruction($endmask1, 1);
                                 }
                                 break;
                             case 2:
@@ -560,14 +552,15 @@ class CompiledSpriteBuilder {
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
 
                                 if ($endmask1 != $oldEndmask1) {
-                                    if ($endmask1 == 0xffff) {
+                                    /*if ($endmask1 == 0xffff) {
                                         $endmaskInstructions[] = 'move.w d7,(a2) ; set endmask1';
                                     } else {
                                         $endmaskInstructions[] = sprintf(
                                             'move.w #$%x,(a2) ; set endmask1',
                                             $endmask1
                                         );
-                                    }
+                                    }*/
+                                    $endmaskInstructions[] = $this->generateSetEndmaskInstruction($endmask1, 1);
                                 }
                                 if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
                                     if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
@@ -630,19 +623,7 @@ class CompiledSpriteBuilder {
 
                         $oldDestinationOffset = $destinationOffset;
 
-                        if ($useNfsr) {
-                            if ($useFxsr) {
-                                $copyInstructions[] = 'move.w d4,(a6) ; set blitter control, fxsr = true, nfsr = true';
-                            } else {
-                                $copyInstructions[] = 'move.w d3,(a6) ; set blitter control, fxsr = false, nfsr = true';
-                            }
-                        } else {
-                            if ($useFxsr) {
-                                $copyInstructions[] = 'move.w d2,(a6) ; set blitter control, fxsr = true, nfsr = false';
-                            } else {
-                                $copyInstructions[] = 'move.w d1,(a6) ; set blitter control, fxsr = false, nfsr = false';
-                            }
-                        }
+                        $copyInstructions[] = $this->generateBlitterControlInstruction($useFxsr, $useNfsr);
 
                         if ($key == array_key_first($spans)) {
                             $loopStartEndmaskInstructions = $endmaskInstructions;
@@ -723,6 +704,77 @@ class CompiledSpriteBuilder {
         }
 
         return $instructions;
+    }
+
+    private function generateBlitterControlInstruction(bool $useFxsr, bool $useNfsr): string
+    {
+        return sprintf(
+            'move.w %s,(a6) ; set blitter control, fxsr = %s, nfsr = %s',
+            $this->getBlitterControlSourceRegister($useFxsr, $useNfsr),
+            $useFxsr ? 'true' : 'false',
+            $useNfsr ? 'true' : 'false',
+        );
+
+        if ($useNfsr) {
+            if ($useFxsr) {
+                $copyInstructions[] = 'move.w d4,(a6) ; set blitter control, fxsr = true, nfsr = true';
+            } else {
+                $copyInstructions[] = 'move.w d3,(a6) ; set blitter control, fxsr = false, nfsr = true';
+            }
+        } else {
+            if ($useFxsr) {
+                $copyInstructions[] = 'move.w d2,(a6) ; set blitter control, fxsr = true, nfsr = false';
+            } else {
+                $copyInstructions[] = 'move.w d1,(a6) ; set blitter control, fxsr = false, nfsr = false';
+            }
+        }
+    }
+
+    private function getBlitterControlSourceRegister(bool $useFxsr, bool $useNfsr): string
+    {
+        if ($useNfsr) {
+            if ($useFxsr) {
+                return 'd4';
+            } else {
+                return 'd3';
+            }
+        } else {
+            if ($useFxsr) {
+                return 'd2';
+            } else {
+                return 'd1';
+            }
+        }
+    }
+
+    private function generateSetEndmaskInstruction(int $endmask, int $endmaskIndex): string
+    {
+        $destinations = [
+            '(a2)',
+            '$ffff8a2a.w',
+            '$ffff8a2c.w',
+        ];
+
+        if ($endmaskIndex < 1 || $endmaskIndex > 3) {
+            throw new RuntimeException('Invalid endmask index ');
+        }
+
+        $source = 'd7';
+        if ($endmask != 0xffff) {
+            $source = sprintf(
+                '#$%x',
+                $endmask
+            );
+        }
+
+        $destination = $destinations[$endmaskIndex - 1];
+
+        return sprintf(
+            'move.w %s,%s ; set endmask%d',
+            $source,
+            $destination,
+            $endmaskIndex
+        );
     }
 }
 
