@@ -296,6 +296,13 @@ class InstructionStream
     {
         return $this->instructions;
     }
+
+    public function appendStream(InstructionStream $stream): void
+    {
+        foreach ($stream->getArray() as $instruction) {
+            $this->add($instruction);
+        }
+    }
 }
 
 class CompiledSpriteBuilder {
@@ -639,24 +646,17 @@ class CompiledSpriteBuilder {
                                 $instructionStream->add('');
                                 $instructionStream->add('; encountered break');
 
-                                foreach ($loopStartEndmaskInstructionStream->getArray() as $endmaskInstruction) {
-                                    $instructionStream->add($endmaskInstruction);
-                                }
+                                $instructionStream->appendStream($loopStartEndmaskInstructionStream);
 
                                 if ($copyInstructionIterations > 1) {
                                     $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
                                     $instructionStream->add('.loop'.$loopIndex.':');
-
-                                    foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
-                                        $instructionStream->add($copyInstruction);
-                                    }
+                                    $instructionStream->appendStream($loopStartCopyInstructionStream);
 
                                     $instructionStream->add('dbra d6,.loop'.$loopIndex);
                                     $loopIndex++;
                                 } else {
-                                    foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
-                                        $instructionStream->add($copyInstruction);
-                                    }
+                                    $instructionStream->appendStream($loopStartCopyInstructionStream);
                                 }
 
                                 $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
@@ -669,7 +669,6 @@ class CompiledSpriteBuilder {
 
                         if ($key == array_key_last($spans)) {
                             $instructionStream->add('');
-                            $instructionStream->add('; LAST SPAN');
                             foreach ($loopStartEndmaskInstructionStream->getArray() as $endmaskInstruction) {
                                 $instructionStream->add($endmaskInstruction);
                             }
@@ -678,16 +677,12 @@ class CompiledSpriteBuilder {
                                 $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
                                 $instructionStream->add('.loop'.$loopIndex.':');
 
-                                foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
-                                    $instructionStream->add($copyInstruction);
-                                }
+                                $instructionStream->appendStream($loopStartCopyInstructionStream);
 
                                 $instructionStream->add('dbra d6,.loop'.$loopIndex);
                                 $loopIndex++;
                             } else {
-                                foreach ($loopStartCopyInstructionStream->getArray() as $copyInstruction) {
-                                    $instructionStream->add($copyInstruction);
-                                }
+                                $instructionStream->appendStream($loopStartCopyInstructionStream);
                             }
                         }
 
