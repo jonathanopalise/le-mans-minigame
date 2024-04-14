@@ -485,6 +485,12 @@ class CompiledSpriteBuilder {
         $oldSourceOffset = 0;
         $oldDestinationOffset = 0;
 
+        $sourceAdvance = null;
+        $destinationAdvance = null;
+
+        $oldSourceAdvance = null;
+        $oldDestinationAdvance = null;
+
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         $loopIndex = 1;
         foreach ($uniqueSpanLengths as $length) {
@@ -562,6 +568,11 @@ class CompiledSpriteBuilder {
                             $length
                         );
 
+
+                        $endmask1Changed = $endmask1 != $oldEndmask1;
+                        $endmask2Changed = $endmask2 != $oldEndmask2;
+                        $endmask3Changed = $endmask3 != $oldEndmask3;
+
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
                         $oldEndmask3 = $endmask3;
@@ -572,9 +583,20 @@ class CompiledSpriteBuilder {
                         }
                         $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
 
+                        $oldSourceAdvance = $sourceAdvance;
+                        $oldDestinationAdvance = $destinationAdvance;
+
+                        $sourceAdvance = $sourceOffset - $oldSourceOffset;
+                        $destinationAdvance = $destinationOffset - $oldDestinationOffset; 
+
+                        $sourceAdvanceChanged = $sourceAdvance != $oldSourceAdvance;
+                        $destinationAdvanceChanged = $destinationAdvance != $oldDestinationAdvance;
+                        $endmasksChanged = $endmask1Changed || $endmask2Changed || $endmask3Changed;
+
                         $copyInstructionStream = $this->generateCopyInstructionStream(
-                            $sourceOffset - $oldSourceOffset,
-                            $destinationOffset - $oldDestinationOffset,
+                            $sourceAdvance,
+                            $destinationAdvance,
+                            'd0',
                             $useFxsr,
                             $useNfsr
                         );
@@ -585,19 +607,17 @@ class CompiledSpriteBuilder {
                         if ($key == array_key_first($spans)) {
                             $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
                             $loopStartCopyInstructionStream = clone $copyInstructionStream;
-                            $loopStartSourceOffset = $sourceOffset;
-                            $loopStartDestinationOffset = $destinationOffset;
+                            $loopStartSourceAdvance = $sourceAdvance;
+                            $loopStartDestinationAdvance = $destinationAdvance;
                             $copyInstructionIterations = 1;
                         } else {
-                            if ($copyInstructionStream->getArray() != $loopStartCopyInstructionStream->getArray() || !empty($endmaskInstructionStream->getArray())) {
+                            if ($sourceAdvanceChanged || $destinationAdvanceChanged || $endmasksChanged) {
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $copyInstructionIterations,
                                     $instructionStream,
                                     $loopStartCopyInstructionStream,
                                     $loopStartEndmaskInstructionStream,
-                                    $loopIndex,
-                                    $loopStartSourceOffset,
-                                    $loopStartDestinationOffset
+                                    $loopIndex
                                 );
 
                                 $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
@@ -616,9 +636,7 @@ class CompiledSpriteBuilder {
                                 $instructionStream,
                                 $loopStartCopyInstructionStream,
                                 $loopStartEndmaskInstructionStream,
-                                $loopIndex,
-                                $loopStartSourceOffset,
-                                $loopStartDestinationOffset
+                                $loopIndex
                             );
                         }
                     }
@@ -645,9 +663,7 @@ class CompiledSpriteBuilder {
         InstructionStream $instructionStream,
         InstructionStream $loopStartCopyInstructionStream,
         InstructionStream $loopStartEndmaskInstructionStream,
-        int $loopIndex,
-        int $loopStartSourceOffset,
-        int $loopStartDestinationOffset
+        int $loopIndex
     ): int {
         $instructionStream->appendStream($loopStartEndmaskInstructionStream);
         /*if ($copyInstructionIterations > 6) {
@@ -696,7 +712,7 @@ class CompiledSpriteBuilder {
         $instructionStream->add('dbra d6,.loop'.$loopIndex);
     }
 
-    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, bool $useFxsr, bool $useNfsr): InstructionStream
+    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr): InstructionStream
     {
         $copyInstructionStream = new InstructionStream();
         $copyInstructionStream->add(
@@ -714,7 +730,7 @@ class CompiledSpriteBuilder {
             )
         );
         $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
-        $copyInstructionStream->add('move.w d0,(a5) ; set ycount (4 bitplanes)');
+        $copyInstructionStream->add('move.w '. $ycountSource .',(a5) ; set ycount (4 bitplanes)');
 
         $copyInstructionStream->add(
             $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
