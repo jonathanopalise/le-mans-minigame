@@ -756,7 +756,7 @@ class CompiledSpriteBuilder {
 
         if (isset($changedEndmasks[2])) {
             $endmaskInstructionStream->add(
-                $this->generateSetEndmaskInstruction($changedEndmasks[2], 3)
+                $this->generateSetEndmaskInstruction($changedEndmasks[2], 2)
             );
         }
 
