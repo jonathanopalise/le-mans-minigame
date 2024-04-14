@@ -545,10 +545,6 @@ class CompiledSpriteBuilder {
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
 
-                        $changedEndmasks = [
-                            1 => $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord()
-                        ];
-
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         switch ($length) {
                             case 1:
@@ -610,37 +606,41 @@ class CompiledSpriteBuilder {
                         $oldDestinationOffset = $destinationOffset;
 
                         if ($key == array_key_first($spans)) {
-                            $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
-                            $loopStartCopyInstructionStream = clone $copyInstructionStream;
-                            $loopStartSourceAdvance = $sourceAdvance;
-                            $loopStartDestinationAdvance = $destinationAdvance;
-                            $copyInstructionIterations = 1;
+                            $loopState = [
+                                'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
+                                'loopStartCopyInstructionStream' => clone $copyInstructionStream,
+                                'loopStartSourceAdvance' => $sourceAdvance,
+                                'loopStartDestinationAdvance' => $destinationAdvance,
+                                'copyInstructionIterations' => 1,
+                            ];
                         } else {
                             if ($sourceAdvanceChanged || $destinationAdvanceChanged || count($changedEndmasks)) {
                                 $loopIndex = $this->addConfirmCopyInstructions(
-                                    $copyInstructionIterations,
+                                    $loopState['copyInstructionIterations'],
                                     $instructionStream,
-                                    $loopStartCopyInstructionStream,
-                                    $loopStartEndmaskInstructionStream,
+                                    $loopState['loopStartCopyInstructionStream'],
+                                    $loopState['loopStartEndmaskInstructionStream'],
                                     $loopIndex
                                 );
 
-                                $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
-                                $loopStartCopyInstructionStream = clone $copyInstructionStream;
-                                $loopStartSourceOffset = $sourceOffset;
-                                $loopStartDestinationOffset = $destinationOffset;
-                                $copyInstructionIterations = 1;
+                                $loopState = [
+                                    'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
+                                    'loopStartCopyInstructionStream' => clone $copyInstructionStream,
+                                    'loopStartSourceOffset' => $sourceOffset,
+                                    'loopStartDestinationOffset' => $destinationOffset,
+                                    'copyInstructionIterations' => 1,
+                                ];
                             } else {
-                                $copyInstructionIterations++;
+                                $loopState['copyInstructionIterations']++;
                             }
                         }
 
                         if ($key == array_key_last($spans)) {
                             $loopIndex = $this->addConfirmCopyInstructions(
-                                $copyInstructionIterations,
+                                $loopState['copyInstructionIterations'],
                                 $instructionStream,
-                                $loopStartCopyInstructionStream,
-                                $loopStartEndmaskInstructionStream,
+                                $loopState['loopStartCopyInstructionStream'],
+                                $loopState['loopStartEndmaskInstructionStream'],
                                 $loopIndex
                             );
                         }
