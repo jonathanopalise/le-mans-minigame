@@ -562,39 +562,21 @@ class CompiledSpriteBuilder {
                             $length
                         );
 
-
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
                         $oldEndmask3 = $endmask3;
-
-                        $useFxsr = $span->canUseFxsr($this->skewed);
 
                         $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
                         if ($useFxsr) {
                             $sourceOffset -= 10;
                         }
-
-                        $copyInstructionStream = new InstructionStream();
-                        $copyInstructionStream->add(
-                            sprintf(
-                                'lea.l %d(a0),a0 ; calc source address into a0',
-                                $sourceOffset - $oldSourceOffset
-                            )
-                        );
-                        $copyInstructionStream->add('move.w a0,(a3) ; set source address');
-
                         $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
-                        $copyInstructionStream->add(
-                            sprintf(
-                                'lea.l %d(a1),a1 ; calc destination address into a1',
-                                $destinationOffset - $oldDestinationOffset
-                            )
-                        );
-                        $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
-                        $copyInstructionStream->add('move.w d0,(a5) ; set ycount (4 bitplanes)');
 
-                        $copyInstructionStream->add(
-                            $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
+                        $copyInstructionStream = $this->generateCopyInstructionStream(
+                            $sourceOffset - $oldSourceOffset,
+                            $destinationOffset - $oldDestinationOffset,
+                            $useFxsr,
+                            $useNfsr
                         );
 
                         $oldSourceOffset = $sourceOffset;
@@ -603,26 +585,25 @@ class CompiledSpriteBuilder {
                         if ($key == array_key_first($spans)) {
                             $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
                             $loopStartCopyInstructionStream = clone $copyInstructionStream;
+                            $loopStartSourceOffset = $sourceOffset;
+                            $loopStartDestinationOffset = $destinationOffset;
                             $copyInstructionIterations = 1;
                         } else {
                             if ($copyInstructionStream->getArray() != $loopStartCopyInstructionStream->getArray() || !empty($endmaskInstructionStream->getArray())) {
-                                $instructionStream->add('');
-
-                                $instructionStream->appendStream($loopStartEndmaskInstructionStream);
-
-                                if ($copyInstructionIterations > 1) {
-                                    $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
-                                    $instructionStream->add('.loop'.$loopIndex.':');
-                                    $instructionStream->appendStream($loopStartCopyInstructionStream);
-
-                                    $instructionStream->add('dbra d6,.loop'.$loopIndex);
-                                    $loopIndex++;
-                                } else {
-                                    $instructionStream->appendStream($loopStartCopyInstructionStream);
-                                }
+                                $loopIndex = $this->addConfirmCopyInstructions(
+                                    $copyInstructionIterations,
+                                    $instructionStream,
+                                    $loopStartCopyInstructionStream,
+                                    $loopStartEndmaskInstructionStream,
+                                    $loopIndex,
+                                    $loopStartSourceOffset,
+                                    $loopStartDestinationOffset
+                                );
 
                                 $loopStartEndmaskInstructionStream = clone $endmaskInstructionStream;
                                 $loopStartCopyInstructionStream = clone $copyInstructionStream;
+                                $loopStartSourceOffset = $sourceOffset;
+                                $loopStartDestinationOffset = $destinationOffset;
                                 $copyInstructionIterations = 1;
                             } else {
                                 $copyInstructionIterations++;
@@ -630,25 +611,16 @@ class CompiledSpriteBuilder {
                         }
 
                         if ($key == array_key_last($spans)) {
-                            $instructionStream->add('');
-                            foreach ($loopStartEndmaskInstructionStream->getArray() as $endmaskInstruction) {
-                                $instructionStream->add($endmaskInstruction);
-                            }
-                            if ($copyInstructionIterations > 1) {
-                                $instructionStream->add('');
-                                $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
-                                $instructionStream->add('.loop'.$loopIndex.':');
-
-                                $instructionStream->appendStream($loopStartCopyInstructionStream);
-
-                                $instructionStream->add('dbra d6,.loop'.$loopIndex);
-                                $loopIndex++;
-                            } else {
-                                $instructionStream->appendStream($loopStartCopyInstructionStream);
-                            }
+                            $loopIndex = $this->addConfirmCopyInstructions(
+                                $copyInstructionIterations,
+                                $instructionStream,
+                                $loopStartCopyInstructionStream,
+                                $loopStartEndmaskInstructionStream,
+                                $loopIndex,
+                                $loopStartSourceOffset,
+                                $loopStartDestinationOffset
+                            );
                         }
-
-
                     }
                 } // end
 
@@ -666,6 +638,89 @@ class CompiledSpriteBuilder {
         }
 
         return $instructionStream->getArray();
+    }
+
+    private function addConfirmCopyInstructions(
+        int $copyInstructionIterations,
+        InstructionStream $instructionStream,
+        InstructionStream $loopStartCopyInstructionStream,
+        InstructionStream $loopStartEndmaskInstructionStream,
+        int $loopIndex,
+        int $loopStartSourceOffset,
+        int $loopStartDestinationOffset
+    ): int {
+        $instructionStream->appendStream($loopStartEndmaskInstructionStream);
+        /*if ($copyInstructionIterations > 6) {
+            $this->addBlitterLoopInstructions($instructionStream, $loopStartEndmaskInstructionStream, $loopStartSourceOffset, $loopStartDestinationOffset, $copyInstructionIterations);*/
+        if ($copyInstructionIterations > 1) {
+            $this->addLoopInstructions($instructionStream, $loopStartCopyInstructionStream, $copyInstructionIterations, $loopIndex);
+            $loopIndex++;
+        } else {
+            $instructionStream->appendStream($loopStartCopyInstructionStream);
+        }
+
+        return $loopIndex;
+    }
+
+    private function addBlitterLoopInstructions(InstructionStream $instructionStream, InstructionStream $loopStartEndmaskInstructionStream, int $loopStartSourceOffset, int $loopStartDestinationOffset, int $copyInstructionIterations)
+    {
+        // set endmasks using endmask instruction stream
+
+        // source = loopStartSourceOffset (will need to advance source)
+        // destination = loopStartDestinationOffset (will need to advance dest
+        // ycount = number of lines
+        // xcount = width in 16 pixel blocks
+
+        // source x increment = 10 (should already be set)
+        // dest x increment = 8 (should already be set)
+
+        // source y increment needs to move to same point on next source line, and change depending on fxsr/nfsr
+        // - will need to take into account both drawing width
+        // dest y increment needs to move to same point on next line (sprite clearing code might help)
+
+        // need to restore ycount to 4 afterwards
+    }
+
+    private function addLoopInstructions(
+        InstructionStream $instructionStream,
+        InstructionStream $loopStartCopyInstructionStream,
+        $copyInstructionIterations,
+        $loopIndex
+    ) {
+        $instructionStream->add('');
+        $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
+        $instructionStream->add('.loop'.$loopIndex.':');
+
+        $instructionStream->appendStream($loopStartCopyInstructionStream);
+
+        $instructionStream->add('dbra d6,.loop'.$loopIndex);
+    }
+
+    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, bool $useFxsr, bool $useNfsr): InstructionStream
+    {
+        $copyInstructionStream = new InstructionStream();
+        $copyInstructionStream->add(
+            sprintf(
+                'lea.l %d(a0),a0 ; calc source address into a0',
+                $sourceAdvance
+            )
+        );
+        $copyInstructionStream->add('move.w a0,(a3) ; set source address');
+
+        $copyInstructionStream->add(
+            sprintf(
+                'lea.l %d(a1),a1 ; calc destination address into a1',
+                $destinationAdvance
+            )
+        );
+        $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
+        $copyInstructionStream->add('move.w d0,(a5) ; set ycount (4 bitplanes)');
+
+        $copyInstructionStream->add(
+            $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
+        );
+
+        return $copyInstructionStream;
     }
 
     private function generateEndmaskInstructionStream(
