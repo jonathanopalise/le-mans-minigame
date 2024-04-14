@@ -545,6 +545,10 @@ class CompiledSpriteBuilder {
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
 
+                        $changedEndmasks = [
+                            1 => $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord()
+                        ];
+
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
                         switch ($length) {
                             case 1:
@@ -552,26 +556,28 @@ class CompiledSpriteBuilder {
                             case 2:
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                                 break;
-                            default:
+                            default: 
                                 $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
                                 $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
                                 break;
                         }
 
-                        $endmaskInstructionStream = $this->generateEndmaskInstructionStream(
-                            $endmask1,
-                            $oldEndmask1,
-                            $endmask2,
-                            $oldEndmask2,
-                            $endmask3,
-                            $oldEndmask3,
-                            $length
-                        );
-
-
                         $endmask1Changed = $endmask1 != $oldEndmask1;
                         $endmask2Changed = $endmask2 != $oldEndmask2;
                         $endmask3Changed = $endmask3 != $oldEndmask3;
+
+                        $changedEndmasks = [];
+                        if ($endmask1Changed) {
+                            $changedEndmasks[1] = $endmask1;
+                        }
+                        if ($endmask2Changed) {
+                            $changedEndmasks[2] = $endmask2;
+                        }
+                        if ($endmask3Changed) {
+                            $changedEndmasks[3] = $endmask3;
+                        }
+
+                        $endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
 
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
@@ -591,7 +597,6 @@ class CompiledSpriteBuilder {
 
                         $sourceAdvanceChanged = $sourceAdvance != $oldSourceAdvance;
                         $destinationAdvanceChanged = $destinationAdvance != $oldDestinationAdvance;
-                        $endmasksChanged = $endmask1Changed || $endmask2Changed || $endmask3Changed;
 
                         $copyInstructionStream = $this->generateCopyInstructionStream(
                             $sourceAdvance,
@@ -611,7 +616,7 @@ class CompiledSpriteBuilder {
                             $loopStartDestinationAdvance = $destinationAdvance;
                             $copyInstructionIterations = 1;
                         } else {
-                            if ($sourceAdvanceChanged || $destinationAdvanceChanged || $endmasksChanged) {
+                            if ($sourceAdvanceChanged || $destinationAdvanceChanged || count($changedEndmasks)) {
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $copyInstructionIterations,
                                     $instructionStream,
@@ -739,68 +744,29 @@ class CompiledSpriteBuilder {
         return $copyInstructionStream;
     }
 
-    private function generateEndmaskInstructionStream(
-        $endmask1,
-        $oldEndmask1,
-        $endmask2,
-        $oldEndmask2,
-        $endmask3,
-        $oldEndmask3,
-        $length
-    ): InstructionStream {
+    private function generateEndmaskInstructionStream(array $changedEndmasks): InstructionStream
+    {
         $endmaskInstructionStream = new InstructionStream();
 
-        switch ($length) {
-            case 1:
-                // length = 1, only endmask1 used
-                if ($endmask1 != $oldEndmask1) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                    );
-                }
-                break;
-            case 2:
-                // length = 2, endmask 1 and endmask3 used
-                if ($endmask1 != $oldEndmask1) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                    );
-                }
-                if ($endmask3 != $oldEndmask3) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask3, 3)
-                    );
-                }
-                break;
-            default:
-                // length 3+, endmask 1, 2 and 3 used
-                if ($endmask1 != $oldEndmask1) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask1, 1)
-                    );
-                }
-                if ($endmask2 != $oldEndmask2 && $endmask3 != $oldEndmask3) {
-                    if ($endmask2 == 0xffff && $endmask3 == 0xffff) {
-                        $endmaskInstructionStream->add('move.l d7,$ffff8a2a.w ; set endmask2 and endmask3');
-                    } else {
-                        $endmaskInstructionStream->add(
-                            sprintf(
-                                'move.l #$%x,$ffff8a2a.w ; set endmask2 and endmask3',
-                                (($endmask2 << 16) | $endmask3) & 0xffffffff
-                            )
-                        );
-                    }
-                } elseif ($endmask2 != $oldEndmask2) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask2, 2)
-                    );
-                } elseif ($endmask3 != $oldEndmask3) {
-                    $endmaskInstructionStream->add(
-                        $this->generateSetEndmaskInstruction($endmask3, 3)
-                    );
-                }
-                break;
+        if (isset($changedEndmasks[1])) {
+            $endmaskInstructionStream->add(
+                $this->generateSetEndmaskInstruction($changedEndmasks[1], 1)
+            );
         }
+
+        if (isset($changedEndmasks[2])) {
+            $endmaskInstructionStream->add(
+                $this->generateSetEndmaskInstruction($changedEndmasks[2], 3)
+            );
+        }
+
+        if (isset($changedEndmasks[3])) {
+            $endmaskInstructionStream->add(
+                $this->generateSetEndmaskInstruction($changedEndmasks[3], 3)
+            );
+        }
+
+        // TODO: reinstate long write for multiple changed endmasks
 
         return $endmaskInstructionStream;
     }
