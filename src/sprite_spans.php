@@ -573,7 +573,7 @@ class CompiledSpriteBuilder {
                             $changedEndmasks[3] = $endmask3;
                         }
 
-                        $endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
+                        //$endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
 
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
@@ -594,46 +594,38 @@ class CompiledSpriteBuilder {
                         $sourceAdvanceChanged = $sourceAdvance != $oldSourceAdvance;
                         $destinationAdvanceChanged = $destinationAdvance != $oldDestinationAdvance;
 
-                        $copyInstructionStream = $this->generateCopyInstructionStream(
-                            $sourceAdvance,
-                            $destinationAdvance,
-                            'd0',
-                            $useFxsr,
-                            $useNfsr
-                        );
-
                         $oldSourceOffset = $sourceOffset;
                         $oldDestinationOffset = $destinationOffset;
 
                         if ($key == array_key_first($spans)) {
                             $loopState = [
-                                'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
                                 'loopStartSourceAdvance' => $sourceAdvance,
                                 'loopStartDestinationAdvance' => $destinationAdvance,
                                 'copyInstructionIterations' => 1,
                                 'useFxsr' => $useFxsr,
                                 'useNfsr' => $useNfsr,
+                                'changedEndmasks' => $changedEndmasks,
                             ];
                         } else {
                             if ($sourceAdvanceChanged || $destinationAdvanceChanged || count($changedEndmasks)) {
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState['copyInstructionIterations'],
                                     $instructionStream,
-                                    $loopState['loopStartEndmaskInstructionStream'],
                                     $loopIndex,
                                     $loopState['useFxsr'],
                                     $loopState['useNfsr'],
                                     $loopState['loopStartSourceAdvance'],
-                                    $loopState['loopStartDestinationAdvance']
+                                    $loopState['loopStartDestinationAdvance'],
+                                    $loopState['changedEndmasks'],
                                 );
 
                                 $loopState = [
-                                    'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
                                     'loopStartSourceAdvance' => $sourceAdvance,
                                     'loopStartDestinationAdvance' => $destinationAdvance,
                                     'copyInstructionIterations' => 1,
                                     'useFxsr' => $useFxsr,
                                     'useNfsr' => $useNfsr,
+                                    'changedEndmasks' => $changedEndmasks,
                                 ];
                             } else {
                                 $loopState['copyInstructionIterations']++;
@@ -644,12 +636,12 @@ class CompiledSpriteBuilder {
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState['copyInstructionIterations'],
                                 $instructionStream,
-                                $loopState['loopStartEndmaskInstructionStream'],
                                 $loopIndex,
                                 $loopState['useFxsr'],
                                 $loopState['useNfsr'],
                                 $loopState['loopStartSourceAdvance'],
-                                $loopState['loopStartDestinationAdvance']
+                                $loopState['loopStartDestinationAdvance'],
+                                $loopState['changedEndmasks'],
                             );
                         }
                     }
@@ -674,14 +666,16 @@ class CompiledSpriteBuilder {
     private function addConfirmCopyInstructions(
         int $copyInstructionIterations,
         InstructionStream $instructionStream,
-        InstructionStream $loopStartEndmaskInstructionStream,
         int $loopIndex,
         bool $useFxsr,
         bool $useNfsr,
         int $sourceAdvance,
-        int $destinationAdvance
+        int $destinationAdvance,
+        array $changedEndmasks
     ): int {
-        $instructionStream->appendStream($loopStartEndmaskInstructionStream);
+        $endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
+
+        $instructionStream->appendStream($endmaskInstructionStream);
 
         $copyInstructionStream = $this->generateCopyInstructionStream(
             $sourceAdvance,
