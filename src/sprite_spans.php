@@ -546,34 +546,23 @@ class CompiledSpriteBuilder {
                         $blockCollection = $span->getBlockCollection();
 
                         $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
-                        switch ($length) {
-                            case 1:
-                                break;
-                            case 2:
-                                $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-                                break;
-                            default: 
-                                $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-                                $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
-                                break;
+                        if ($length == 2) {
+                            $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
+                        } elseif ($length > 2) {
+                            $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
+                            $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
                         }
-
-                        $endmask1Changed = $endmask1 != $oldEndmask1;
-                        $endmask2Changed = $endmask2 != $oldEndmask2;
-                        $endmask3Changed = $endmask3 != $oldEndmask3;
 
                         $changedEndmasks = [];
-                        if ($endmask1Changed) {
+                        if ($endmask1 != $oldEndmask1) {
                             $changedEndmasks[1] = $endmask1;
                         }
-                        if ($endmask2Changed) {
+                        if ($endmask2 != $oldEndmask2) {
                             $changedEndmasks[2] = $endmask2;
                         }
-                        if ($endmask3Changed) {
+                        if ($endmask3 != $oldEndmask3) {
                             $changedEndmasks[3] = $endmask3;
                         }
-
-                        //$endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
 
                         $oldEndmask1 = $endmask1;
                         $oldEndmask2 = $endmask2;
@@ -591,9 +580,6 @@ class CompiledSpriteBuilder {
                         $sourceAdvance = $sourceOffset - $oldSourceOffset;
                         $destinationAdvance = $destinationOffset - $oldDestinationOffset; 
 
-                        $sourceAdvanceChanged = $sourceAdvance != $oldSourceAdvance;
-                        $destinationAdvanceChanged = $destinationAdvance != $oldDestinationAdvance;
-
                         $oldSourceOffset = $sourceOffset;
                         $oldDestinationOffset = $destinationOffset;
 
@@ -607,7 +593,7 @@ class CompiledSpriteBuilder {
                                 'changedEndmasks' => $changedEndmasks,
                             ];
                         } else {
-                            if ($sourceAdvanceChanged || $destinationAdvanceChanged || count($changedEndmasks)) {
+                            if ($sourceAdvance != $oldSourceAdvance || $destinationAdvance != $oldDestinationAdvance || count($changedEndmasks)) {
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState,
                                     $instructionStream,
@@ -635,15 +621,11 @@ class CompiledSpriteBuilder {
                             );
                         }
                     }
-                } // end
-
+                }
             }
-
-
         }
 
         $instructionStream->add('rts');
-
 
         if (count($instructionStream->getArray()) == 2) {
             echo("FAIL2");
