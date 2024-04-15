@@ -121,6 +121,22 @@ class Span
 
         return !$useNfsr;
     }
+
+    public function getApplicableEndmasks()
+    {
+        $endmasks = [];
+        $length = $this->getLength();
+
+        $endmasks[1] = $this->blockCollection->getBlockByOffset($this->startOffset)->getInvertedMaskWord();
+        if ($length == 2) {
+            $endmasks[3] = $this->blockCollection->getBlockByOffset($this->startOffset+1)->getInvertedMaskWord();
+        } elseif ($length > 2) {
+            $endmasks[2] = $this->blockCollection->getBlockByOffset($this->startOffset+1)->getInvertedMaskWord();
+            $endmasks[3] = $this->blockCollection->getBlockByOffset($this->endOffset)->getInvertedMaskWord();
+        }
+
+        return $endmasks;
+    }
 }
 
 class SpanCollection
@@ -545,12 +561,15 @@ class CompiledSpriteBuilder {
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
 
-                        $endmask1 = $blockCollection->getBlockByOffset($span->getStartOffset())->getInvertedMaskWord();
-                        if ($length == 2) {
-                            $endmask3 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-                        } elseif ($length > 2) {
-                            $endmask2 = $blockCollection->getBlockByOffset($span->getStartOffset()+1)->getInvertedMaskWord();
-                            $endmask3 = $blockCollection->getBlockByOffset($span->getEndOffset())->getInvertedMaskWord();
+                        $applicableEndmasks = $span->getApplicableEndmasks();
+                        if (isset($applicableEndmasks[1])) {
+                            $endmask1 = $applicableEndmasks[1];
+                        }
+                        if (isset($applicableEndmasks[2])) {
+                            $endmask2 = $applicableEndmasks[2];
+                        }
+                        if (isset($applicableEndmasks[3])) {
+                            $endmask3 = $applicableEndmasks[3];
                         }
 
                         $changedEndmasks = [];
