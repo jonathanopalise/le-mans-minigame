@@ -612,6 +612,8 @@ class CompiledSpriteBuilder {
                                 'loopStartSourceAdvance' => $sourceAdvance,
                                 'loopStartDestinationAdvance' => $destinationAdvance,
                                 'copyInstructionIterations' => 1,
+                                'useFxsr' => $useFxsr,
+                                'useNfsr' => $useNfsr,
                             ];
                         } else {
                             if ($sourceAdvanceChanged || $destinationAdvanceChanged || count($changedEndmasks)) {
@@ -620,15 +622,21 @@ class CompiledSpriteBuilder {
                                     $instructionStream,
                                     $loopState['loopStartCopyInstructionStream'],
                                     $loopState['loopStartEndmaskInstructionStream'],
-                                    $loopIndex
+                                    $loopIndex,
+                                    $loopState['useFxsr'],
+                                    $loopState['useNfsr'],
+                                    $loopState['loopStartSourceAdvance'],
+                                    $loopState['loopStartDestinationAdvance']
                                 );
 
                                 $loopState = [
                                     'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
                                     'loopStartCopyInstructionStream' => clone $copyInstructionStream,
-                                    'loopStartSourceOffset' => $sourceOffset,
-                                    'loopStartDestinationOffset' => $destinationOffset,
+                                    'loopStartSourceAdvance' => $sourceAdvance,
+                                    'loopStartDestinationAdvance' => $destinationAdvance,
                                     'copyInstructionIterations' => 1,
+                                    'useFxsr' => $useFxsr,
+                                    'useNfsr' => $useNfsr,
                                 ];
                             } else {
                                 $loopState['copyInstructionIterations']++;
@@ -641,7 +649,11 @@ class CompiledSpriteBuilder {
                                 $instructionStream,
                                 $loopState['loopStartCopyInstructionStream'],
                                 $loopState['loopStartEndmaskInstructionStream'],
-                                $loopIndex
+                                $loopIndex,
+                                $loopState['useFxsr'],
+                                $loopState['useNfsr'],
+                                $loopState['loopStartSourceAdvance'],
+                                $loopState['loopStartDestinationAdvance']
                             );
                         }
                     }
@@ -668,13 +680,25 @@ class CompiledSpriteBuilder {
         InstructionStream $instructionStream,
         InstructionStream $loopStartCopyInstructionStream,
         InstructionStream $loopStartEndmaskInstructionStream,
-        int $loopIndex
+        int $loopIndex,
+        bool $useFxsr,
+        bool $useNfsr,
+        int $sourceAdvance,
+        int $destinationAdvance
     ): int {
         $instructionStream->appendStream($loopStartEndmaskInstructionStream);
         /*if ($copyInstructionIterations > 6) {
             $this->addBlitterLoopInstructions($instructionStream, $loopStartEndmaskInstructionStream, $loopStartSourceOffset, $loopStartDestinationOffset, $copyInstructionIterations);*/
         if ($copyInstructionIterations > 1) {
-            $this->addLoopInstructions($instructionStream, $loopStartCopyInstructionStream, $copyInstructionIterations, $loopIndex);
+            $copyInstructionStream = $this->generateCopyInstructionStream(
+                $sourceAdvance,
+                $destinationAdvance,
+                'd0',
+                $useFxsr,
+                $useNfsr 
+            );          
+
+            $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex);
             $loopIndex++;
         } else {
             $instructionStream->appendStream($loopStartCopyInstructionStream);
