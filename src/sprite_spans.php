@@ -344,6 +344,7 @@ class CompiledSpriteBuilder {
 
     const FRAMEBUFFER_BYTES_PER_LINE = 160;
     const BYTES_PER_16_PIXELS = 8;
+    const BLITTER_COPY_THRESHOLD = 6;
 
 	private string $data;
 	private SixteenPixelBlockCollection $sixteenPixelBlockCollection;
@@ -525,20 +526,22 @@ class CompiledSpriteBuilder {
         $oldSourceAdvance = null;
         $oldDestinationAdvance = null;
 
+        $oldDestinationYIncrement = null;
+
         $uniqueSpanLengths = $spanCollection->getUniqueSpanLengths();
         $loopIndex = 1;
         foreach ($uniqueSpanLengths as $length) {
             $instructionStream->add('');
 
-            $destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+            //$destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
 
             // TODO: this may need to change on a per span basis!
-            $instructionStream->add(
+            /*$instructionStream->add(
                 sprintf(
                     'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
                     $destinationYIncrement
                 )
-            );
+            );*/
 
             // this is fine
             $instructionStream->add(
@@ -607,13 +610,16 @@ class CompiledSpriteBuilder {
                                 // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
 
                                 $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
+                                $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState,
                                     $instructionStream,
                                     $loopIndex,
-                                    $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement : null
+                                    $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement : null,
+                                    $destinationYIncrement != $oldDestinationYIncrement ? $destinationYIncrement: null
                                 );
                                 $oldSourceYIncrement = $sourceYIncrement;
+                                $oldDestinationYIncrement = $destinationYIncrement;
 
                                 $loopState = $state;
                             } else {
@@ -622,16 +628,19 @@ class CompiledSpriteBuilder {
                         }
 
                         if ($key == array_key_last($spans)) {
-
                             $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
+                            $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState,
                                 $instructionStream,
                                 $loopIndex,
-                                $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null
+                                $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null,
+                                $destinationYIncrement != $oldDestinationYIncrement ? $destinationYIncrement: null
                             );
+                            $oldDestinationYIncrement = $destinationYIncrement;
                         }
                     }
+
                 }
             }
         }
@@ -650,7 +659,8 @@ class CompiledSpriteBuilder {
         array $loopState,
         InstructionStream $instructionStream,
         int $loopIndex,
-        ?int $sourceYIncrement
+        ?int $sourceYIncrement,
+        ?int $destinationYIncrement
     ): int {
         $copyInstructionIterations = $loopState['copyInstructionIterations'];
         $useFxsr = $loopState['useFxsr'];
@@ -668,15 +678,22 @@ class CompiledSpriteBuilder {
             );
         }
 
-        /*if ($copyInstructionIterations > 6) {
-            $this->addBlitterLoopInstructions(
-                $instructionStream,
+        if ($destinationYIncrement) { 
+            $instructionStream->add(
+                $this->generateDestinationYIncrementInstruction($destinationYIncrement)
+            );
+        }
+
+        /*if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
+            $copyInstructionStream = $this->generateCopyInstructionStream(
                 $sourceAdvance,
                 $destinationAdvance,
-                $copyInstructionIterations,
+                '#' . $copyInstructionIterations,
                 $useFxsr,
-                $useNfsr
-            );
+                $useNfsr 
+            );          
+
+            $instructionStream->appendStream($copyInstructionStream);
         } else {*/
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 $sourceAdvance,
@@ -701,11 +718,11 @@ class CompiledSpriteBuilder {
     {
         // set endmasks using endmask instruction stream
 
-        // source = loopStartSourceOffset (will need to advance source)
-        // destination = loopStartDestinationOffset (will need to advance dest
-        // ycount = number of lines
-        // xcount = width in 16 pixel blocks
+        // source = loopStartSourceOffset
+        // destination = loopStartDestinationOffset
+        // ycount = number of lines (need to set)
 
+        // xcount = width in 16 pixel blocks (should already be set)
         // source x increment = 10 (should already be set)
         // dest x increment = 8 (should already be set)
 
@@ -874,7 +891,12 @@ class CompiledSpriteBuilder {
 
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
-        $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+        } else {
+            $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+        }
+
         if ($loopState['useFxsr']) {
             $sourceYIncrement -= 10;
         }
@@ -885,11 +907,29 @@ class CompiledSpriteBuilder {
         return $sourceYIncrement;
     }
 
+    private function calculateDestinationYIncrement(array $loopState, int $length): int
+    {
+        // TODO: needs to act differently when number of lines > 6
+        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            return -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+        } else {
+            return -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+        }
+    }
+
     private function generateSourceYIncrementInstruction(int $sourceYIncrement): string
     {
         return sprintf(
             'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
             $sourceYIncrement
+        );
+    }
+
+    private function generateDestinationYIncrementInstruction(int $destinationYIncrement): string
+    {
+        return sprintf(
+            'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
+            $destinationYIncrement
         );
     }
 }
