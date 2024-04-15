@@ -514,6 +514,7 @@ class CompiledSpriteBuilder {
 
             $destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
 
+            // TODO: this may need to change on a per span basis!
             $instructionStream->add(
                 sprintf(
                     'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
@@ -521,6 +522,7 @@ class CompiledSpriteBuilder {
                 )
             );
 
+            // this is fine
             $instructionStream->add(
                 sprintf(
                     'move.w #%d,$ffff8a36.w ; x count (per length group)',
@@ -670,27 +672,36 @@ class CompiledSpriteBuilder {
 
         $instructionStream->appendStream($endmaskInstructionStream);
 
-        $copyInstructionStream = $this->generateCopyInstructionStream(
-            $sourceAdvance,
-            $destinationAdvance,
-            'd0',
-            $useFxsr,
-            $useNfsr 
-        );          
-
         /*if ($copyInstructionIterations > 6) {
-            $this->addBlitterLoopInstructions($instructionStream, $loopStartEndmaskInstructionStream, $loopStartSourceOffset, $loopStartDestinationOffset, $copyInstructionIterations);*/
-        if ($copyInstructionIterations > 1) {
-            $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex);
-            $loopIndex++;
-        } else {
-            $instructionStream->appendStream($copyInstructionStream);
-        }
+            $this->addBlitterLoopInstructions(
+                $instructionStream,
+                $sourceAdvance,
+                $destinationAdvance,
+                $copyInstructionIterations,
+                $useFxsr,
+                $useNfsr
+            );
+        } else {*/
+            $copyInstructionStream = $this->generateCopyInstructionStream(
+                $sourceAdvance,
+                $destinationAdvance,
+                'd0',
+                $useFxsr,
+                $useNfsr 
+            );          
+
+            if ($copyInstructionIterations > 1) {
+                $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex);
+                $loopIndex++;
+            } else {
+                $instructionStream->appendStream($copyInstructionStream);
+            }
+        //}
 
         return $loopIndex;
     }
 
-    private function addBlitterLoopInstructions(InstructionStream $instructionStream, InstructionStream $loopStartEndmaskInstructionStream, int $loopStartSourceOffset, int $loopStartDestinationOffset, int $copyInstructionIterations)
+    private function addBlitterLoopInstructions(InstructionStream $instructionStream, int $sourceAdvance, int $destinationAdvance, int $copyInstructionIterations, bool $useFxsr, bool $useNfsr)
     {
         // set endmasks using endmask instruction stream
 
@@ -707,6 +718,17 @@ class CompiledSpriteBuilder {
         // dest y increment needs to move to same point on next line (sprite clearing code might help)
 
         // need to restore ycount to 4 afterwards
+
+
+        $copyInstructionStream = $this->generateCopyInstructionStream(
+            $sourceAdvance,
+            $destinationAdvance,
+            '#' . $copyInstructionIterations,
+            $useFxsr,
+            $useNfsr 
+        );
+
+        $instructionStream->appendStream($copyInstructionStream);
     }
 
     private function addLoopInstructions(
@@ -742,13 +764,21 @@ class CompiledSpriteBuilder {
             )
         );
         $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
-        $copyInstructionStream->add('move.w '. $ycountSource .',(a5) ; set ycount (4 bitplanes)');
+
+        $copyInstructionStream->add(
+            $this->generateYCountInstruction($ycountSource)
+        );
 
         $copyInstructionStream->add(
             $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
         );
 
         return $copyInstructionStream;
+    }
+
+    private function generateYCountInstruction(string $ycountSource): string
+    {
+        return 'move.w '. $ycountSource .',(a5) ; set ycount';
     }
 
     private function generateEndmaskInstructionStream(array $changedEndmasks): InstructionStream
