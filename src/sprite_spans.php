@@ -608,7 +608,6 @@ class CompiledSpriteBuilder {
                         if ($key == array_key_first($spans)) {
                             $loopState = [
                                 'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
-                                'loopStartCopyInstructionStream' => clone $copyInstructionStream,
                                 'loopStartSourceAdvance' => $sourceAdvance,
                                 'loopStartDestinationAdvance' => $destinationAdvance,
                                 'copyInstructionIterations' => 1,
@@ -620,7 +619,6 @@ class CompiledSpriteBuilder {
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState['copyInstructionIterations'],
                                     $instructionStream,
-                                    $loopState['loopStartCopyInstructionStream'],
                                     $loopState['loopStartEndmaskInstructionStream'],
                                     $loopIndex,
                                     $loopState['useFxsr'],
@@ -631,7 +629,6 @@ class CompiledSpriteBuilder {
 
                                 $loopState = [
                                     'loopStartEndmaskInstructionStream' => clone $endmaskInstructionStream,
-                                    'loopStartCopyInstructionStream' => clone $copyInstructionStream,
                                     'loopStartSourceAdvance' => $sourceAdvance,
                                     'loopStartDestinationAdvance' => $destinationAdvance,
                                     'copyInstructionIterations' => 1,
@@ -647,7 +644,6 @@ class CompiledSpriteBuilder {
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState['copyInstructionIterations'],
                                 $instructionStream,
-                                $loopState['loopStartCopyInstructionStream'],
                                 $loopState['loopStartEndmaskInstructionStream'],
                                 $loopIndex,
                                 $loopState['useFxsr'],
@@ -678,7 +674,6 @@ class CompiledSpriteBuilder {
     private function addConfirmCopyInstructions(
         int $copyInstructionIterations,
         InstructionStream $instructionStream,
-        InstructionStream $loopStartCopyInstructionStream,
         InstructionStream $loopStartEndmaskInstructionStream,
         int $loopIndex,
         bool $useFxsr,
@@ -729,7 +724,7 @@ class CompiledSpriteBuilder {
 
     private function addLoopInstructions(
         InstructionStream $instructionStream,
-        InstructionStream $loopStartCopyInstructionStream,
+        InstructionStream $copyInstructionStream,
         $copyInstructionIterations,
         $loopIndex
     ) {
@@ -737,7 +732,7 @@ class CompiledSpriteBuilder {
         $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
         $instructionStream->add('.loop'.$loopIndex.':');
 
-        $instructionStream->appendStream($loopStartCopyInstructionStream);
+        $instructionStream->appendStream($copyInstructionStream);
 
         $instructionStream->add('dbra d6,.loop'.$loopIndex);
     }
