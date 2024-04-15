@@ -490,13 +490,13 @@ class CompiledSpriteBuilder {
         // mSkewFXSR      equ  $80
         // mSkewNFSR      equ  $40
 
-        $endmask1 = null;
-        $endmask2 = null;
-        $endmask3 = null;
+        $endmasks = [
+            1 => null,
+            2 => null,
+            3 => null,
+        ];
 
-        $oldEndmask1 = null;
-        $oldEndmask2 = null;
-        $oldEndmask3 = null;
+        $oldEndmasks = $endmasks;
 
         $oldSourceOffset = 0;
         $oldDestinationOffset = 0;
@@ -564,30 +564,17 @@ class CompiledSpriteBuilder {
                         $blockCollection = $span->getBlockCollection();
 
                         $applicableEndmasks = $span->getApplicableEndmasks();
-                        if (isset($applicableEndmasks[1])) {
-                            $endmask1 = $applicableEndmasks[1];
-                        }
-                        if (isset($applicableEndmasks[2])) {
-                            $endmask2 = $applicableEndmasks[2];
-                        }
-                        if (isset($applicableEndmasks[3])) {
-                            $endmask3 = $applicableEndmasks[3];
-                        }
-
                         $changedEndmasks = [];
-                        if ($endmask1 != $oldEndmask1) {
-                            $changedEndmasks[1] = $endmask1;
-                        }
-                        if ($endmask2 != $oldEndmask2) {
-                            $changedEndmasks[2] = $endmask2;
-                        }
-                        if ($endmask3 != $oldEndmask3) {
-                            $changedEndmasks[3] = $endmask3;
+                        for ($index = 1; $index <= 3; $index++) {
+                            if (isset($applicableEndmasks[$index])) {
+                                $endmasks[$index] = $applicableEndmasks[$index];
+                                if ($endmasks[$index] != $oldEndmasks[$index]) {
+                                    $changedEndmasks[$index] = $endmasks[$index];
+                                }
+                            }
                         }
 
-                        $oldEndmask1 = $endmask1;
-                        $oldEndmask2 = $endmask2;
-                        $oldEndmask3 = $endmask3;
+                        $oldEndmasks = $endmasks;
 
                         $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
                         if ($useFxsr) {
@@ -615,6 +602,7 @@ class CompiledSpriteBuilder {
                             ];
                         } else {
                             if ($sourceAdvance != $oldSourceAdvance || $destinationAdvance != $oldDestinationAdvance || count($changedEndmasks)) {
+                                // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState,
                                     $instructionStream,
