@@ -559,25 +559,7 @@ class CompiledSpriteBuilder {
 
                     $spans = $nfsrBasedSpanCollection->getSpans();
 
-                    if (count($spans)) {
-                        $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
-                        if ($useFxsr) {
-                            $sourceYIncrement -= 10;
-                        }
-                        if ($useNfsr) {
-                            $sourceYIncrement += 10;
-                        }
-
-                        $instructionStream->add('');
-
-                        $instructionStream->add(
-                            sprintf(
-                                'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
-                                $sourceYIncrement
-                            )
-                        );
-                    }
-
+                    $oldSourceYIncrement = null;
                     foreach ($spans as $key => $span) {
                         $blockCollection = $span->getBlockCollection();
 
@@ -623,11 +605,15 @@ class CompiledSpriteBuilder {
                         } else {
                             if ($sourceAdvance != $oldSourceAdvance || $destinationAdvance != $oldDestinationAdvance || count($changedEndmasks)) {
                                 // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
+
+                                $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState,
                                     $instructionStream,
-                                    $loopIndex
+                                    $loopIndex,
+                                    $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement : null
                                 );
+                                $oldSourceYIncrement = $sourceYIncrement;
 
                                 $loopState = $state;
                             } else {
@@ -636,10 +622,13 @@ class CompiledSpriteBuilder {
                         }
 
                         if ($key == array_key_last($spans)) {
+
+                            $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState,
                                 $instructionStream,
-                                $loopIndex
+                                $loopIndex,
+                                $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null
                             );
                         }
                     }
@@ -660,7 +649,8 @@ class CompiledSpriteBuilder {
     private function addConfirmCopyInstructions(
         array $loopState,
         InstructionStream $instructionStream,
-        int $loopIndex
+        int $loopIndex,
+        ?int $sourceYIncrement
     ): int {
         $copyInstructionIterations = $loopState['copyInstructionIterations'];
         $useFxsr = $loopState['useFxsr'];
@@ -670,8 +660,13 @@ class CompiledSpriteBuilder {
         $changedEndmasks = $loopState['changedEndmasks'];
 
         $endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
-
         $instructionStream->appendStream($endmaskInstructionStream);
+
+        if ($sourceYIncrement) { 
+            $instructionStream->add(
+                $this->generateSourceYIncrementInstruction($sourceYIncrement)
+            );
+        }
 
         /*if ($copyInstructionIterations > 6) {
             $this->addBlitterLoopInstructions(
@@ -717,9 +712,6 @@ class CompiledSpriteBuilder {
         // source y increment needs to move to same point on next source line, and change depending on fxsr/nfsr
         // - will need to take into account both drawing width
         // dest y increment needs to move to same point on next line (sprite clearing code might help)
-
-        // need to restore ycount to 4 afterwards
-
 
         $copyInstructionStream = $this->generateCopyInstructionStream(
             $sourceAdvance,
@@ -877,6 +869,27 @@ class CompiledSpriteBuilder {
             $source,
             $destination,
             $endmaskIndex
+        );
+    }
+
+    private function calculateSourceYIncrement(array $loopState, int $length): int
+    {
+        $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+        if ($loopState['useFxsr']) {
+            $sourceYIncrement -= 10;
+        }
+        if ($loopState['useNfsr']) {
+            $sourceYIncrement += 10;
+        }
+
+        return $sourceYIncrement;
+    }
+
+    private function generateSourceYIncrementInstruction(int $sourceYIncrement): string
+    {
+        return sprintf(
+            'move.w #%d,$ffff8a22.w ; source y increment (per fxsr eligibility)',
+            $sourceYIncrement
         );
     }
 }
