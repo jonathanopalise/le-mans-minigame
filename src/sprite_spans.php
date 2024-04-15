@@ -401,7 +401,6 @@ class CompiledSpriteBuilder {
 
         $spans = [];
 		for ($y = 0; $y < $this->heightInLines; $y++) {
-            //echo("** next line\n");
 
             $maskValues = [];
 
@@ -591,15 +590,17 @@ class CompiledSpriteBuilder {
                         $oldSourceOffset = $sourceOffset;
                         $oldDestinationOffset = $destinationOffset;
 
+                        $state = [
+                            'loopStartSourceAdvance' => $sourceAdvance,
+                            'loopStartDestinationAdvance' => $destinationAdvance,
+                            'copyInstructionIterations' => 1,
+                            'useFxsr' => $useFxsr,
+                            'useNfsr' => $useNfsr,
+                            'changedEndmasks' => $changedEndmasks,
+                        ];
+
                         if ($key == array_key_first($spans)) {
-                            $loopState = [
-                                'loopStartSourceAdvance' => $sourceAdvance,
-                                'loopStartDestinationAdvance' => $destinationAdvance,
-                                'copyInstructionIterations' => 1,
-                                'useFxsr' => $useFxsr,
-                                'useNfsr' => $useNfsr,
-                                'changedEndmasks' => $changedEndmasks,
-                            ];
+                            $loopState = $state;
                         } else {
                             if ($sourceAdvance != $oldSourceAdvance || $destinationAdvance != $oldDestinationAdvance || count($changedEndmasks)) {
                                 // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
@@ -609,14 +610,7 @@ class CompiledSpriteBuilder {
                                     $loopIndex
                                 );
 
-                                $loopState = [
-                                    'loopStartSourceAdvance' => $sourceAdvance,
-                                    'loopStartDestinationAdvance' => $destinationAdvance,
-                                    'copyInstructionIterations' => 1,
-                                    'useFxsr' => $useFxsr,
-                                    'useNfsr' => $useNfsr,
-                                    'changedEndmasks' => $changedEndmasks,
-                                ];
+                                $loopState = $state;
                             } else {
                                 $loopState['copyInstructionIterations']++;
                             }
