@@ -16,7 +16,7 @@ void trackside_items_update_nearest()
 {
     while (camera_track_position > current_nearest_trackside_item->track_position) {
         current_nearest_trackside_item++;
-        if (current_nearest_trackside_item->track_position == 0x3fffffff) {
+        if (current_nearest_trackside_item->track_position == 0x7fffffff) {
             // so once we get to this point, the nearest trackside item is behind the player!
             // this is why we need the > 0 check in the loop below
             current_nearest_trackside_item = trackside_items;

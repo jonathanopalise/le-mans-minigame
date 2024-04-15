@@ -194,7 +194,26 @@ class SpanCollection
             }
         }
 
-        return $spanCollection;
+        $uniqueApplicableEndmasks = [];
+        foreach ($spanCollection->getSpans() as $span) {
+            $applicableEndmasks = $span->getApplicableEndmasks();
+            $applicableEndmasksString = http_build_query($applicableEndmasks, '', ',');
+            $uniqueApplicableEndmasks[$applicableEndmasksString] = true;
+        }
+
+        $reorderedSpanCollection = new self();
+        foreach (array_keys($uniqueApplicableEndmasks) as $applicableEndmasksSearchString) {
+            foreach ($spanCollection->getSpans() as $span) {
+                $applicableEndmasks = $span->getApplicableEndmasks();
+                $applicableEndmasksString = http_build_query($applicableEndmasks, '', ',');
+
+                if ($applicableEndmasksString == $applicableEndmasksSearchString) {
+                    $reorderedSpanCollection->addSpan($span);
+                }
+            }
+        }
+
+        return $reorderedSpanCollection;
     }
 
     public function getSpanCollectionByFxsrEligibility(bool $fxsr, int $skewed): SpanCollection
