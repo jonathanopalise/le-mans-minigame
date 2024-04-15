@@ -687,21 +687,22 @@ class CompiledSpriteBuilder {
         int $destinationAdvance
     ): int {
         $instructionStream->appendStream($loopStartEndmaskInstructionStream);
+
+        $copyInstructionStream = $this->generateCopyInstructionStream(
+            $sourceAdvance,
+            $destinationAdvance,
+            'd0',
+            $useFxsr,
+            $useNfsr 
+        );          
+
         /*if ($copyInstructionIterations > 6) {
             $this->addBlitterLoopInstructions($instructionStream, $loopStartEndmaskInstructionStream, $loopStartSourceOffset, $loopStartDestinationOffset, $copyInstructionIterations);*/
         if ($copyInstructionIterations > 1) {
-            $copyInstructionStream = $this->generateCopyInstructionStream(
-                $sourceAdvance,
-                $destinationAdvance,
-                'd0',
-                $useFxsr,
-                $useNfsr 
-            );          
-
             $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex);
             $loopIndex++;
         } else {
-            $instructionStream->appendStream($loopStartCopyInstructionStream);
+            $instructionStream->appendStream($copyInstructionStream);
         }
 
         return $loopIndex;
