@@ -692,22 +692,26 @@ class CompiledSpriteBuilder {
 
             $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
 
-            $bitplaneSourceAdvance = $sourceAdvance;
-            $bitplaneDestinationAdvance = $destinationAdvance;
-            for ($index = 0; $index < 4; $index++) {
-                $copyInstructionStream = $this->generateCopyInstructionStream(
-                    $bitplaneSourceAdvance,
-                    $bitplaneDestinationAdvance,
-                    'd6',
-                    $useFxsr,
-                    $useNfsr
-                );          
 
-                $instructionStream->appendStream($copyInstructionStream);
+            $copyInstructionStream = $this->generateCopyInstructionStream(
+                $sourceAdvance,
+                $destinationAdvance,
+                'd6',
+                $useFxsr,
+                $useNfsr
+            );
+            $instructionStream->appendStream($copyInstructionStream);
 
-                $bitplaneSourceAdvance = 2;
-                $bitplaneDestinationAdvance = 2;
-            }
+            $instructionStream->add('rept 3');
+            $copyInstructionStream = $this->generateCopyInstructionStream(
+                2,
+                2,
+                'd6',
+                $useFxsr,
+                $useNfsr
+            );
+            $instructionStream->appendStream($copyInstructionStream);
+            $instructionStream->add('endr');
 
             $resetDestinationAdvance = (($copyInstructionIterations - 1) * $destinationAdvance) - 6;
             $instructionStream->add(
@@ -743,33 +747,6 @@ class CompiledSpriteBuilder {
         }
 
         return $loopIndex;
-    }
-
-    private function addBlitterLoopInstructions(InstructionStream $instructionStream, int $sourceAdvance, int $destinationAdvance, int $copyInstructionIterations, bool $useFxsr, bool $useNfsr)
-    {
-        // set endmasks using endmask instruction stream
-
-        // source = loopStartSourceOffset
-        // destination = loopStartDestinationOffset
-        // ycount = number of lines (need to set)
-
-        // xcount = width in 16 pixel blocks (should already be set)
-        // source x increment = 10 (should already be set)
-        // dest x increment = 8 (should already be set)
-
-        // source y increment needs to move to same point on next source line, and change depending on fxsr/nfsr
-        // - will need to take into account both drawing width
-        // dest y increment needs to move to same point on next line (sprite clearing code might help)
-
-        $copyInstructionStream = $this->generateCopyInstructionStream(
-            $sourceAdvance,
-            $destinationAdvance,
-            '#' . $copyInstructionIterations,
-            $useFxsr,
-            $useNfsr 
-        );
-
-        $instructionStream->appendStream($copyInstructionStream);
     }
 
     private function addLoopInstructions(
