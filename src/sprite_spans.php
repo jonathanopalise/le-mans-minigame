@@ -907,12 +907,14 @@ class CompiledSpriteBuilder {
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
         if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            $width = $this->widthInSixteenPixelBlocks;
+            /*$width = $this->widthInSixteenPixelBlocks;
             if ($this->skewed) {
                 $width--;
-            }
+            }*/
 
-            $sourceYIncrement = (($width + 1) * 10) - ($length * 10);
+            $sourceYIncrement = ($loopState['loopStartSourceAdvance'] + 10) - ($length * 10);
+
+            //$sourceYIncrement = (($width + 1) * 10) - ($length * 10);
 
             if ($loopState['useFxsr']) {
                 $sourceYIncrement -= 10;
