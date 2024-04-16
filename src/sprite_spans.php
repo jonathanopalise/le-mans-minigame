@@ -669,6 +669,8 @@ class CompiledSpriteBuilder {
         $destinationAdvance = $loopState['loopStartDestinationAdvance'];
         $changedEndmasks = $loopState['changedEndmasks'];
 
+        $instructionStream->add('');
+
         $endmaskInstructionStream = $this->generateEndmaskInstructionStream($changedEndmasks);
         $instructionStream->appendStream($endmaskInstructionStream);
 
@@ -684,17 +686,46 @@ class CompiledSpriteBuilder {
             );
         }
 
-        /*if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
-            $copyInstructionStream = $this->generateCopyInstructionStream(
-                $sourceAdvance,
-                $destinationAdvance,
-                '#' . $copyInstructionIterations,
-                $useFxsr,
-                $useNfsr 
-            );          
+        if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
 
-            $instructionStream->appendStream($copyInstructionStream);
-        } else {*/
+            //$instructionStream->add('move.l #'.rand().',$2DC6C0');
+
+            $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
+
+            $bitplaneSourceAdvance = $sourceAdvance;
+            $bitplaneDestinationAdvance = $destinationAdvance;
+            for ($index = 0; $index < 4; $index++) {
+                $copyInstructionStream = $this->generateCopyInstructionStream(
+                    $bitplaneSourceAdvance,
+                    $bitplaneDestinationAdvance,
+                    'd6',
+                    $useFxsr,
+                    $useNfsr
+                );          
+
+                $instructionStream->appendStream($copyInstructionStream);
+
+                $bitplaneSourceAdvance = 2;
+                $bitplaneDestinationAdvance = 2;
+            }
+
+            $resetDestinationAdvance = (($copyInstructionIterations - 1) * $destinationAdvance) - 6;
+            $instructionStream->add(
+                sprintf(
+                    'lea.l %d(a1),a1 ; calc destination address into a1',
+                    $resetDestinationAdvance
+                )
+            );
+
+            $resetSourceAdvance = (($copyInstructionIterations - 1) * $sourceAdvance) - 6;
+            $instructionStream->add(
+                sprintf(
+                    'lea.l %d(a0),a0 ; calc source address into a0',
+                    $resetSourceAdvance
+                )
+            );
+
+        } else {
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 $sourceAdvance,
                 $destinationAdvance,
@@ -709,7 +740,7 @@ class CompiledSpriteBuilder {
             } else {
                 $instructionStream->appendStream($copyInstructionStream);
             }
-        //}
+        }
 
         return $loopIndex;
     }
@@ -756,7 +787,7 @@ class CompiledSpriteBuilder {
         $instructionStream->add('dbra d6,.loop'.$loopIndex);
     }
 
-    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr): InstructionStream
+    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr, $repeatControl = null): InstructionStream
     {
         $copyInstructionStream = new InstructionStream();
         $copyInstructionStream->add(
@@ -775,6 +806,10 @@ class CompiledSpriteBuilder {
         );
         $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
 
+        if ($repeatControl) {
+            $copyInstructionStream->add('rept '.$repeatControl);
+        }
+
         $copyInstructionStream->add(
             $this->generateYCountInstruction($ycountSource)
         );
@@ -782,6 +817,10 @@ class CompiledSpriteBuilder {
         $copyInstructionStream->add(
             $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
         );
+
+        if ($repeatControl) {
+            $copyInstructionStream->add('endr');
+        }
 
         return $copyInstructionStream;
     }
@@ -911,9 +950,10 @@ class CompiledSpriteBuilder {
     {
         // TODO: needs to act differently when number of lines > 6
         if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            return -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+            //$test= -((8 * ($length - 1)) - 2);
+            return 168 - ($length * 8);
         } else {
-            return -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
+            return -((8 * ($length - 1)) - 2);
         }
     }
 
