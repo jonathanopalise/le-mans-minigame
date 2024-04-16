@@ -692,7 +692,6 @@ class CompiledSpriteBuilder {
 
             $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
 
-
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 $sourceAdvance,
                 $destinationAdvance,
@@ -908,7 +907,15 @@ class CompiledSpriteBuilder {
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
         if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+            $width = $this->widthInSixteenPixelBlocks;
+            if ($this->skewed) {
+                $width--;
+            }
+
+            $sourceYIncrement = ($width * 10) - ($length * 10);
+            $sourceYIncrement += 10;
+
+            //$sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
         } else {
             $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
         }
