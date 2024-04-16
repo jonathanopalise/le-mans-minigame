@@ -912,19 +912,27 @@ class CompiledSpriteBuilder {
                 $width--;
             }
 
-            $sourceYIncrement = ($width * 10) - ($length * 10);
-            $sourceYIncrement += 10;
+            $sourceYIncrement = (($width + 1) * 10) - ($length * 10);
+
+            if ($loopState['useFxsr']) {
+                $sourceYIncrement -= 10;
+            }
+
+            if ($loopState['useNfsr']) {
+                $sourceYIncrement += 10;
+            }
 
             //$sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
         } else {
             $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
-        }
+            if ($loopState['useFxsr']) {
+                $sourceYIncrement -= 10;
+            }
 
-        if ($loopState['useFxsr']) {
-            $sourceYIncrement -= 10;
-        }
-        if ($loopState['useNfsr']) {
-            $sourceYIncrement += 10;
+            if ($loopState['useNfsr']) {
+                $sourceYIncrement += 10;
+            }
+
         }
 
         return $sourceYIncrement;
