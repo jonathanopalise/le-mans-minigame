@@ -61,6 +61,12 @@ void game_loop()
             );
         }
 
+        /*display_list_add_sprite(
+            &sprite_definitions[SCENERY_TYPE_LAMPPOST],
+            16,
+            180
+        );*/
+
         display_list_execute();
         hardware_playfield_frame_complete();
     }
