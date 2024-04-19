@@ -618,9 +618,6 @@ class CompiledSpriteBuilder {
                                 // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
 
                                 $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
-                                $instructionStream->add('; calculated source y increment is '.$sourceYIncrement);
-                                $instructionStream->add('; old source y increment is '.$oldSourceYIncrement);
-                                $instructionStream->add('; pass value '.var_export($sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null,1));
                                 $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
                                 $loopIndex = $this->addConfirmCopyInstructions(
                                     $loopState,
@@ -640,9 +637,6 @@ class CompiledSpriteBuilder {
 
                         if ($key == array_key_last($spans)) {
                             $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
-                            $instructionStream->add('; calculated source y increment is '.$sourceYIncrement);
-                            $instructionStream->add('; old source y increment is '.$oldSourceYIncrement);
-                            $instructionStream->add('; pass value '.var_export($sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null,1));
                             $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState,
@@ -677,8 +671,6 @@ class CompiledSpriteBuilder {
         ?int $sourceYIncrement,
         ?int $destinationYIncrement
     ): int {
-        $instructionStream->add('; received source y increment '.var_export($sourceYIncrement,1));
-
         $copyInstructionIterations = $loopState['copyInstructionIterations'];
         $useFxsr = $loopState['useFxsr'];
         $useNfsr = $loopState['useNfsr'];
@@ -695,8 +687,6 @@ class CompiledSpriteBuilder {
             $instructionStream->add(
                 $this->generateSourceYIncrementInstruction($sourceYIncrement)
             );
-        } else {
-            $instructionStream->add('; no source y increment change detected');
         }
 
         if (!is_null($destinationYIncrement)) { 
