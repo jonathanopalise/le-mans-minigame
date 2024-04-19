@@ -13,7 +13,6 @@ struct OpponentCar {
     uint16_t active;
     uint16_t base_sprite_index;
     int16_t lane_change_countdown;
-    int32_t xpos;
 };
 
 extern struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];

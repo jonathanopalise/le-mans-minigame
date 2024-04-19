@@ -173,6 +173,7 @@ void opponent_cars_update()
     uint16_t index3;
     uint16_t left_lane_index;
     uint16_t right_lane_index;
+    uint16_t change_lane;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
@@ -195,12 +196,10 @@ void opponent_cars_update()
 
         if (current_opponent_car->lane_change_countdown > 0) {
             current_opponent_car->lane_change_countdown--;
-            current_opponent_car->xpos += 2000;
             if (current_opponent_car->lane_change_countdown == 0) {
                 current_opponent_car->lane++;
             }
         } else if (current_opponent_car->lane_change_countdown < 0) {
-            current_opponent_car->xpos -= 2000;
             current_opponent_car->lane_change_countdown++;
             if (current_opponent_car->lane_change_countdown == 0) {
                 current_opponent_car->lane--;
@@ -244,68 +243,84 @@ void opponent_cars_update()
             right_lane_blocked = 1;
         }
 
-        for (uint16_t index2 = 0; index2 < OPPONENT_CAR_COUNT; index2++) {
-            if (current_opponent_car != current_other_opponent_car) {
-                if (current_other_opponent_car->lane == current_opponent_car->lane && 
-                    current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 7000) &&
-                    current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position)
-                ) {
-                    // lane ahead is blocked
-                    // if I can move left or right, do so
-                    // otherwise stay in lane and brake hard to match speed of car in front
+        change_lane = 0;
 
-                    if (!left_lane_blocked) {
-                        current_other_opponent_car_2 = opponent_cars;
-                        for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
-                            if (current_other_opponent_car_2 != current_other_opponent_car &&
-                                current_other_opponent_car_2->lane == left_lane_index &&
-                                current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
-                                current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
-                            ) {
-                                left_lane_blocked = 1;
-                                break;
-                            }
-                            current_other_opponent_car_2++;
-                        }
+        //if ((random() & 127) < 4) {
+            // change lane for the hell of it
+        //    change_lane = 1;
+        //}
+
+        if (!change_lane) {
+            for (uint16_t index2 = 0; index2 < OPPONENT_CAR_COUNT; index2++) {
+                if (current_opponent_car != current_other_opponent_car) {
+                    if (current_other_opponent_car->lane == current_opponent_car->lane && 
+                        current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 7000) &&
+                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position)
+                    ) {
+                        // change lane because we have to
+                        change_lane = 1;
+                        break;
                     }
+                }
+                current_other_opponent_car++;
+            }
+        }
 
-                    if (!right_lane_blocked) {
-                        current_other_opponent_car_2 = opponent_cars;
-                        for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
-                            if (current_other_opponent_car_2 != current_other_opponent_car &&
-                                current_other_opponent_car_2->lane == right_lane_index &&
-                                current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
-                                current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
-                            ) {
-                                right_lane_blocked = 1;
-                                break;
-                            }
-                            current_other_opponent_car_2++;
-                        }
+        // lane ahead is blocked
+        // if I can move left or right, do so
+        // otherwise stay in lane and brake hard to match speed of car in front
+
+        if (change_lane) {
+            if (!left_lane_blocked) {
+                // we're not in the leftmost lane, but the lane to our left may contain cars
+                current_other_opponent_car_2 = opponent_cars;
+                for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
+                    if (current_other_opponent_car_2 != current_other_opponent_car &&
+                        current_other_opponent_car_2->lane == left_lane_index &&
+                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
+                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
+                    ) {
+                        left_lane_blocked = 1;
+                        break;
                     }
-
-
-                    if (left_lane_blocked && right_lane_blocked) {
-                        // if both left and right lanes blocked, brake
-                        current_opponent_car->speed -= 6;
-                    } else if (!left_lane_blocked && !right_lane_blocked) {
-                        // if both left and right lanes available, take pick of lanes based on random or other factor
-                        if (random() & 1) {
-                            current_opponent_car->lane_change_countdown = 60;
-                        } else {
-                            current_opponent_car->lane_change_countdown = -60;
-                        }
-                    } else if (left_lane_blocked) {
-                        current_opponent_car->lane_change_countdown = 60;
-                        // left lane blocked, move right
-                    } else {
-                        current_opponent_car->lane_change_countdown = -60;
-                        // right lane blocked, move left
-                    }
+                    current_other_opponent_car_2++;
                 }
             }
 
-            current_other_opponent_car++;
+            if (!right_lane_blocked) {
+                // we're not in the rightmost lane, but the lane to our right may contain cars
+                current_other_opponent_car_2 = opponent_cars;
+                for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
+                    if (current_other_opponent_car_2 != current_other_opponent_car &&
+                        current_other_opponent_car_2->lane == right_lane_index &&
+                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
+                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
+                    ) {
+                        right_lane_blocked = 1;
+                        break;
+                    }
+                    current_other_opponent_car_2++;
+                }
+            }
+
+
+            if (left_lane_blocked && right_lane_blocked) {
+                // if both left and right lanes blocked, brake
+                current_opponent_car->speed -= 6;
+            } else if (!left_lane_blocked && !right_lane_blocked) {
+                // if both left and right lanes available, take pick of lanes based on random or other factor
+                if (random() & 1) {
+                    current_opponent_car->lane_change_countdown = 60;
+                } else {
+                    current_opponent_car->lane_change_countdown = -60;
+                }
+            } else if (left_lane_blocked) {
+                current_opponent_car->lane_change_countdown = 60;
+                // left lane blocked, move right
+            } else {
+                current_opponent_car->lane_change_countdown = -60;
+                // right lane blocked, move left
+            }
         }
 
         current_opponent_car++;
