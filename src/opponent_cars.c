@@ -90,12 +90,11 @@ void opponent_cars_update()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
-    int32_t curvature_max_speed = 900 - (corner_sharpness - 200 < 0 ? 0 : corner_sharpness - 200);
-    uint32_t random_number;
-    uint16_t car_selector;
-    uint16_t lane_status[4];
-    int16_t xpos;
-    uint16_t base_sprite_index;
+    int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
+    if (curvature_max_speed < 400) {
+        curvature_max_speed = 400;
+    }
+
     int32_t opponent_car_advance;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
@@ -109,12 +108,12 @@ void opponent_cars_update()
             }
         }
 
-        opponent_car_advance = current_opponent_car->speed - (current_opponent_car->player_relative_track_position >> 5);
+        /*opponent_car_advance = current_opponent_car->speed - (current_opponent_car->player_relative_track_position >> 5);
         if (opponent_car_advance < 250) {
             opponent_car_advance = 250;
-        }
+        }*/
 
-        current_opponent_car->player_relative_track_position += opponent_car_advance;
+        current_opponent_car->player_relative_track_position += current_opponent_car->speed;
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->player_relative_track_position > 65536) {
@@ -122,73 +121,84 @@ void opponent_cars_update()
         }
 
         if (current_opponent_car->player_relative_track_position < 0) {
-            current_opponent_car->player_relative_track_position += 50000;
-
-            random_number = random();
-
-            // car colour selection - 3 bits
-            car_selector = random_number & 7;
-            if (car_selector <= 2) {
-                base_sprite_index = RED_CAR_BASE_INDEX;
-            } else if (car_selector >= 5) {
-                base_sprite_index = YELLOW_CAR_BASE_INDEX;
-            } else {
-                base_sprite_index = BLUE_CAR_BASE_INDEX;
-            }
-
-            current_opponent_car->base_sprite_index = base_sprite_index;
-
-            // speed - 8 bits
-            current_opponent_car->speed = current_opponent_car->max_speed = 650 + ((random_number >> 3) & 255);
-
-
-            /*snprintf(
-                nf_strbuf,
-                256,
-                "spawned opponent speed: %d\n",
-                current_opponent_car->speed
-            );
-            nf_print(nf_strbuf);*/
-
-
-
-            for (uint16_t index = 0; index < 4; index++) {
-                lane_status[index] = 0; // empty
-            }
-            for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
-                lane_status[opponent_cars[index].lane] = 1;
-            }
-
-            uint16_t new_lane;
-            // lane selection - 1 bit
-            if ((random_number >> 12) & 1) {
-                if (lane_status[3] == 0) {
-                    new_lane = 3;
-                } else if (lane_status[2] == 0) {
-                    new_lane = 2;
-                } else if (lane_status[1] == 0) {
-                    new_lane = 1;
-                } else {
-                    new_lane = 0;
-                }
-            } else {
-                if (lane_status[0] == 0) {
-                    new_lane = 0;
-                } else if (lane_status[1] == 0) {
-                    new_lane = 1;
-                } else if (lane_status[2] == 0) {
-                    new_lane = 2;
-                } else {
-                    new_lane = 3;
-                }
-            }
-
-            //current_opponent_car->lane = new_lane;
-            current_opponent_car->lane = (random_number >> 12) & 3;
+            opponent_horizon_respawn(current_opponent_car);
         }
 
         current_opponent_car++;
     }
+}
+
+void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
+{
+    uint32_t random_number;
+    uint16_t car_selector;
+    uint16_t lane_status[4];
+    int16_t xpos;
+    uint16_t base_sprite_index;
+
+    current_opponent_car->player_relative_track_position += 60000;
+
+    random_number = random();
+
+    // car colour selection - 3 bits
+    car_selector = random_number & 7;
+    if (car_selector <= 2) {
+        base_sprite_index = RED_CAR_BASE_INDEX;
+    } else if (car_selector >= 5) {
+        base_sprite_index = YELLOW_CAR_BASE_INDEX;
+    } else {
+        base_sprite_index = BLUE_CAR_BASE_INDEX;
+    }
+
+    current_opponent_car->base_sprite_index = base_sprite_index;
+
+    // speed - 8 bits
+    current_opponent_car->speed = current_opponent_car->max_speed = 650 + ((random_number >> 3) & 255);
+
+
+    /*snprintf(
+        nf_strbuf,
+        256,
+        "spawned opponent speed: %d\n",
+        current_opponent_car->speed
+    );
+    nf_print(nf_strbuf);*/
+
+
+
+    for (uint16_t index = 0; index < 4; index++) {
+        lane_status[index] = 0; // empty
+    }
+    for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
+        lane_status[opponent_cars[index].lane] = 1;
+    }
+
+    uint16_t new_lane;
+    // lane selection - 1 bit
+    if ((random_number >> 12) & 1) {
+        if (lane_status[3] == 0) {
+            new_lane = 3;
+        } else if (lane_status[2] == 0) {
+            new_lane = 2;
+        } else if (lane_status[1] == 0) {
+            new_lane = 1;
+        } else {
+            new_lane = 0;
+        }
+    } else {
+        if (lane_status[0] == 0) {
+            new_lane = 0;
+        } else if (lane_status[1] == 0) {
+            new_lane = 1;
+        } else if (lane_status[2] == 0) {
+            new_lane = 2;
+        } else {
+            new_lane = 3;
+        }
+    }
+
+    //current_opponent_car->lane = new_lane;
+    current_opponent_car->lane = (random_number >> 12) & 3;
 }
 
 void opponent_cars_process()
