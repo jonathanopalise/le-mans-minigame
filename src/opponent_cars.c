@@ -174,14 +174,25 @@ void opponent_cars_update()
     uint16_t left_lane_index;
     uint16_t right_lane_index;
     uint16_t change_lane;
+    int32_t distance_max_advance;
+    int32_t combined_max_speed;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
-    if (curvature_max_speed < 400) {
-        curvature_max_speed = 400;
+    if (curvature_max_speed < 500) {
+        curvature_max_speed = 500;
     }
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
+        if (current_opponent_car->player_relative_track_position < 10000) {
+            distance_max_advance = current_opponent_car->max_speed;
+        } else {
+            // if player_relative_track_position = 10000, distance_max_advance needs to be 1000
+            // if player_relative_track_position = 60000, distance_max_advance needs to be 400
+
+            distance_max_advance = current_opponent_car->max_speed - ((current_opponent_car->player_relative_track_position - 10000) >> 7);
+        }
+
         if (current_opponent_car->speed > curvature_max_speed) {
             current_opponent_car->speed -= 8;
         } else {
@@ -191,7 +202,12 @@ void opponent_cars_update()
             }
         }
 
-        current_opponent_car->player_relative_track_position += current_opponent_car->speed;
+        if (current_opponent_car->speed > distance_max_advance) {
+            current_opponent_car->player_relative_track_position += distance_max_advance;
+        } else {
+            current_opponent_car->player_relative_track_position += current_opponent_car->speed;
+        }
+
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->lane_change_countdown > 0) {
@@ -245,17 +261,17 @@ void opponent_cars_update()
 
         change_lane = 0;
 
-        //if ((random() & 127) < 4) {
-            // change lane for the hell of it
-        //    change_lane = 1;
-        //}
+        if ((random() & 2047) < 4) {
+            // change lane just because
+            change_lane = 1;
+        }
 
         if (!change_lane) {
             for (uint16_t index2 = 0; index2 < OPPONENT_CAR_COUNT; index2++) {
                 if (current_opponent_car != current_other_opponent_car) {
                     if (current_other_opponent_car->lane == current_opponent_car->lane && 
-                        current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 7000) &&
-                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position)
+                        current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 8000) &&
+                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position - 4000)
                     ) {
                         // change lane because we have to
                         change_lane = 1;
@@ -277,8 +293,8 @@ void opponent_cars_update()
                 for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
                     if (current_other_opponent_car_2 != current_other_opponent_car &&
                         current_other_opponent_car_2->lane == left_lane_index &&
-                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
-                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
+                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 8000) &&
+                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position - 4000)
                     ) {
                         left_lane_blocked = 1;
                         break;
@@ -293,8 +309,8 @@ void opponent_cars_update()
                 for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
                     if (current_other_opponent_car_2 != current_other_opponent_car &&
                         current_other_opponent_car_2->lane == right_lane_index &&
-                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 7000) &&
-                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position) 
+                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 8000) &&
+                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position - 4000) 
                     ) {
                         right_lane_blocked = 1;
                         break;
@@ -310,15 +326,15 @@ void opponent_cars_update()
             } else if (!left_lane_blocked && !right_lane_blocked) {
                 // if both left and right lanes available, take pick of lanes based on random or other factor
                 if (random() & 1) {
-                    current_opponent_car->lane_change_countdown = 60;
+                    current_opponent_car->lane_change_countdown = 37;
                 } else {
-                    current_opponent_car->lane_change_countdown = -60;
+                    current_opponent_car->lane_change_countdown = -37;
                 }
             } else if (left_lane_blocked) {
-                current_opponent_car->lane_change_countdown = 60;
+                current_opponent_car->lane_change_countdown = 37;
                 // left lane blocked, move right
             } else {
-                current_opponent_car->lane_change_countdown = -60;
+                current_opponent_car->lane_change_countdown = -37;
                 // right lane blocked, move left
             }
         }
@@ -358,11 +374,11 @@ void opponent_cars_process()
                     logical_xpos = (road_scanline->current_logical_xpos - road_scanline->object_xpos_add_values[-opponent_car_xpos]);
                 }
 
-                if (current_opponent_car->lane_change_countdown !=0) {
+                if (current_opponent_car->lane_change_countdown != 0) {
                     if (current_opponent_car->lane_change_countdown > 0) {
-                        logical_xpos += road_scanline->logical_xpos_add_values[60 - current_opponent_car->lane_change_countdown];
+                        logical_xpos += road_scanline->logical_xpos_add_values[37 - current_opponent_car->lane_change_countdown] << 1;
                     } else {
-                        logical_xpos -= road_scanline->logical_xpos_add_values[60 + current_opponent_car->lane_change_countdown];
+                        logical_xpos -= road_scanline->logical_xpos_add_values[37 + current_opponent_car->lane_change_countdown] << 1;
                     }
                 }
 

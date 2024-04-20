@@ -98,7 +98,7 @@ void player_car_handle_inputs()
         }*/
 
         if (joy_up) {
-            player_car_speed += 2;
+            player_car_speed += 3;
             if (player_car_speed > 1000) {
                 player_car_speed = 1000;
             }
