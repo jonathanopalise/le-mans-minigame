@@ -49,10 +49,10 @@ $yVector = $farVisibleScanlineYVector;
 $scanlines = [];
 
 $unnormalisedSkewAddValuesMultiplier = 10;
-$requiredObjectXPositions = [0,45,120,225,250,275];
+$requiredObjectXPositions = [0,40,120,225,250,275];
 
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
-    $spriteIndexAdjust = 7 - round($scanlineIndex / 6);
+    $spriteIndexAdjust = 7 - round($scanlineIndex / 7.5);
     if ($spriteIndexAdjust < 0) {
         $spriteIndexAdjust = 0;
     }

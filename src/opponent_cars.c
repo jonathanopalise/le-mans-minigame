@@ -48,7 +48,7 @@ void opponent_cars_init()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     current_opponent_car->player_relative_track_position = 30000;
-    current_opponent_car->lane = 1;
+    current_opponent_car->lane = 0;
     current_opponent_car->speed = 600;
     current_opponent_car->max_speed = 600;
     current_opponent_car->active = 1;
@@ -58,7 +58,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 25000;
-    current_opponent_car->lane = 2;
+    current_opponent_car->lane = 1;
     current_opponent_car->speed = 650;
     current_opponent_car->max_speed = 650;
     current_opponent_car->active = 1;
@@ -68,7 +68,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 20000;
-    current_opponent_car->lane = 3;
+    current_opponent_car->lane = 2;
     current_opponent_car->speed = 700;
     current_opponent_car->max_speed = 700;
     current_opponent_car->active = 1;
@@ -78,7 +78,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 15000;
-    current_opponent_car->lane = 4;
+    current_opponent_car->lane = 3;
     current_opponent_car->speed = 750;
     current_opponent_car->max_speed = 750;
     current_opponent_car->active = 1;
@@ -97,7 +97,7 @@ static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
     int16_t xpos;
     uint16_t base_sprite_index;
 
-    current_opponent_car->player_relative_track_position += 60000;
+    current_opponent_car->player_relative_track_position += 50000;
     current_opponent_car->lane_change_countdown = 0;
 
     random_number = random();
@@ -128,16 +128,16 @@ static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
 
 
 
-    for (uint16_t index = 0; index < 4; index++) {
+    /*for (uint16_t index = 0; index < 4; index++) {
         lane_status[index] = 0; // empty
     }
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         lane_status[opponent_cars[index].lane] = 1;
-    }
+    }*/
 
-    uint16_t new_lane;
+    //uint16_t new_lane;
     // lane selection - 1 bit
-    if ((random_number >> 12) & 1) {
+    /*if ((random_number >> 12) & 1) {
         if (lane_status[3] == 0) {
             new_lane = 3;
         } else if (lane_status[2] == 0) {
@@ -157,7 +157,7 @@ static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
         } else {
             new_lane = 3;
         }
-    }
+    }*/
 
     //current_opponent_car->lane = new_lane;
     current_opponent_car->lane = (random_number >> 12) & 3;
@@ -173,7 +173,7 @@ void opponent_cars_update()
     uint16_t index3;
     uint16_t left_lane_index;
     uint16_t right_lane_index;
-    uint16_t change_lane;
+    uint16_t take_evasive_action;
     int32_t distance_max_advance;
     int32_t combined_max_speed;
 
@@ -190,11 +190,14 @@ void opponent_cars_update()
             // if player_relative_track_position = 10000, distance_max_advance needs to be 1000
             // if player_relative_track_position = 60000, distance_max_advance needs to be 400
 
-            distance_max_advance = current_opponent_car->max_speed - ((current_opponent_car->player_relative_track_position - 10000) >> 7);
+            distance_max_advance = current_opponent_car->max_speed - ((current_opponent_car->player_relative_track_position - 10000) >> 5);
+            if (distance_max_advance < 400) {
+                distance_max_advance = 400;
+            }
         }
 
         if (current_opponent_car->speed > curvature_max_speed) {
-            current_opponent_car->speed -= 8;
+            current_opponent_car->speed -= 6;
         } else {
             current_opponent_car->speed += 2;
             if (current_opponent_car->speed > current_opponent_car->max_speed) {
@@ -259,22 +262,22 @@ void opponent_cars_update()
             right_lane_blocked = 1;
         }
 
-        change_lane = 0;
+        take_evasive_action = 0;
 
         if ((random() & 2047) < 4) {
             // change lane just because
-            change_lane = 1;
+            take_evasive_action = 1;
         }
 
-        if (!change_lane) {
+        if (!take_evasive_action) {
             for (uint16_t index2 = 0; index2 < OPPONENT_CAR_COUNT; index2++) {
                 if (current_opponent_car != current_other_opponent_car) {
                     if (current_other_opponent_car->lane == current_opponent_car->lane && 
                         current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 8000) &&
-                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position - 4000)
+                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position)
                     ) {
                         // change lane because we have to
-                        change_lane = 1;
+                        take_evasive_action = 1;
                         break;
                     }
                 }
@@ -286,7 +289,7 @@ void opponent_cars_update()
         // if I can move left or right, do so
         // otherwise stay in lane and brake hard to match speed of car in front
 
-        if (change_lane) {
+        if (take_evasive_action) {
             if (!left_lane_blocked) {
                 // we're not in the leftmost lane, but the lane to our left may contain cars
                 current_other_opponent_car_2 = opponent_cars;
@@ -362,10 +365,12 @@ void opponent_cars_process()
                 road_scanline = &road_scanlines[scanline_index];
                 //sprite_index = current_opponent_car->base_sprite_index + road_scanline->sprite_index_adjust;
 
-                sprite_index = current_opponent_car->base_sprite_index - (scanline_index / 6);
+                /*sprite_index = current_opponent_car->base_sprite_index - (scanline_index / 6);
                 if (sprite_index < (current_opponent_car->base_sprite_index - 7)) {
                     sprite_index = current_opponent_car->base_sprite_index - 7;
-                }
+                }*/
+
+                sprite_index = (current_opponent_car->base_sprite_index - 7) + road_scanline->sprite_index_adjust;
  
                 opponent_car_xpos = lane_to_xpos_mappings[current_opponent_car->lane];
                 if (opponent_car_xpos > 0) {

@@ -55,7 +55,7 @@ void hardware_playfield_handle_vbl()
             -1
         );*/
     } else {
-        //nf_print("Frame dropped :(");
+        nf_print("Frame dropped :(");
     }
 }
 
