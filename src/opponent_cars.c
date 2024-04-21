@@ -197,7 +197,7 @@ void opponent_cars_update()
         }
 
         if (current_opponent_car->speed > curvature_max_speed) {
-            current_opponent_car->speed -= 6;
+            current_opponent_car->speed -= 3;
         } else {
             current_opponent_car->speed += 2;
             if (current_opponent_car->speed > current_opponent_car->max_speed) {
@@ -325,7 +325,7 @@ void opponent_cars_update()
 
             if (left_lane_blocked && right_lane_blocked) {
                 // if both left and right lanes blocked, brake
-                current_opponent_car->speed -= 6;
+                current_opponent_car->speed -= 4;
             } else if (!left_lane_blocked && !right_lane_blocked) {
                 // if both left and right lanes available, take pick of lanes based on random or other factor
                 if (random() & 1) {
@@ -389,7 +389,7 @@ void opponent_cars_process()
 
                 screen_xpos = logical_xpos >> 16;
 
-                sprite_aspect = (screen_xpos << 1) - (current_road_curvature >> 1);
+                sprite_aspect = (screen_xpos << 1) - current_road_curvature;
 
                 if (sprite_aspect > 50) {
                     sprite_index += 8;
