@@ -163,6 +163,19 @@ static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
     current_opponent_car->lane = (random_number >> 12) & 3;
 }
 
+uint16_t get_target_lane(struct OpponentCar *opponent_car)
+{
+    if (opponent_car->lane_change_countdown != 0) {
+        if (opponent_car->lane_change_countdown > 0) {
+            return opponent_car->lane + 1;
+        } else {
+            return opponent_car->lane - 1;
+        }
+    } else {
+        return opponent_car->lane;
+    }
+}
+
 void opponent_cars_update()
 {
     struct OpponentCar *current_opponent_car = opponent_cars;
@@ -176,6 +189,7 @@ void opponent_cars_update()
     uint16_t take_evasive_action;
     int32_t distance_max_advance;
     int32_t combined_max_speed;
+    uint16_t target_lane;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
@@ -264,7 +278,7 @@ void opponent_cars_update()
 
         take_evasive_action = 0;
 
-        if ((random() & 2047) < 4) {
+        if ((random() & 2047) < 8) {
             // change lane just because
             take_evasive_action = 1;
         }
@@ -292,33 +306,33 @@ void opponent_cars_update()
         if (take_evasive_action) {
             if (!left_lane_blocked) {
                 // we're not in the leftmost lane, but the lane to our left may contain cars
-                current_other_opponent_car_2 = opponent_cars;
+                current_other_opponent_car = opponent_cars;
                 for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
-                    if (current_other_opponent_car_2 != current_other_opponent_car &&
-                        current_other_opponent_car_2->lane == left_lane_index &&
-                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 8000) &&
-                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position - 4000)
+                    if (current_other_opponent_car != current_opponent_car &&
+                        current_other_opponent_car->lane == left_lane_index &&
+                        current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 8000) &&
+                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position - 4000)
                     ) {
                         left_lane_blocked = 1;
                         break;
                     }
-                    current_other_opponent_car_2++;
+                    current_other_opponent_car++;
                 }
             }
 
             if (!right_lane_blocked) {
                 // we're not in the rightmost lane, but the lane to our right may contain cars
-                current_other_opponent_car_2 = opponent_cars;
+                current_other_opponent_car = opponent_cars;
                 for (index3 = 0; index3 < OPPONENT_CAR_COUNT; index3++) {
-                    if (current_other_opponent_car_2 != current_other_opponent_car &&
-                        current_other_opponent_car_2->lane == right_lane_index &&
-                        current_other_opponent_car_2->player_relative_track_position < (current_other_opponent_car->player_relative_track_position + 8000) &&
-                        current_other_opponent_car_2->player_relative_track_position > (current_other_opponent_car->player_relative_track_position - 4000) 
+                    if (current_other_opponent_car != current_opponent_car &&
+                        current_other_opponent_car->lane == right_lane_index &&
+                        current_other_opponent_car->player_relative_track_position < (current_opponent_car->player_relative_track_position + 8000) &&
+                        current_other_opponent_car->player_relative_track_position > (current_opponent_car->player_relative_track_position - 4000) 
                     ) {
                         right_lane_blocked = 1;
                         break;
                     }
-                    current_other_opponent_car_2++;
+                    current_other_opponent_car++;
                 }
             }
 
