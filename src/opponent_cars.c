@@ -138,7 +138,7 @@ static uint16_t is_opponent_distance_blocking(struct OpponentCar *opponent_car, 
     // if speed difference > 0, other_opponent_car is going faster than opponent_car
     opponent_distance = other_opponent_car->player_relative_track_position - opponent_car->player_relative_track_position;
 
-    if (opponent_distance < 2000 && opponent_distance > -2000) {
+    if (opponent_distance < 1500 && opponent_distance > -1500) {
         // cars are alongside each other
         return 1;
     }
@@ -147,12 +147,13 @@ static uint16_t is_opponent_distance_blocking(struct OpponentCar *opponent_car, 
         
     if (opponent_distance > 0) {
         // other opponent car is ahead
-        // if other opponent car is faster, return false
-        // opponent car is catching up with other opponent car
-        return speed_difference < 0 && (opponent_distance < ((-speed_difference) << 8));
+        // other opponent car is considered blocking if
+        // - it's going slower than opponent car, AND
+        // - the distance between the two cars is less than a certain threshold
+        return speed_difference < 0 && (opponent_distance < ((-speed_difference) << 7));
     }
 
-    return speed_difference > 0 && ((-opponent_distance) < (speed_difference << 8));
+    return speed_difference > 0 && ((-opponent_distance) < (speed_difference << 7));
 }
 
 void opponent_cars_update()
