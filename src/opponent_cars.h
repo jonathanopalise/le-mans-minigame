@@ -10,6 +10,7 @@ struct OpponentCar {
     uint16_t lane;
     uint32_t speed;
     uint32_t max_speed;
+    uint32_t target_speed;
     uint16_t active;
     uint16_t base_sprite_index;
     int16_t lane_change_countdown;
