@@ -80,7 +80,7 @@ void player_car_handle_inputs()
         uint16_t joy_right = joy_data & 8;
         uint16_t joy_fire = joy_data >> 7 & 1;
 
-        /*if (joy_fire) {
+        if (joy_fire) {
             snprintf(
                 nf_strbuf,
                 256,
@@ -88,14 +88,14 @@ void player_car_handle_inputs()
                 camera_track_position
             );
             nf_print(nf_strbuf);
-            snprintf(
+            /*snprintf(
                 nf_strbuf,
                 256,
                 "logical_xpos: %d\n",
                 player_car_logical_xpos
             );
-            nf_print(nf_strbuf);
-        }*/
+            nf_print(nf_strbuf);*/
+        }
 
         if (joy_up) {
             player_car_speed += 3;
