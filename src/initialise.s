@@ -44,7 +44,7 @@ dummy:
 	rte
 
 vbl:
-    movem.l d0-d7/a0-a6,-(sp)
+    movem.l d0-d2/a0-a1,-(sp)
 
     jsr _hardware_playfield_handle_vbl
 
@@ -78,7 +78,7 @@ vbl:
     move.w (a0)+,(a1)+ ; sky gradient end
 
     ;jsr _vbl_handler
-    movem.l (sp)+,d0-d7/a0-a6
+    movem.l (sp)+,d0-d2/a0-a1
     rte
 
     ; timer 1 - top of mountains
