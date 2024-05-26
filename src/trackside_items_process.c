@@ -42,7 +42,7 @@ void trackside_items_process()
         return;
     }
 
-    while (current_trackside_item_camera_relative_position < 35000) {
+    while (current_trackside_item_camera_relative_position < 40000) {
         trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
         if (trackside_item_scanline_index != -1) {
             road_scanline = &road_scanlines[trackside_item_scanline_index];

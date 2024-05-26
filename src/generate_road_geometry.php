@@ -13,6 +13,33 @@
 
 include('library.php');
 
+function generateSpriteIndexAdjust($scanlineIndex)
+{
+    $roadWidth = intval(11 + ((382 - 11) / 80 * $scanlineIndex));
+
+    // largest should come in at width = 320
+    $spriteIndex = 0; // smallest by default
+
+    $spriteIndex = 7;
+    if ($roadWidth >= 63*5) {
+        $spriteIndex = 0;
+    } elseif ($roadWidth >= 47*5) {
+        $spriteIndex = 1;
+    } elseif ($roadWidth >= 35*5) {
+        $spriteIndex = 2;
+    } elseif ($roadWidth >= 26*5) {
+        $spriteIndex = 3;
+    } elseif ($roadWidth >= 19*5) {
+        $spriteIndex = 4;
+    } elseif ($roadWidth >= 14*5) {
+        $spriteIndex = 5;
+    } elseif ($roadWidth >= 10*5) {
+        $spriteIndex = 6;
+    }
+
+    return $spriteIndex;
+}
+
 if ($argc < 2) {
     echo("Usage: php generate_road_geometry.php [outputFile]\n");
     exit(1);
@@ -52,10 +79,11 @@ $unnormalisedSkewAddValuesMultiplier = 10;
 $requiredObjectXPositions = [0,40,120,225,250,275];
 
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
-    $spriteIndexAdjust = 7 - round($scanlineIndex / 7.5);
+    $spriteIndexAdjust = generateSpriteIndexAdjust($scanlineIndex);
+    /*$spriteIndexAdjust = 7 - round($scanlineIndex / 5.5);
     if ($spriteIndexAdjust < 0) {
         $spriteIndexAdjust = 0;
-    }
+    }*/
 
     $distanceAlongRoad = (ROAD_Y / $yVector) * $xVector;
     $xVector -= $scanlineXVectorAddQuantity;
