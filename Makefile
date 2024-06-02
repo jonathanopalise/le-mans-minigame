@@ -34,7 +34,11 @@ OBJECT_FILES =\
     src/generated/status_definitions.o\
     src/generated/time_of_day.o\
 	src/initialise.o\
-	src/nf_asmv.o
+	src/nf_asmv.o\
+	src/mixer_init.o\
+	src/mixer_data.o\
+	src/mixer_variables.o\
+	src/mixer_vbl.o\
 
 ASSETS_GIF = assets/round-tree.gif
 
@@ -46,7 +50,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h
@@ -147,6 +151,18 @@ src/generated/time_of_day.c: src/generate_time_of_day.php
 
 src/initialise.o: src/initialise.s
 	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o
+
+src/mixer_init.o: src/mixer_init.s src/mixer_init.h
+	$(VASM) $(VASM_OPTS) src/mixer_init.s -Felf -o src/mixer_init.o
+
+src/mixer_data.o: src/mixer_data.s
+	$(VASM) $(VASM_OPTS) src/mixer_data.s -Felf -o src/mixer_data.o
+
+src/mixer_variables.o: src/mixer_variables.s
+	$(VASM) $(VASM_OPTS) src/mixer_variables.s -Felf -o src/mixer_variables.o
+
+src/mixer_vbl.o: src/mixer_vbl.s
+	$(VASM) $(VASM_OPTS) src/mixer_vbl.s -Felf -o src/mixer_vbl.o
 
 src/nf_asmv.o: src/nf_asmv.s
 	$(VASM) $(VASM_OPTS) src/nf_asmv.s -Felf -o src/nf_asmv.o

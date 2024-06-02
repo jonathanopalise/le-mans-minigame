@@ -99,8 +99,8 @@ void player_car_handle_inputs()
 
         if (joy_up) {
             player_car_speed += 3;
-            if (player_car_speed > 1000) {
-                player_car_speed = 1000;
+            if (player_car_speed > 1200) {
+                player_car_speed = 1200;
             }
         } else if (joy_down) {
             player_car_speed -= 12;

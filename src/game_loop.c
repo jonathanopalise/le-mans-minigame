@@ -15,6 +15,7 @@
 #include "opponent_cars.h"
 #include "time_of_day_process.h"
 #include "detect_collisions.h"
+#include "mixer_init.h"
 #include "natfeats.h"
 
 void game_loop()
@@ -28,6 +29,7 @@ void game_loop()
 
     nf_print("hello from lemans!");
 
+    mixer_init();
     hardware_playfield_init();
     initialise();
     road_corners_init();
