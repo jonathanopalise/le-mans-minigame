@@ -2,15 +2,16 @@
 
 _draw_status:
 
-    move.l sp,a6
+    move.l sp,a0
     movem.l d2-d7/a2-a6,-(sp)    
 
-    move.l 4(a6),a0       ; source data
-    move.l 8(a6),a1      ; destination
-    move.w 14(a6),d2      ; data width pixels
-    move.w 18(a6),d3      ; data height lines
-    move.w 22(a6),d6      ; skew
+    move.l 4(a0),a6       ; source data
+    move.l 8(a0),a1      ; destination
+    move.w 14(a0),d2      ; data width pixels
+    move.w 18(a0),d3      ; data height lines
+    move.w 22(a0),d6      ; skew
     move.w #8,d4          ; unadjusted source y increment value
+    move.l a6,a0
 
     tst.w d6
     beq _noskew

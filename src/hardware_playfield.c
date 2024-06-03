@@ -10,6 +10,8 @@
 #include "natfeats.h"
 #include "random.h"
 #include "initialise.h"
+#include "hud.h"
+#include "hud_digits.h"
 
 #define HARDWARE_PLAYFIELD_COUNT 3
 
@@ -224,6 +226,15 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_height_lines,
         2 // 160 + 2 = 162
     );
+
+    for (uint16_t index = 0; index < TIME_DIGIT_COUNT; index++) {
+        hardware_playfield->hud_digits.time_digits[index] = -1;
+    }
+
+    for (uint16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
+        hardware_playfield->hud_digits.score_digits[index] = -1;
+        hardware_playfield->hud_digits.high_score_digits[index] = -1;
+    }
 }
 
 void hardware_playfield_init()
@@ -242,6 +253,39 @@ void hardware_playfield_init()
     for (uint16_t index = 0; index < HARDWARE_PLAYFIELD_COUNT; index++) {
         hardware_playfield_init_playfield(&hardware_playfields[index]);
     }
+}
+
+void hardware_playfield_update_digits()
+{
+    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+
+    int8_t desired_digit;
+    struct StatusDefinition *status_definition;
+
+    for (uint16_t index = 0; index <= 1; index++) {
+        desired_digit = hud_digits.time_digits[index];
+        if (desired_digit != playfield->hud_digits.time_digits[index]) {
+            playfield->hud_digits.time_digits[index] = desired_digit;
+            status_definition = &status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE + desired_digit];
+            if (index == 0) {
+                draw_status(
+                    status_definition->words, // confirmed correct
+                    &playfield->buffer[160 * 19 + (8 * 8)],
+                    status_definition->source_data_width_pixels,
+                    status_definition->source_data_height_lines,
+                    13 // 128 + 13 = 141
+                );
+            } else {
+                draw_status(
+                    status_definition->words, // confirmed correct
+                    &playfield->buffer[160 * 19 + (10 * 8)],
+                    status_definition->source_data_width_pixels,
+                    status_definition->source_data_height_lines,
+                    2 // 160 + 2 = 162
+                );
+            }
+        }
+    } 
 }
 
 static void hardware_playfield_error()

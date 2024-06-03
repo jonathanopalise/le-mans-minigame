@@ -24,6 +24,7 @@ OBJECT_FILES =\
     src/display_list.o\
     src/detect_collisions.o\
     src/random.o\
+    src/hud.o\
     src/time_of_day_process.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
@@ -50,10 +51,10 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
-src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h
+src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h
 	$(CC) $(CFLAGS) -c src/hardware_playfield.c -o src/hardware_playfield.o
 
 src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
@@ -100,6 +101,9 @@ src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/pla
 
 src/random.o: src/random.c src/random.h
 	$(CC) $(CFLAGS) -c src/random.c -o src/random.o
+
+src/hud.o: src/hud.c src/hud.h src/hud_digits.h
+	$(CC) $(CFLAGS) -c src/hud.c -o src/hud.o
 
 src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h
 	$(CC) $(CFLAGS) -c src/time_of_day_process.c -o src/time_of_day_process.o

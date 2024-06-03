@@ -16,6 +16,7 @@
 #include "time_of_day_process.h"
 #include "detect_collisions.h"
 #include "mixer_init.h"
+#include "hud.h"
 #include "natfeats.h"
 
 void game_loop()
@@ -31,6 +32,7 @@ void game_loop()
 
     mixer_init();
     hardware_playfield_init();
+    hud_init();
     initialise();
     road_corners_init();
     player_car_initialise();
@@ -42,6 +44,8 @@ void game_loop()
 
     while (1) {
         time_of_day_update();
+        hud_reduce_time();
+        hud_update_digits();
         player_car_handle_inputs();
         opponent_cars_update();
         trackside_items_update_nearest();
@@ -52,6 +56,8 @@ void game_loop()
         hardware_playfield_erase_sprites();
         trackside_items_process();
         opponent_cars_process();
+
+        hardware_playfield_update_digits();
 
         player_car_sprite_definition_offset = player_car_get_sprite_definition();
 
