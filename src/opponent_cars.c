@@ -48,6 +48,7 @@ void opponent_cars_init()
     struct OpponentCar *current_opponent_car = opponent_cars;
 
     current_opponent_car->player_relative_track_position = 30000;
+    current_opponent_car->max_player_relative_track_position = 45001;
     current_opponent_car->lane = 0;
     current_opponent_car->speed = 600;
     current_opponent_car->max_speed = 600;
@@ -58,6 +59,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 25000;
+    current_opponent_car->max_player_relative_track_position = 65001;
     current_opponent_car->lane = 1;
     current_opponent_car->speed = 650;
     current_opponent_car->max_speed = 650;
@@ -68,6 +70,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 20000;
+    current_opponent_car->max_player_relative_track_position = 85001;
     current_opponent_car->lane = 2;
     current_opponent_car->speed = 700;
     current_opponent_car->max_speed = 700;
@@ -78,6 +81,7 @@ void opponent_cars_init()
     current_opponent_car++;
 
     current_opponent_car->player_relative_track_position = 15000;
+    current_opponent_car->max_player_relative_track_position = 105001;
     current_opponent_car->lane = 3;
     current_opponent_car->speed = 750;
     current_opponent_car->max_speed = 750;
@@ -223,8 +227,8 @@ void opponent_cars_update()
             }
         }
 
-        if (current_opponent_car->player_relative_track_position > 65536) {
-            current_opponent_car->player_relative_track_position = 65536;
+        if (current_opponent_car->player_relative_track_position > current_opponent_car->max_player_relative_track_position) {
+            current_opponent_car->player_relative_track_position = current_opponent_car->max_player_relative_track_position;
         }
 
         if (current_opponent_car->player_relative_track_position < 0) {

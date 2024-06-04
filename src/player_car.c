@@ -172,6 +172,9 @@ void player_car_crash()
     if (player_car_speed > 600) {
         player_car_state = PLAYER_CAR_STATE_FLIP_CRASH;
         player_car_altitude_change = (player_car_speed - 200) * 2;
+        if (player_car_altitude_change > 1500) {
+            player_car_altitude_change = 1500;
+        }
         player_car_flip_image_tracker = 0;
     } else if (player_car_speed > 100) {
         player_car_state = PLAYER_CAR_STATE_SPIN_CRASH;
