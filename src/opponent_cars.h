@@ -19,6 +19,8 @@ struct OpponentCar {
 
 extern struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
+extern uint16_t lane_to_xpos_mappings[4];
+
 void opponent_cars_init();
 void opponent_cars_update();
 void opponent_cars_process();

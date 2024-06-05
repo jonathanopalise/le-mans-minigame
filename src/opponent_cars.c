@@ -213,6 +213,10 @@ void opponent_cars_update()
             current_opponent_car->player_relative_track_position += current_opponent_car->speed;
         }
 
+        if (current_opponent_car->player_relative_track_position < 0) {
+            current_opponent_car->player_relative_track_position -= 100;
+        }
+
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (current_opponent_car->lane_change_countdown > 0) {
@@ -231,7 +235,7 @@ void opponent_cars_update()
             current_opponent_car->player_relative_track_position = current_opponent_car->max_player_relative_track_position;
         }
 
-        if (current_opponent_car->player_relative_track_position < 0) {
+        if (current_opponent_car->player_relative_track_position < -PLAYER_CAR_DISTANCE) {
             opponent_horizon_respawn(current_opponent_car);
         }
 
@@ -396,9 +400,10 @@ void opponent_cars_process()
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         // TODO: the 65535 check may eventually be over-defensive
-        camera_relative_track_position = current_opponent_car->player_relative_track_position - PLAYER_CAR_DISTANCE;
-        if (current_opponent_car->active && camera_relative_track_position > (0 - PLAYER_CAR_DISTANCE) && camera_relative_track_position < (45000 - PLAYER_CAR_DISTANCE)) {
-            scanline_index = distance_to_scanline_lookup[current_opponent_car->player_relative_track_position];
+        camera_relative_track_position = current_opponent_car->player_relative_track_position + PLAYER_CAR_DISTANCE;
+        //camera_relative_track_position = PLAYER_CAR_DISTANCE;
+        if (current_opponent_car->active && camera_relative_track_position > 0 && camera_relative_track_position < 45000) {
+            scanline_index = distance_to_scanline_lookup[camera_relative_track_position];
             if (scanline_index != -1) {
                 road_scanline = &road_scanlines[scanline_index];
                 //sprite_index = current_opponent_car->base_sprite_index + road_scanline->sprite_index_adjust;

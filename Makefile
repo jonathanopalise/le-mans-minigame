@@ -97,7 +97,7 @@ src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h sr
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
-src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h
+src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h
 	$(CC) $(CFLAGS) -c src/detect_collisions.c -o src/detect_collisions.o
 
 src/random.o: src/random.c src/random.h
