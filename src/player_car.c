@@ -15,6 +15,7 @@ uint32_t player_car_current_track_segment_start_position;
 uint32_t player_car_current_track_segment_end_position;
 uint16_t player_car_current_track_segment_changes_applied;
 int32_t camera_track_position;
+int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
 int32_t player_car_speed;
 int32_t player_car_steering;
@@ -103,7 +104,7 @@ void player_car_handle_inputs()
                 player_car_speed = 1200;
             }
         } else if (joy_down) {
-            player_car_speed -= 12;
+            player_car_speed -= 14;
             if (player_car_speed < 0) {
                 player_car_speed = 0;
             }
@@ -136,6 +137,7 @@ void player_car_handle_inputs()
     // TODO: slowdown when on grass
 
     camera_track_position += player_car_speed;
+    player_car_track_position = camera_track_position + 2280;
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
     if (player_car_altitude == 0) {

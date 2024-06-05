@@ -7,8 +7,6 @@
 
 void detect_collisions()
 {
-    uint32_t player_car_track_position = camera_track_position + 2280;
-
     struct TracksideItem *current_trackside_item = current_nearest_trackside_item;
 
     int32_t current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
