@@ -2,6 +2,8 @@
 #include "road_geometry.h"
 #include "player_car.h"
 #include "track_segments.h"
+#include "trackside_items.h"
+#include "trackside_items_process.h"
 #include "movement_update_inner.h"
 
 // TODO: this should be a generated value
@@ -48,6 +50,7 @@ void road_corners_update() {
             camera_track_position -= player_car_current_track_segment_end_position;
             player_car_current_track_segment = track_segments;
             player_car_current_track_segment_start_position = 0;
+            current_nearest_trackside_item = trackside_items;
         } else {
             player_car_current_track_segment_start_position = player_car_current_track_segment_end_position;
         }

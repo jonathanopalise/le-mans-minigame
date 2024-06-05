@@ -138,6 +138,7 @@ void player_car_handle_inputs()
 
     camera_track_position += player_car_speed;
     player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;
+    // TODO: wrap player_car_track_position when it goes beyond end of track
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
     if (player_car_altitude == 0) {

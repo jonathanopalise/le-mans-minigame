@@ -67,7 +67,7 @@ src/draw_status.o: src/draw_status.s src/draw_status.h
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
-src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h
+src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
 
 src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inner.h

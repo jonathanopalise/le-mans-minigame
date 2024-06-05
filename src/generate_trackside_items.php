@@ -790,6 +790,13 @@ $definitions = [
         'count' => 4,
         'gap' => 5000,
     ],
+    [
+        'types' => ['SCENERY_TYPE_LAMPPOST'],
+        'xpos' => -3,
+        'track_position' => 3750000,
+        'count' => 20,
+        'gap' => 6000,
+    ],
 ];
 
 
