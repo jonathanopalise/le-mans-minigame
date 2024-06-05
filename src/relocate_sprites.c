@@ -1,7 +1,7 @@
-#define SPRITE_DEFINITION_COUNT 48 
-#define RELOCATION_BUFFER_SIZE_WORDS = 32768
+#define RELOCATION_BUFFER_SIZE_WORDS 32768
 
 #include "sprite_definitions.h"
+#include "generated/sprite_definitions_count.h"
 
 uint16_t relocation_buffer[RELOCATION_BUFFER_SIZE_WORDS];
 
@@ -17,7 +17,7 @@ void relocate_sprites()
     uint16_t *dest = relocation_buffer;
     uint16_t *source; 
 
-    for (uint16_t index = 0; index < SPRITE_DEFINITION_COUNT; index++) {
+    for (uint16_t index = 0; index < SPRITE_DEFINITIONS_COUNT; index++) {
         data_size_bytes = current_sprite_definition->source_data_width * current_sprite_definition->source_data_height * 10;
         source_start_address = (uint32_t)current_sprite_definition->words;
         source_end_address = source_start_address + (data_size_bytes - 1);

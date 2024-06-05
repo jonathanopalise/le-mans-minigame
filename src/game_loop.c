@@ -17,6 +17,7 @@
 #include "detect_collisions.h"
 #include "mixer_init.h"
 #include "hud.h"
+#include "relocate_sprites.h"
 #include "natfeats.h"
 
 void game_loop()
@@ -30,6 +31,7 @@ void game_loop()
 
     nf_print("hello from lemans!");
 
+    relocate_sprites();
     mixer_init();
     hardware_playfield_init();
     hud_init();

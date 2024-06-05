@@ -26,6 +26,7 @@ OBJECT_FILES =\
     src/random.o\
     src/hud.o\
     src/time_of_day_process.o\
+    src/relocate_sprites.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -108,6 +109,9 @@ src/hud.o: src/hud.c src/hud.h src/hud_digits.h
 src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h
 	$(CC) $(CFLAGS) -c src/time_of_day_process.c -o src/time_of_day_process.o
 
+src/relocate_sprites.o: src/relocate_sprites.c src/relocate_sprites.h src/generated/sprite_definitions_count.h
+	$(CC) $(CFLAGS) -c src/relocate_sprites.c -o src/relocate_sprites.o
+
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o
 
@@ -138,8 +142,11 @@ src/generated/mountain_graphics.c: src/generate_mountain_graphics.php src/librar
 src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprite_definitions.h
 	$(CC) $(CFLAGS) -c src/generated/sprite_definitions.c -o src/generated/sprite_definitions.o
 
-src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/library.php src/sprite_spans.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php
+src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/library.php src/sprite_spans.php $(ASSETS_GIF) src/sprite_definitions_template.php src/library.php src/sprite_definitions.php
 	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
+
+src/generated/sprite_definitions_count.h: src/generate_sprite_definitions_count.php src/sprite_definitions.php
+	$(PHP) src/generate_sprite_definitions.php src/generated/sprite_definitions_count.h
 
 src/generated/status_definitions.o: src/generated/status_definitions.c src/status_definitions.h
 	$(CC) $(CFLAGS) -c src/generated/status_definitions.c -o src/generated/status_definitions.o
