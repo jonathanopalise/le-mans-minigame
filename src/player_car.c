@@ -137,7 +137,7 @@ void player_car_handle_inputs()
     // TODO: slowdown when on grass
 
     camera_track_position += player_car_speed;
-    player_car_track_position = camera_track_position + 2280;
+    player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
     if (player_car_altitude == 0) {

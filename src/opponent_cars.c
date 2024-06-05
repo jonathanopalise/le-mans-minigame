@@ -392,10 +392,12 @@ void opponent_cars_process()
     int16_t screen_xpos;
     int16_t sprite_aspect;
     int16_t opponent_car_xpos;
+    int32_t camera_relative_track_position;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         // TODO: the 65535 check may eventually be over-defensive
-        if (current_opponent_car->active && current_opponent_car->player_relative_track_position > 0 && current_opponent_car->player_relative_track_position < 45000) {
+        camera_relative_track_position = current_opponent_car->player_relative_track_position - PLAYER_CAR_DISTANCE;
+        if (current_opponent_car->active && camera_relative_track_position > (0 - PLAYER_CAR_DISTANCE) && camera_relative_track_position < (45000 - PLAYER_CAR_DISTANCE)) {
             scanline_index = distance_to_scanline_lookup[current_opponent_car->player_relative_track_position];
             if (scanline_index != -1) {
                 road_scanline = &road_scanlines[scanline_index];

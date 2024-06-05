@@ -1,6 +1,8 @@
 #ifndef __PLAYER_CAR_H
 #define __PLAYER_CAR_H
 
+#define PLAYER_CAR_DISTANCE 2280
+
 #include<inttypes.h>
 #include "track_segments.h"
 
