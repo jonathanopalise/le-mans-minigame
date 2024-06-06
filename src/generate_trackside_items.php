@@ -31,6 +31,13 @@ $definitions = [
         'gap' => 6000,
     ],
     [
+        'types' => ['SCENERY_TYPE_CHECKPOINT_TOP'],
+        'xpos' => 3,
+        'track_position' => 86000,
+        'count' => 1,
+        'gap' => 6000,
+    ],
+    [
         'types' => ['SCENERY_TYPE_LAMPPOST'],
         'xpos' => -3,
         'track_position' => 1320000,
