@@ -1342,13 +1342,63 @@ $definitions = [
         'height' => 59,
     ],
 
+    // checkpoint gantry
 
-
-
-
-
-
-
-    // blue car TBC ...
+    [
+        'label' => 'checkpoint-gantry-1',
+        'left' => 3,
+        'top' => 65,
+        'width' => 32,
+        'height' => 100,
+    ],
+    [
+        'label' => 'checkpoint-gantry-2',
+        'left' => 39,
+        'top' => 65,
+        'width' => 24,
+        'height' => 75,
+    ],
+    [
+        'label' => 'checkpoint-gantry-3',
+        'left' => 67,
+        'top' => 65,
+        'width' => 18,
+        'height' => 56,
+    ],
+    [
+        'label' => 'checkpoint-gantry-4',
+        'left' => 89,
+        'top' => 65,
+        'width' => 13,
+        'height' => 41,
+    ],
+    [
+        'label' => 'checkpoint-gantry-5',
+        'left' => 106,
+        'top' => 65,
+        'width' => 10,
+        'height' => 31,
+    ],
+    [
+        'label' => 'checkpoint-gantry-6',
+        'left' => 120,
+        'top' => 65,
+        'width' => 7,
+        'height' => 22,
+    ],
+    [
+        'label' => 'checkpoint-gantry-7',
+        'left' => 131,
+        'top' => 65,
+        'width' => 5,
+        'height' => 15,
+    ],
+    [
+        'label' => 'checkpoint-gantry-8',
+        'left' => 140,
+        'top' => 65,
+        'width' => 4,
+        'height' => 13,
+    ],
 ];
 

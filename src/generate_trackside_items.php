@@ -24,10 +24,17 @@ $definitions = [
         'gap' => 6000,
     ],
     [
+        'types' => ['SCENERY_TYPE_CHECKPOINT_GANTRY'],
+        'xpos' => 3,
+        'track_position' => 86000,
+        'count' => 1,
+        'gap' => 6000,
+    ],
+    [
         'types' => ['SCENERY_TYPE_LAMPPOST'],
         'xpos' => -3,
-        'track_position' => 90000,
-        'count' => 13,
+        'track_position' => 1320000,
+        'count' => 6,
         'gap' => 7000,
     ],
     [
