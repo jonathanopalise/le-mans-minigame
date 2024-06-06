@@ -146,7 +146,7 @@ src/generated/sprite_definitions.c: src/generate_sprite_definitions.php src/libr
 	$(PHP) src/generate_sprite_definitions.php $(ASSETS_GIF) src/generated/sprite_definitions.c
 
 src/generated/sprite_definitions_count.h: src/generate_sprite_definitions_count.php src/sprite_definitions.php
-	$(PHP) src/generate_sprite_definitions.php src/generated/sprite_definitions_count.h
+	$(PHP) src/generate_sprite_definitions_count.php src/generated/sprite_definitions_count.h
 
 src/generated/status_definitions.o: src/generated/status_definitions.c src/status_definitions.h
 	$(CC) $(CFLAGS) -c src/generated/status_definitions.c -o src/generated/status_definitions.o
