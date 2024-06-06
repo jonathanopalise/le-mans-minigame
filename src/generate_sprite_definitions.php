@@ -27,13 +27,26 @@ $indexedBitmap = IndexedBitmap::loadGif($inputFilename);
 $exportedSprites = [];
 
 foreach ($definitions as $definition) {
+
+    if (isset($definition['originx'])) {
+        $originX = $definition['originx'];
+    } else {
+        $originX = intval($definition['width'] / 2);
+    }
+
+    if (isset($definition['originy'])) {
+        $originY = $definition['originy'];
+    } else {
+        $originY = $definition['height'] - 1;
+    }
+
     $croppedIndexedBitmap = $indexedBitmap->extractRegionToIndexedBitmap(
         $definition['left'],
         $definition['top'],
         $definition['width'],
         $definition['height'],
-        intval($definition['width'] / 2),
-        $definition['height'] - 1
+        $originX,
+        $originY
     )->getCopyRoundedTo16PixelDivisibleWidth();
 
     $maskedSprite = SpriteConvertor::createMaskedSprite($croppedIndexedBitmap);

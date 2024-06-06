@@ -1408,8 +1408,8 @@ $definitions = [
         'top' => 170,
         'width' => 48,
         'height' => 23,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 16 + 48,
+        'originy' => 99,
     ],
     [
         'label' => 'checkpoint-top-2',
@@ -1417,8 +1417,8 @@ $definitions = [
         'top' => 170,
         'width' => 36,
         'height' => 17,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 12 + 36,
+        'originy' => 74,
     ],
     [
         'label' => 'checkpoint-top-3',
@@ -1426,8 +1426,8 @@ $definitions = [
         'top' => 170,
         'width' => 27,
         'height' => 13,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 9 + 27,
+        'originy' => 55,
     ],
     [
         'label' => 'checkpoint-top-4',
@@ -1435,8 +1435,8 @@ $definitions = [
         'top' => 170,
         'width' => 20,
         'height' => 10,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 6 + 20,
+        'originy' => 40,
     ],
     [
         'label' => 'checkpoint-top-5',
@@ -1444,8 +1444,8 @@ $definitions = [
         'top' => 170,
         'width' => 15,
         'height' => 7,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 5 + 15,
+        'originy' => 30,
     ],
     [
         'label' => 'checkpoint-top-6',
@@ -1453,8 +1453,8 @@ $definitions = [
         'top' => 170,
         'width' => 11,
         'height' => 5,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 3 + 11,
+        'originy' => 21,
     ],
     [
         'label' => 'checkpoint-top-7',
@@ -1462,8 +1462,8 @@ $definitions = [
         'top' => 170,
         'width' => 8,
         'height' => 4,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 2 + 8,
+        'originy' => 14,
     ],
     [
         'label' => 'checkpoint-top-8',
@@ -1471,8 +1471,8 @@ $definitions = [
         'top' => 170,
         'width' => 6,
         'height' => 3,
-        'originx' => 0,
-        'originy' => 0,
+        'originx' => 2 + 6,
+        'originy' => 12,
     ],
 ];
 
