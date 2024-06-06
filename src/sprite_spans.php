@@ -412,7 +412,7 @@ class CompiledSpriteBuilder {
     public function runFirstPass()
     {
         if ($this->skewed & 1) {
-            return ['rts'];
+            return [];
         }
 
         $sixteenPixelBlockOffset = 0;

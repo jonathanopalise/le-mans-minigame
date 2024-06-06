@@ -88,7 +88,7 @@ foreach ($definitions as $definition) {
         printf("width in 16 pixel blocks: %d\n", $widthIn16PixelBlocks);
 
         if (str_contains($definition['label'], 'yellow-car') || str_contains($definition['label'], 'blue-car')) {
-            $instructions = ['rts'];
+            $instructions = [];
         } else {
             $builder = new CompiledSpriteBuilder(
                 $skewedCharData,
@@ -99,44 +99,48 @@ foreach ($definitions as $definition) {
             $instructions = $builder->runFirstPass();
         }
 
-        $processedInstructions = [];
-        foreach ($instructions as $instruction) {
-            $processedInstructions[] = '    ' . $instruction;
+        if (count($instructions)) {
+            $processedInstructions = [];
+            foreach ($instructions as $instruction) {
+                $processedInstructions[] = '    ' . $instruction;
+            }
+
+            $filenameWithoutExtension = sys_get_temp_dir() . '/' . $definition['label'] . '-' . $skew;
+            $sourceFilename = $filenameWithoutExtension. '.s';
+            $outputFilename = $filenameWithoutExtension. '.bin';
+
+            printf(
+                "Writing source for %s skew %d to file %s\n",
+                $definition['label'],
+                $skew,
+                $sourceFilename
+            );
+
+            file_put_contents($sourceFilename, implode("\n", $processedInstructions));
+
+            // TODO: pass in name of vasm command
+            $assembleCommand = sprintf(
+                'vasmm68k_mot %s -Fbin -o %s',
+                $sourceFilename,
+                $outputFilename
+            );
+
+            printf(
+                "Assembling source in file %s\n",
+                $sourceFilename
+            );
+
+            $result = exec($assembleCommand);
+            if ($result === false) {
+                printf("assembly failed\n");
+                exit(1);
+            }
+
+            $binaryCode = file_get_contents($outputFilename);
+            $exportedSprite['skew_' . $skew] = unpack('C*', $binaryCode); 
+        } else {
+            $exportedSprite['skew_' . $skew] = null;
         }
-
-        $filenameWithoutExtension = sys_get_temp_dir() . '/' . $definition['label'] . '-' . $skew;
-        $sourceFilename = $filenameWithoutExtension. '.s';
-        $outputFilename = $filenameWithoutExtension. '.bin';
-
-        printf(
-            "Writing source for %s skew %d to file %s\n",
-            $definition['label'],
-            $skew,
-            $sourceFilename
-        );
-
-        file_put_contents($sourceFilename, implode("\n", $processedInstructions));
-
-        // TODO: pass in name of vasm command
-        $assembleCommand = sprintf(
-            'vasmm68k_mot %s -Fbin -o %s',
-            $sourceFilename,
-            $outputFilename
-        );
-
-        printf(
-            "Assembling source in file %s\n",
-            $sourceFilename
-        );
-
-        $result = exec($assembleCommand);
-        if ($result === false) {
-            printf("assembly failed\n");
-            exit(1);
-        }
-
-        $binaryCode = file_get_contents($outputFilename);
-        $exportedSprite['skew_' . $skew] = unpack('C*', $binaryCode); 
     }
 
     $exportedSprites[] = $exportedSprite;
