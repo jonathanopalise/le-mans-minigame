@@ -82,7 +82,7 @@ src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items
 src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mountain_graphics.h src/hardware_playfield.h src/blitter.h src/road_movement.h
 	$(CC) $(CFLAGS) -c src/mountains_render.c -o src/mountains_render.o
 
-src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h
+src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h src/road_render_fast.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
 
 src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h

@@ -5,7 +5,6 @@
 #include "road_movement.h"
 #include "mountains_render.h"
 #include "road_render.h"
-#include "road_render_fast.h"
 #include "player_car.h"
 #include "sprite_definitions.h"
 #include "road_geometry.h"
@@ -54,7 +53,7 @@ void game_loop()
         detect_collisions();
         road_corners_update();
         mountains_render();
-        road_render_fast();
+        road_render();
         hardware_playfield_erase_sprites();
         trackside_items_process();
         opponent_cars_process();
