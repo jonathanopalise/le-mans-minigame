@@ -9,6 +9,8 @@
 
 #define LINE_COUNT 80
 #define START_LINE_DISTANCE 86000
+#define CHECKPOINT_1_DISTANCE 1250000
+#define CHECKPOINT_2_DISTANCE 2500000
 
 int32_t checkpoint_camera_distance;
 
@@ -27,10 +29,19 @@ void road_render_init()
 void road_render()
 {
     checkpoint_camera_distance = START_LINE_DISTANCE - camera_track_position;
-
     if (checkpoint_camera_distance > 0 && checkpoint_camera_distance < 50000) {
-        road_render_fast_checkpoint(checkpoint_camera_distance, checkpoint_camera_distance + 200);
+        road_render_fast_checkpoint(checkpoint_camera_distance, checkpoint_camera_distance + 400);
     } else {
-        road_render_fast();
+        checkpoint_camera_distance = CHECKPOINT_1_DISTANCE - camera_track_position;
+        if (checkpoint_camera_distance > 0 && checkpoint_camera_distance < 50000) {
+            road_render_fast_checkpoint(checkpoint_camera_distance, checkpoint_camera_distance + 400);
+        } else {
+            checkpoint_camera_distance = CHECKPOINT_2_DISTANCE - camera_track_position;
+            if (checkpoint_camera_distance > 0 && checkpoint_camera_distance < 50000) {
+                road_render_fast_checkpoint(checkpoint_camera_distance, checkpoint_camera_distance + 400);
+            } else {
+                road_render_fast();
+            }
+        }
     }
 }
