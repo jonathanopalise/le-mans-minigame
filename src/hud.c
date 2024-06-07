@@ -14,7 +14,7 @@ struct HudDigits hud_digits;
 void hud_init()
 {
     old_seconds_remaining = -1;
-    seconds_remaining = 99;
+    seconds_remaining = 50;
     frames_in_current_second_remaining = 49;
 
     old_score = -1;

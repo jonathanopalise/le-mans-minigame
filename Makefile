@@ -27,6 +27,7 @@ OBJECT_FILES =\
     src/hud.o\
     src/time_of_day_process.o\
     src/relocate_sprites.o\
+    src/checkpoints.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -82,13 +83,13 @@ src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items
 src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mountain_graphics.h src/hardware_playfield.h src/blitter.h src/road_movement.h
 	$(CC) $(CFLAGS) -c src/mountains_render.c -o src/mountains_render.o
 
-src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h src/road_render_fast.h
+src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h src/road_render_fast.h src/player_car.h src/checkpoints.h
 	$(CC) $(CFLAGS) -c src/road_render.c -o src/road_render.o
 
 src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h
 	$(VASM) $(VASM_OPTS) src/road_render_fast.s -Felf -o src/road_render_fast.o
 
-src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h
+src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
 src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h
@@ -111,6 +112,9 @@ src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h
 
 src/relocate_sprites.o: src/relocate_sprites.c src/relocate_sprites.h src/generated/sprite_definitions_count.h
 	$(CC) $(CFLAGS) -c src/relocate_sprites.c -o src/relocate_sprites.o
+
+src/checkpoints.o: src/checkpoints.c src/checkpoints.h
+	$(CC) $(CFLAGS) -c src/checkpoints.c -o src/checkpoints.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o

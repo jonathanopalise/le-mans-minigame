@@ -4,6 +4,8 @@
 #include "hardware_playfield.h"
 #include "natfeats.h"
 #include "sprite_definitions.h"
+#include "checkpoints.h"
+#include "hud.h"
 #include <stdio.h>
 
 #define PLAYER_CAR_STATE_NORMAL 0
@@ -15,6 +17,7 @@ uint32_t player_car_current_track_segment_start_position;
 uint32_t player_car_current_track_segment_end_position;
 uint16_t player_car_current_track_segment_changes_applied;
 int32_t camera_track_position;
+int32_t old_player_car_track_position;
 int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
 int32_t player_car_speed;
@@ -37,8 +40,10 @@ void player_car_initialise()
     player_car_current_track_segment_changes_applied = 0;
     camera_track_position = 0;
     player_car_logical_xpos = 0;
-    player_car_speed = 0;
+    player_car_speed = 400;
     player_car_steering = 0;
+    player_car_track_position = 0;
+    old_player_car_track_position = 0;
 }
 
 void player_car_handle_inputs()
@@ -98,7 +103,7 @@ void player_car_handle_inputs()
             nf_print(nf_strbuf);*/
         }
 
-        if (joy_up) {
+        if (joy_up && !hud_is_time_up()) {
             player_car_speed += 3;
             if (player_car_speed > 1200) {
                 player_car_speed = 1200;
@@ -128,8 +133,14 @@ void player_car_handle_inputs()
         } else {
             if (player_car_steering > 0) {
                 player_car_steering -= 20;
+                if (player_car_steering < 0) {
+                    player_car_steering = 0;
+                }
             } else if (player_car_steering < 0) {
                 player_car_steering += 20;
+                if (player_car_steering > 0) {
+                    player_car_steering = 0;
+                }
             }
         }
     }
@@ -137,7 +148,17 @@ void player_car_handle_inputs()
     // TODO: slowdown when on grass
 
     camera_track_position += player_car_speed;
+
+    old_player_car_track_position = player_car_track_position;
     player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;
+
+
+    for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
+        if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
+            hud_increase_time(20);
+        }
+    }
+
     // TODO: wrap player_car_track_position when it goes beyond end of track
     player_car_logical_xpos += player_car_steering * player_car_speed;
 

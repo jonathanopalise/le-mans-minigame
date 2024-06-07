@@ -6,11 +6,9 @@
 #include "blitter.h"
 #include "road_render_fast.h"
 #include "player_car.h"
+#include "checkpoints.h"
 
 #define LINE_COUNT 80
-#define START_LINE_DISTANCE 86000
-#define CHECKPOINT_1_DISTANCE 1250000
-#define CHECKPOINT_2_DISTANCE 2500000
 
 int32_t checkpoint_camera_distance;
 
