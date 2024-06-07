@@ -28,6 +28,8 @@ uint16_t player_car_invincible_countdown;
 int32_t player_car_altitude;
 int32_t player_car_altitude_change;
 uint16_t player_car_flip_image_tracker;
+uint16_t active_opponent_cars;
+uint16_t opponent_lane_change_probability;
 
 void player_car_initialise()
 {
@@ -44,6 +46,8 @@ void player_car_initialise()
     player_car_steering = 0;
     player_car_track_position = 0;
     old_player_car_track_position = 0;
+    active_opponent_cars = 1;
+    opponent_lane_change_probability = 1;
 }
 
 void player_car_handle_inputs()
@@ -155,7 +159,13 @@ void player_car_handle_inputs()
 
     for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
-            hud_increase_time(20);
+            hud_increase_time(25);
+            if (index == 0) {
+                if (active_opponent_cars < 4) {
+                    active_opponent_cars++;
+                }
+                opponent_lane_change_probability+=1;
+            }
         }
     }
 

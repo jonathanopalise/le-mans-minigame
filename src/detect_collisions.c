@@ -17,7 +17,6 @@ void detect_collisions()
     struct OpponentCar *current_opponent_car = opponent_cars;
     int32_t logical_xpos;
     int16_t opponent_car_xpos;
-    uint32_t tmp_speed;
 
     while (current_trackside_item_player_relative_position < 500) {
         if (current_trackside_item->xpos > 0) {
