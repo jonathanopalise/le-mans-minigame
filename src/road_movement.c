@@ -33,6 +33,7 @@ void road_corners_update() {
     uint32_t segment_changes_to_apply;
     int32_t total_change_to_apply = 0;
     uint16_t current_segment_changes_passed;
+    int32_t player_xpos_shift;
 
     if (camera_track_position > player_car_current_track_segment_end_position) {
         // apply all changes from old track segment before moving onto new one
@@ -84,7 +85,12 @@ void road_corners_update() {
     }
 
     current_road_curvature -= total_change_to_apply;
-    player_car_logical_xpos += current_road_curvature * ((player_car_speed * player_car_speed) / 375);
+    player_xpos_shift = current_road_curvature * ((player_car_speed * player_car_speed) / 375);
+    player_car_logical_xpos += player_xpos_shift;
+
+    if (player_xpos_shift < -500000 || player_xpos_shift > 500000) {
+        play_sound(7);
+    }
 
     mountains_shift += current_road_curvature * player_car_speed;
     if (mountains_shift < 0) {

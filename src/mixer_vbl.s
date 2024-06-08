@@ -131,7 +131,7 @@ label1PlayerSound
 	addx.l		d1,d0																			; effectively divide offset by 65536
 	endr
 
-    bra labelFinishedSoundMixing ; JT added
+    ;bra labelFinishedSoundMixing ; JT added
 
 	tst.w		variableSoundEventLatch														; is there a sound event?
 	bmi			labelFinishedSoundMixing													; if not then just mix the engine sound

@@ -5,6 +5,7 @@
 #include "road_geometry.h"
 #include "opponent_cars.h"
 #include "natfeats.h"
+#include "play_sound.h"
 
 void detect_collisions()
 {
@@ -58,6 +59,7 @@ void detect_collisions()
             logical_xpos =- logical_xpos;
 
             if (logical_xpos > (player_car_logical_xpos - 3000000) && logical_xpos < (player_car_logical_xpos + 3000000)) {
+                play_sound(1);
                 player_car_speed = current_opponent_car->speed - 150;
                 if (player_car_speed < 0) {
                     player_car_speed = 0;

@@ -6,6 +6,7 @@
 #include "sprite_definitions.h"
 #include "checkpoints.h"
 #include "hud.h"
+#include "play_sound.h"
 #include <stdio.h>
 
 #define PLAYER_CAR_STATE_NORMAL 0
@@ -159,6 +160,7 @@ void player_car_handle_inputs()
 
     for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
+            play_sound(3);
             hud_increase_time(25);
             if (index == 0) {
                 if (active_opponent_cars < 4) {

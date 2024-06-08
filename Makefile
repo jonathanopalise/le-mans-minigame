@@ -42,6 +42,7 @@ OBJECT_FILES =\
 	src/mixer_data.o\
 	src/mixer_variables.o\
 	src/mixer_vbl.o\
+	src/play_sound.o\
 
 ASSETS_GIF = assets/round-tree.gif
 
@@ -68,7 +69,7 @@ src/draw_status.o: src/draw_status.s src/draw_status.h
 src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
 	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
-src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h
+src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
 
 src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inner.h
@@ -89,7 +90,7 @@ src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/r
 src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h
 	$(VASM) $(VASM_OPTS) src/road_render_fast.s -Felf -o src/road_render_fast.o
 
-src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h
+src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
 src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h
@@ -98,7 +99,7 @@ src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h sr
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
-src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h
+src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/detect_collisions.c -o src/detect_collisions.o
 
 src/random.o: src/random.c src/random.h
@@ -178,6 +179,9 @@ src/mixer_variables.o: src/mixer_variables.s
 
 src/mixer_vbl.o: src/mixer_vbl.s
 	$(VASM) $(VASM_OPTS) src/mixer_vbl.s -Felf -o src/mixer_vbl.o
+
+src/play_sound.o: src/play_sound.s
+	$(VASM) $(VASM_OPTS) src/play_sound.s -Felf -o src/play_sound.o
 
 src/nf_asmv.o: src/nf_asmv.s
 	$(VASM) $(VASM_OPTS) src/nf_asmv.s -Felf -o src/nf_asmv.o
