@@ -16,7 +16,6 @@ _draw_status:
     tst.w d6
     beq _noskew
 
-
 _noskew:
 
     lea _leftendmasks,a2
@@ -49,7 +48,18 @@ _no_block_add:
     and.w #$f,d0              ; endmask3 lookup table index from skewed width
     add.w d0,d0               ; endmask3 lookup table offset
     move.w (a2,d0),d0         ; endmask3 value
+
+    cmp.w #1,d5               ; is xcount 1?
+    beq.s _single_block
+
     move.w d0,$ffff8a2c.w     ; set endmask3
+    bra.s _after_single_block_check
+
+_single_block:
+
+    and.w d0,$ffff8a28.w
+
+_after_single_block_check:
 
     move.w #8,$ffff8a20.w     ; source x increment = 8
 

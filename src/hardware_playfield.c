@@ -285,7 +285,66 @@ void hardware_playfield_update_digits()
                 );
             }
         }
-    } 
+    }
+
+    uint16_t blocks_across;
+    uint16_t skew;
+    for (int16_t index = SCORE_DIGIT_COUNT - 1; index >=0; index--) {
+        desired_digit = hud_digits.score_digits[index];
+        if (desired_digit != playfield->hud_digits.score_digits[index]) {
+            playfield->hud_digits.score_digits[index] = desired_digit;
+            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + desired_digit];
+            // start at xpos = 9, increment by 9
+            switch (index) {
+                case 0:
+                    blocks_across = 0;
+                    skew = 9;
+                    break;
+                case 1:
+                    // 18 = 16 + 2
+                    blocks_across = 1;
+                    skew = 2;
+                    break;
+                case 2:
+                    // 27 = 16 + 11
+                    blocks_across = 1;
+                    skew = 11;
+                    break;
+                case 3:
+                    // 36 = 32 + 4
+                    blocks_across = 2;
+                    skew = 4;
+                    break;
+                case 4:
+                    // 45 = 32 + 13
+                    blocks_across = 2;
+                    skew = 13;
+                    break;
+                case 5:
+                    // 54 = 48 + 6
+                    blocks_across = 3;
+                    skew = 6;
+                    break;
+                case 6:
+                    // 63 = 48 + 15
+                    blocks_across = 3;
+                    skew = 15;
+                    break;
+                case 7:
+                    // 72 = 64 + 6
+                    blocks_across = 4;
+                    skew = 8;
+                    break;
+            }
+            draw_status(
+                status_definition->words, // confirmed correct
+                &playfield->buffer[160 * 19 + (blocks_across * 8)],
+                status_definition->source_data_width_pixels,
+                status_definition->source_data_height_lines,
+                skew
+            );
+        }
+    }
 }
 
 static void hardware_playfield_error()

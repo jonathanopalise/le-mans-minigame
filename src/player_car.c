@@ -18,6 +18,7 @@ uint32_t player_car_current_track_segment_start_position;
 uint32_t player_car_current_track_segment_end_position;
 uint16_t player_car_current_track_segment_changes_applied;
 int32_t camera_track_position;
+int32_t total_distance_travelled;
 int32_t old_player_car_track_position;
 int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
@@ -42,6 +43,7 @@ void player_car_initialise()
     player_car_current_track_segment_end_position = (player_car_current_track_segment->change_frequency * player_car_current_track_segment->change_count);
     player_car_current_track_segment_changes_applied = 0;
     camera_track_position = 0;
+    total_distance_travelled = 0;
     player_car_logical_xpos = 0;
     player_car_speed = 400;
     player_car_steering = 0;
@@ -153,6 +155,9 @@ void player_car_handle_inputs()
     // TODO: slowdown when on grass
 
     camera_track_position += player_car_speed;
+    total_distance_travelled += player_car_speed;
+
+    hud_set_score(total_distance_travelled);
 
     old_player_car_track_position = player_car_track_position;
     player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;

@@ -2,7 +2,7 @@
 #define __HUD_DIGITS_H
 
 #define TIME_DIGIT_COUNT 2
-#define SCORE_DIGIT_COUNT 7
+#define SCORE_DIGIT_COUNT 8
 
 #include <inttypes.h>
 

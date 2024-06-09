@@ -50,9 +50,9 @@ void hud_increase_time(uint32_t seconds_to_add)
     seconds_remaining += seconds_to_add;
 }
 
-void hud_increase_score(uint32_t amount_to_add)
+void hud_set_score(uint32_t new_score)
 {
-    score += amount_to_add;
+    score = new_score;
 }
 
 uint16_t hud_is_time_up()
@@ -72,15 +72,16 @@ void hud_update_digits()
     if (frames_until_score_update == 0) {
         frames_until_score_update = 10;
         if (score != old_score) {
-            hud_digits.score_digits[6] = score % 10;
-            hud_digits.score_digits[5] = score / 10;
-            hud_digits.score_digits[4] = score / 100;
-            hud_digits.score_digits[3] = score / 1000;
-            hud_digits.score_digits[2] = score / 10000;
-            hud_digits.score_digits[1] = score / 100000;
-            hud_digits.score_digits[0] = score / 1000000;
+            hud_digits.score_digits[7] = score % 10;
+            hud_digits.score_digits[6] = (score / 10) % 10;
+            hud_digits.score_digits[5] = (score / 100) % 10;
+            hud_digits.score_digits[4] = (score / 1000) % 10;
+            hud_digits.score_digits[3] = (score / 10000) % 10;
+            hud_digits.score_digits[2] = (score / 100000) % 10;
+            hud_digits.score_digits[1] = (score / 1000000) % 10;
+            hud_digits.score_digits[0] = (score / 10000000) % 10;
+            old_score = score;
         }
-        old_score = score;
     }
 }
 

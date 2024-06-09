@@ -4,6 +4,7 @@
 #include <inttypes.h>
 
 #define STATUS_DEFS_LARGE_DIGITS_BASE 3
+#define STATUS_DEFS_SMALL_DIGITS_BASE 13
 #define STATUS_DEFS_TIME 0
 #define STATUS_DEFS_SCORE 1
 #define STATUS_DEFS_HIGH 2
