@@ -24,11 +24,11 @@ void game_loop()
     uint16_t player_car_sprite_definition_offset;
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
-    if (!nf_init()) {
+    /*if (!nf_init()) {
         while (1==1) {}
     }
 
-    nf_print("hello from lemans!");
+    nf_print("hello from lemans!");*/
 
     relocate_sprites();
     mixer_init();

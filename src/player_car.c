@@ -94,13 +94,13 @@ void player_car_handle_inputs()
         uint16_t joy_fire = joy_data >> 7 & 1;
 
         if (joy_fire) {
-            snprintf(
+            /*snprintf(
                 nf_strbuf,
                 256,
                 "track_position: %d\n",
                 camera_track_position
-            );
-            nf_print(nf_strbuf);
+            );*/
+            //nf_print(nf_strbuf);
             /*snprintf(
                 nf_strbuf,
                 256,
@@ -110,7 +110,7 @@ void player_car_handle_inputs()
             nf_print(nf_strbuf);*/
         }
 
-        if (joy_up && !hud_is_time_up()) {
+        if (joy_up/* && !hud_is_time_up()*/) {
             player_car_speed += 3;
             if (player_car_speed > 1200) {
                 player_car_speed = 1200;
@@ -134,7 +134,7 @@ void player_car_handle_inputs()
             }
         } else if (joy_right) {
             player_car_steering -= 125;
-            if (player_car_steering < 500) {
+            if (player_car_steering < -500) {
                 player_car_steering = -500;
             }
         } else {
@@ -228,15 +228,23 @@ void player_car_crash()
 uint16_t player_car_get_sprite_definition()
 {
     if (player_car_state == PLAYER_CAR_STATE_FLIP_CRASH) {
-        return 176 + player_car_flip_image_tracker / 4;
+        return 180 + player_car_flip_image_tracker / 4;
     }
 
     uint16_t player_car_sprite_definition_offset = 8;
     if (player_car_speed > 0) {
-        if (player_car_steering <= -250) {
+        if (player_car_steering <= -375) {
             player_car_sprite_definition_offset += 16;
-        } else if (player_car_steering >= 250) {
+        } else if (player_car_steering <= -250) {
+            player_car_sprite_definition_offset += 27;
+        } else if (player_car_steering <= -125) {
+            player_car_sprite_definition_offset += 26;
+        } else if (player_car_steering >= 375) {
             player_car_sprite_definition_offset += 8;
+        } else if (player_car_steering >= 250) {
+            player_car_sprite_definition_offset += 25;
+        } else if (player_car_steering >= 125) {
+            player_car_sprite_definition_offset += 24;
         }
     }
 

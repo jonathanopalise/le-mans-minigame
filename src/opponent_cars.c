@@ -11,7 +11,7 @@
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
 #define RED_CAR_BASE_INDEX 15
-#define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 24)
+#define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 28)
 #define BLUE_CAR_BASE_INDEX (YELLOW_CAR_BASE_INDEX + 24)
 
 uint16_t lane_to_xpos_mappings[4] = {-2, -1, 1, 2};
@@ -423,7 +423,7 @@ void opponent_cars_process()
                     sprite_index = current_opponent_car->base_sprite_index - 7;
                 }*/
 
-                sprite_index = (current_opponent_car->base_sprite_index - 7) + road_scanline->sprite_index_adjust;
+                sprite_index = (RED_CAR_BASE_INDEX - 7) + road_scanline->sprite_index_adjust;
  
                 opponent_car_xpos = lane_to_xpos_mappings[current_opponent_car->lane];
                 if (opponent_car_xpos > 0) {
