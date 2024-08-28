@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -Os -fomit-frame-pointer -m68000 -Wall
+CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -Os -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
@@ -28,6 +28,7 @@ OBJECT_FILES =\
     src/time_of_day_process.o\
     src/relocate_sprites.o\
     src/checkpoints.o\
+    src/lookups.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -78,7 +79,7 @@ src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inn
 src/track_segments.o: src/track_segments.c src/track_segments.h
 	$(CC) $(CFLAGS) -c src/track_segments.c -o src/track_segments.o
 
-src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items_process.h src/trackside_items.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h
+src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items_process.h src/trackside_items.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/trackside_items_process.c -o src/trackside_items_process.o
 
 src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mountain_graphics.h src/hardware_playfield.h src/blitter.h src/road_movement.h
@@ -93,13 +94,13 @@ src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_g
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
-src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h
+src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/opponent_cars.c -o src/opponent_cars.o
 
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
-src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h src/play_sound.h
+src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h src/play_sound.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/detect_collisions.c -o src/detect_collisions.o
 
 src/random.o: src/random.c src/random.h
@@ -111,11 +112,14 @@ src/hud.o: src/hud.c src/hud.h src/hud_digits.h
 src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h
 	$(CC) $(CFLAGS) -c src/time_of_day_process.c -o src/time_of_day_process.o
 
-src/relocate_sprites.o: src/relocate_sprites.c src/relocate_sprites.h src/generated/sprite_definitions_count.h
+src/relocate_sprites.o: src/relocate_sprites.c src/relocate_sprites.h src/generated/sprite_definitions_count.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/relocate_sprites.c -o src/relocate_sprites.o
 
 src/checkpoints.o: src/checkpoints.c src/checkpoints.h
 	$(CC) $(CFLAGS) -c src/checkpoints.c -o src/checkpoints.o
+
+src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geometry.h 
+	$(CC) $(CFLAGS) -c src/lookups.c -o src/lookups.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o

@@ -6,6 +6,7 @@
 #include "road_movement.h"
 #include "random.h"
 #include "natfeats.h"
+#include "lookups.h"
 #include <stdio.h>
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
@@ -415,7 +416,7 @@ void opponent_cars_process()
         if (current_opponent_car->active && camera_relative_track_position > 0 && camera_relative_track_position < 45000) {
             scanline_index = distance_to_scanline_lookup[camera_relative_track_position];
             if (scanline_index != -1) {
-                road_scanline = &road_scanlines[scanline_index];
+                road_scanline = road_scanline_pointers[scanline_index];
                 //sprite_index = current_opponent_car->base_sprite_index + road_scanline->sprite_index_adjust;
 
                 /*sprite_index = current_opponent_car->base_sprite_index - (scanline_index / 6);
@@ -453,7 +454,8 @@ void opponent_cars_process()
                 screen_xpos += 160;
 
                 display_list_add_sprite(
-                    &sprite_definitions[sprite_index],
+                    sprite_definition_pointers[sprite_index],
+                    //&sprite_definitions[sprite_index],
                     screen_xpos,
                     (119 + scanline_index)
                 );

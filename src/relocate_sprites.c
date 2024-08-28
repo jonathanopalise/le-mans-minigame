@@ -2,6 +2,8 @@
 
 #include "sprite_definitions.h"
 #include "generated/sprite_definitions_count.h"
+#include "natfeats.h"
+#include <stdio.h>
 
 uint16_t relocation_buffer[RELOCATION_BUFFER_SIZE_WORDS];
 
@@ -15,15 +17,25 @@ void relocate_sprites()
     uint32_t dest_start_address;
     uint32_t dest_end_address;
     uint16_t *dest = relocation_buffer;
-    uint16_t *source; 
+    uint16_t *source;
+    uint16_t index2; 
 
     for (uint16_t index = 0; index < SPRITE_DEFINITIONS_COUNT; index++) {
-        data_size_bytes = current_sprite_definition->source_data_width * current_sprite_definition->source_data_height * 10;
-        source_start_address = (uint32_t)current_sprite_definition->words;
+        data_size_bytes = (current_sprite_definition->source_data_width >> 4) * current_sprite_definition->source_data_height * 10;
+        source_start_address = (uint32_t)(current_sprite_definition->words);
         source_end_address = source_start_address + (data_size_bytes - 1);
 
         if ((source_start_address >> 16) != (source_end_address >> 16)) {
             // relocation required
+            snprintf(
+                nf_strbuf,
+                256,
+                "relocating: startaddr: %x, endaddr: %x\n",
+                source_start_address,
+                source_end_address
+            );
+
+            nf_print(nf_strbuf);
 
             dest_start_address = (uint32_t)dest;
             dest_end_address = dest_start_address + (data_size_bytes - 1);
@@ -37,7 +49,7 @@ void relocate_sprites()
             source = current_sprite_definition->words;
             current_sprite_definition->words = dest;
             
-            for (index = 0; index < data_size_words; index++) {
+            for (index2 = 0; index2 < data_size_words; index2++) {
                 *dest++ = *source++;
             }
         }

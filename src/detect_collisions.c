@@ -6,6 +6,7 @@
 #include "opponent_cars.h"
 #include "natfeats.h"
 #include "play_sound.h"
+#include "lookups.h"
 
 void detect_collisions()
 {
@@ -14,7 +15,7 @@ void detect_collisions()
     int32_t current_trackside_item_player_relative_position = current_trackside_item->track_position - player_car_track_position;
     int32_t current_trackside_item_logical_xpos;
 
-    struct RoadScanline *player_scanline = &road_scanlines[75];
+    struct RoadScanline *player_scanline = road_scanline_pointers[75];
     struct OpponentCar *current_opponent_car = opponent_cars;
     int32_t logical_xpos;
     int16_t opponent_car_xpos;

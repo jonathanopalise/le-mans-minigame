@@ -4,6 +4,7 @@
 #include "road_geometry.h"
 #include "trackside_items.h"
 #include "display_list.h"
+#include "lookups.h"
 
 struct TracksideItem *current_nearest_trackside_item;
 
@@ -45,7 +46,7 @@ void trackside_items_process()
     while (current_trackside_item_camera_relative_position < 40000) {
         trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
         if (trackside_item_scanline_index != -1) {
-            road_scanline = &road_scanlines[trackside_item_scanline_index];
+            road_scanline = road_scanline_pointers[trackside_item_scanline_index];
             sprite_index = current_trackside_item->type + road_scanline->sprite_index_adjust;
 
             if (current_trackside_item->xpos > 0) {
@@ -56,7 +57,9 @@ void trackside_items_process()
             screen_xpos += 160;
 
             display_list_add_sprite(
-                &sprite_definitions[sprite_index],
+                // TODO: find way to replace multiply with lookup table
+                //&sprite_definitions[sprite_index],
+                sprite_definition_pointers[sprite_index],
                 screen_xpos,
                 (119 + trackside_item_scanline_index)
             );
