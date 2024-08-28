@@ -389,10 +389,10 @@ void hardware_playfield_erase_sprites()
                 // TODO: table lookup for multiply by 160
                 destination_address = current_bitplane_draw_record->destination_address + multiply_160[lines_to_draw];
                 lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
+            } else {
+                lines_to_draw = current_bitplane_draw_record->y_count;
+                destination_address = current_bitplane_draw_record->destination_address;
             }
-
-            lines_to_draw = current_bitplane_draw_record->y_count;
-            destination_address = current_bitplane_draw_record->destination_address;            
 
             *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
             *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;

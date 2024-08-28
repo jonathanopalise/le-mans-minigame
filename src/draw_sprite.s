@@ -128,7 +128,7 @@ setrightclipped:
 zeroskew:
 
     tst.w     d2                       ; set flags for d2
-    bpl.s     label_7a32c              ; jump when no left clipping required
+    bpl.s     label_7a348              ; jump when no left clipping required
     tst.w     d6                       ; bytes to skip after each line
     bmi       alldone                  ; if negative, nothing to draw
     move.w    d2,d0
@@ -142,21 +142,22 @@ zeroskew:
     add.w     d0,d0
     suba.w    d0,a0
 
-label_7a32c:
-    tst.w     d5                       ; do we need to clip the top of the sprite?
-    bpl.s     label_7a348              ; if we take the jump, no need to clip the top
+; no need for top clipping of sprites
+;label_7a32c:
+;    tst.w     d5                       ; do we need to clip the top of the sprite?
+;    bpl.s     label_7a348              ; if we take the jump, no need to clip the top
                                        ; at this point, top is being clipped
-    tst.w     d7                       ; is the bottom of the sprite off screen too?
-    bmi     alldone                  ; if so, nothing to draw
-    move.w    d5,d0
-    moveq     #0,d5
-    add.w     d0,d3
-    add.w     d0,d0
-    muls.w    d1,d0
-    suba.w    d0,a0
-    add.w     d0,d0
-    add.w     d0,d0
-    suba.w    d0,a0
+;    tst.w     d7                       ; is the bottom of the sprite off screen too?
+;    bmi     alldone                  ; if so, nothing to draw
+;    move.w    d5,d0
+;    moveq     #0,d5
+;    add.w     d0,d3
+;    add.w     d0,d0
+;    muls.w    d1,d0
+;    suba.w    d0,a0
+;    add.w     d0,d0
+;    add.w     d0,d0
+;    suba.w    d0,a0
 
 label_7a348:
     cmp.w     #$14,d6
@@ -197,6 +198,7 @@ label_7a374:
 
     add.w     d2,d2            ; d2 = d2 * 2
 
+    ; TODO: can we make use of the 160 multiply table?
     ; is d5 here the final ypos of the sprite?
     move.w d5,final_ypos
 
