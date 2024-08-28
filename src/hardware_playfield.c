@@ -356,52 +356,56 @@ void hardware_playfield_erase_sprites()
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
 
-    for (uint16_t index = drawing_playfield->sprites_drawn; index > 0; index--) {
+    //for (uint16_t index = drawing_playfield->sprites_drawn; index > 0; index--) {
+    while (current_bitplane_draw_record < drawing_playfield->current_bitplane_draw_record) {
         // road draws in bitplanes 0 and 1, so we only need to clear bitplanes 2 and 3
         // we will probably draw background in planes 0 and 1 too...
-        if (current_bitplane_draw_record->destination_address != 0) {
-            if (current_bitplane_draw_record->ypos < 90) {
-                lines_to_draw = 90 - current_bitplane_draw_record->ypos;
-
-                *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
-                *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
-
-                *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
-
-                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address;
-                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
-
-                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 2;
-                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
-
-                *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
-
-                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 4;
-                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
-
-                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = current_bitplane_draw_record->destination_address + 6;
-                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
-
-                // TODO: table lookup for multiply by 160
-                destination_address = current_bitplane_draw_record->destination_address + multiply_160[lines_to_draw];
-                lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
-            } else {
-                lines_to_draw = current_bitplane_draw_record->y_count;
-                destination_address = current_bitplane_draw_record->destination_address;
-            }
-
+        destination_address = current_bitplane_draw_record->destination_address;
+        if (destination_address != 0) {
             *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
             *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
 
-            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address + 4;
+            if (current_bitplane_draw_record->ypos < 90) {
+                lines_to_draw = 90 - current_bitplane_draw_record->ypos;
+
+                *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
+
+                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+                destination_address += 2;
+
+                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+                destination_address += 2;
+
+                *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
+
+                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+                destination_address += 2;
+
+                *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+                *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+                *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+
+                destination_address -= 2;
+                destination_address += multiply_160[lines_to_draw];
+                lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
+            } else {
+                lines_to_draw = current_bitplane_draw_record->y_count;
+                destination_address += 4;
+            }
+
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
             *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
-            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address + 6;
+            destination_address += 2;
+
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
             *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
         }
