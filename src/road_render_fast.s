@@ -16,9 +16,10 @@
 _road_render_fast:
     movem.l d0-d7/a0-a6,-(sp)
 
-    jsr _hardware_playfield_get_drawing_playfield
+    ;jsr _hardware_playfield_get_drawing_playfield
+    ;move.l d0,a0
 
-    move.l d0,a0
+    move.l _drawing_playfield,a0
     move.l (a0),d4
     add.w #(160*119),d4
 
@@ -125,9 +126,10 @@ _road_render_fast_checkpoint:
 
     movem.l d0-d7/a0-a6,-(sp)
 
-    jsr _hardware_playfield_get_drawing_playfield
+    ;jsr _hardware_playfield_get_drawing_playfield
+    ;move.l d0,a0
 
-    move.l d0,a0
+    move.l _drawing_playfield,a0
     move.l (a0),d4
     add.w #(160*119),d4
 

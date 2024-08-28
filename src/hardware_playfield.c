@@ -18,6 +18,7 @@
 static int16_t visible_index;
 volatile static int16_t ready_index;
 static int16_t drawing_index;
+struct HardwarePlayfield *drawing_playfield;
 
 uint16_t hardware_playfield_shaking = 0;
 
@@ -38,6 +39,7 @@ void hardware_playfield_handle_vbl()
         // no idea why we specify drawing_index here
         uint32_t visible_buffer_address = hardware_playfields[visible_index].buffer;
         if (vertical_shift != 0) {
+            // TODO: table lookup for multiply by 160
             visible_buffer_address -= vertical_shift * 160;
         }
         uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
@@ -57,13 +59,13 @@ void hardware_playfield_handle_vbl()
             -1
         );*/
     } else {
-        //nf_print("Frame dropped :(");
+        nf_print("Frame dropped :(");
     }
 }
 
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
 {
-    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
     draw_sprite(
         xpos - sprite_definition->origin_x,
@@ -71,20 +73,20 @@ void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, 
         sprite_definition->words,
         sprite_definition->source_data_width,
         sprite_definition->source_data_height,
-        playfield->buffer,
-        playfield->current_bitplane_draw_record,
+        drawing_playfield->buffer,
+        drawing_playfield->current_bitplane_draw_record,
         &(sprite_definition->compiled_sprite_0)
     );
 
-    playfield->current_bitplane_draw_record++;
-    playfield->sprites_drawn++;
+    drawing_playfield->current_bitplane_draw_record++;
+    drawing_playfield->sprites_drawn++;
 }
 
 void hardware_playfield_erase_sprites()
 {
-    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
-    struct BitplaneDrawRecord *current_bitplane_draw_record = playfield->bitplane_draw_records;
+    struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
 
     int16_t lines_to_draw;
     uint8_t *destination_address;
@@ -95,7 +97,7 @@ void hardware_playfield_erase_sprites()
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
 
-    for (uint16_t index = 0; index < playfield->sprites_drawn; index++) {
+    for (uint16_t index = drawing_playfield->sprites_drawn; index > 0; index--) {
         // road draws in bitplanes 0 and 1, so we only need to clear bitplanes 2 and 3
         // we will probably draw background in planes 0 and 1 too...
         if (current_bitplane_draw_record->destination_address != 0) {
@@ -125,6 +127,7 @@ void hardware_playfield_erase_sprites()
                 *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
                 *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
+                // TODO: table lookup for multiply by 160
                 destination_address = current_bitplane_draw_record->destination_address + (160 * lines_to_draw);
                 lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
             }
@@ -147,8 +150,8 @@ void hardware_playfield_erase_sprites()
         current_bitplane_draw_record++;
     }
 
-    playfield->current_bitplane_draw_record = playfield->bitplane_draw_records;
-    playfield->sprites_drawn = 0;
+    drawing_playfield->current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
+    drawing_playfield->sprites_drawn = 0;
 }
 
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
@@ -244,6 +247,7 @@ void hardware_playfield_init()
     visible_index = 0;
     ready_index = -1;
     drawing_index = 1;
+    drawing_playfield = &hardware_playfields[drawing_index];
 
     uint16_t *phys_base = Physbase();
     hardware_playfields[0].buffer = phys_base;
@@ -257,20 +261,20 @@ void hardware_playfield_init()
 
 void hardware_playfield_update_digits()
 {
-    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
     int8_t desired_digit;
     struct StatusDefinition *status_definition;
 
     for (uint16_t index = 0; index <= 1; index++) {
         desired_digit = hud_digits.time_digits[index];
-        if (desired_digit != playfield->hud_digits.time_digits[index]) {
-            playfield->hud_digits.time_digits[index] = desired_digit;
+        if (desired_digit != drawing_playfield->hud_digits.time_digits[index]) {
+            drawing_playfield->hud_digits.time_digits[index] = desired_digit;
             status_definition = &status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE + desired_digit];
             if (index == 0) {
                 draw_status(
                     status_definition->words, // confirmed correct
-                    &playfield->buffer[160 * 19 + (8 * 8)],
+                    &drawing_playfield->buffer[160 * 19 + (8 * 8)],
                     status_definition->source_data_width_pixels,
                     status_definition->source_data_height_lines,
                     13 // 128 + 13 = 141
@@ -278,7 +282,7 @@ void hardware_playfield_update_digits()
             } else {
                 draw_status(
                     status_definition->words, // confirmed correct
-                    &playfield->buffer[160 * 19 + (10 * 8)],
+                    &drawing_playfield->buffer[160 * 19 + (10 * 8)],
                     status_definition->source_data_width_pixels,
                     status_definition->source_data_height_lines,
                     2 // 160 + 2 = 162
@@ -291,8 +295,8 @@ void hardware_playfield_update_digits()
     uint16_t skew;
     for (int16_t index = SCORE_DIGIT_COUNT - 1; index >=0; index--) {
         desired_digit = hud_digits.score_digits[index];
-        if (desired_digit != playfield->hud_digits.score_digits[index]) {
-            playfield->hud_digits.score_digits[index] = desired_digit;
+        if (desired_digit != drawing_playfield->hud_digits.score_digits[index]) {
+            drawing_playfield->hud_digits.score_digits[index] = desired_digit;
             status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + desired_digit];
             // start at xpos = 9, increment by 9
             switch (index) {
@@ -338,7 +342,7 @@ void hardware_playfield_update_digits()
             }
             draw_status(
                 status_definition->words, // confirmed correct
-                &playfield->buffer[160 * 19 + (blocks_across * 8)],
+                &drawing_playfield->buffer[160 * 19 + (blocks_across * 8)],
                 status_definition->source_data_width_pixels,
                 status_definition->source_data_height_lines,
                 skew
@@ -363,11 +367,13 @@ void hardware_playfield_frame_complete()
     if (drawing_index == HARDWARE_PLAYFIELD_COUNT) {
         drawing_index = 0;
     }
+
+    drawing_playfield = &hardware_playfields[drawing_index];
 }
 
-struct HardwarePlayfield *hardware_playfield_get_drawing_playfield()
+/*struct HardwarePlayfield *hardware_playfield_get_drawing_playfield()
 {
     return &hardware_playfields[drawing_index];
-}
+}*/
 
 

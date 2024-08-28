@@ -55,7 +55,7 @@ void insertionSort(struct DisplayListItem arr[], int n)
            that are greater than key, 
            to one position ahead of 
            their current position */
-        while (j >= 0 && arr[j].ypos > key.ypos) 
+        while (j >= 0 && arr[j].ypos < key.ypos) 
         {
             arr[j + 1] = arr[j];
             j = j - 1;
@@ -65,20 +65,20 @@ void insertionSort(struct DisplayListItem arr[], int n)
 }
 
 void display_list_execute() {
-    struct DisplayListItem *current_display_list_item = display_list;
+    struct DisplayListItem *current_display_list_item = next_free_display_list_item - 1;
 
     //*((volatile uint16_t *)0xffff8240) = 0x222;
     insertionSort(display_list, num_visible_objects);
     //*((volatile uint16_t *)0xffff8240) = 0x444;
 
-    while (current_display_list_item < next_free_display_list_item) {
+    while (current_display_list_item >= display_list) {
         hardware_playfield_draw_sprite(
             current_display_list_item->sprite_definition,
             current_display_list_item->xpos,
             current_display_list_item->ypos
         );
 
-        current_display_list_item++;
+        current_display_list_item--;
     }
 
     display_list_init();

@@ -43,6 +43,7 @@ void time_of_day_set_colours()
     *dest++ = *src++;
     *dest++ = *src++;
 }
+
 void time_of_day_init()
 {
     quarter_hour_countdown = 60;
@@ -61,9 +62,7 @@ void time_of_day_update()
         if (time_of_day_offset == 29*96) {
             time_of_day_offset = 0;
         }
+
+        time_of_day_set_colours();
     }
-
-    time_of_day_set_colours();
 }
-
-

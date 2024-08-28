@@ -6,7 +6,7 @@
 
 void mountains_render()
 {
-    struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
+    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
     *((volatile int16_t *)BLITTER_ENDMASK_1) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
@@ -21,7 +21,7 @@ void mountains_render()
     uint16_t blitter_control_word;
     int32_t current_skew;
     uint8_t *line_start_source = mountain_graphics;
-    uint8_t *line_start_dest = (playfield->buffer) + 160*90;
+    uint8_t *line_start_dest = (drawing_playfield->buffer) + 160*90;
 
     uint16_t scroll_pixels = mountains_shift >> 16;
     current_skew = ((-scroll_pixels)-1);
