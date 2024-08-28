@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
+CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
@@ -118,7 +118,7 @@ src/relocate_sprites.o: src/relocate_sprites.c src/relocate_sprites.h src/genera
 src/checkpoints.o: src/checkpoints.c src/checkpoints.h
 	$(CC) $(CFLAGS) -c src/checkpoints.c -o src/checkpoints.o
 
-src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geometry.h 
+src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geometry.h src/generated/sprite_definitions_count.h
 	$(CC) $(CFLAGS) -c src/lookups.c -o src/lookups.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
