@@ -5,6 +5,7 @@ static int16_t old_seconds_remaining;
 
 static int32_t score;
 static int32_t old_score;
+static int32_t wip_score;
 
 static int16_t frames_in_current_second_remaining;
 static int16_t frames_until_score_update;
@@ -72,14 +73,23 @@ void hud_update_digits()
     if (frames_until_score_update == 0) {
         frames_until_score_update = 10;
         if (score != old_score) {
-            hud_digits.score_digits[7] = score % 10;
-            hud_digits.score_digits[6] = (score / 10) % 10;
-            hud_digits.score_digits[5] = (score / 100) % 10;
-            hud_digits.score_digits[4] = (score / 1000) % 10;
-            hud_digits.score_digits[3] = (score / 10000) % 10;
-            hud_digits.score_digits[2] = (score / 100000) % 10;
-            hud_digits.score_digits[1] = (score / 1000000) % 10;
-            hud_digits.score_digits[0] = (score / 10000000) % 10;
+            wip_score = score;
+            
+            hud_digits.score_digits[7] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[6] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[5] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[4] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[3] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[2] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[1] = wip_score % 10;
+            wip_score /= 10;
+            hud_digits.score_digits[0] = wip_score % 10;
             old_score = score;
         }
     }
