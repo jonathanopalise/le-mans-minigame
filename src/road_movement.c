@@ -176,18 +176,32 @@ void road_corners_update() {
             );
             break;
         case POSITIVE_SHIFT_REQUIRED|NEGATIVE_TOTAL_CHANGE_TO_APPLY:
-            for (uint16_t index = 0; index < 100; index++) {
+            /*for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
                 current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply];
                 current_road_scanline++;
-            }
+            }*/
+
+            movement_update_inner_scenario_5(
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_add_values[shift_required]),
+                &(current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply])
+            );
             break;
         case POSITIVE_SHIFT_REQUIRED|POSITIVE_TOTAL_CHANGE_TO_APPLY:
-            for (uint16_t index = 0; index < 100; index++) {
+            /*for (uint16_t index = 0; index < 100; index++) {
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
                 current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
                 current_road_scanline++;
-            }
+            }*/
+
+            movement_update_inner_scenario_6(
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_add_values[shift_required]),
+                &(current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply])
+            );
             break;
     }
 }
