@@ -44,6 +44,7 @@ OBJECT_FILES =\
 	src/mixer_variables.o\
 	src/mixer_vbl.o\
 	src/play_sound.o\
+    src/music.o\
 
 ASSETS_GIF = assets/round-tree.gif
 
@@ -55,7 +56,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h
@@ -186,6 +187,9 @@ src/mixer_vbl.o: src/mixer_vbl.s
 
 src/play_sound.o: src/play_sound.s
 	$(VASM) $(VASM_OPTS) src/play_sound.s -Felf -o src/play_sound.o
+
+src/music.o: src/music.s src/music.h src/jracer.snd
+	$(VASM) $(VASM_OPTS) src/music.s -Felf -o src/music.o
 
 src/nf_asmv.o: src/nf_asmv.s
 	$(VASM) $(VASM_OPTS) src/nf_asmv.s -Felf -o src/nf_asmv.o

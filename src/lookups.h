@@ -8,4 +8,6 @@
 extern struct SpriteDefinition *sprite_definition_pointers[SPRITE_DEFINITIONS_COUNT];
 extern struct RoadScanline *road_scanline_pointers[100];
 
+void lookups_init();
+
 #endif

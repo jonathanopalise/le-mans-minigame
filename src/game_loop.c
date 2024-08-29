@@ -16,6 +16,7 @@
 #include "detect_collisions.h"
 #include "mixer_init.h"
 #include "hud.h"
+#include "music.h"
 #include "relocate_sprites.h"
 #include "lookups.h"
 #include "natfeats.h"
@@ -34,6 +35,7 @@ void game_loop()
     lookups_init();
     relocate_sprites();
     mixer_init();
+    music_init();
     hardware_playfield_init();
     hud_init();
     initialise();
@@ -46,6 +48,7 @@ void game_loop()
     road_render_init();
 
     while (1) {
+        //music_tick();
         time_of_day_update();
         hud_reduce_time();
         hud_update_digits();

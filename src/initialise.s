@@ -47,6 +47,7 @@ vbl:
     movem.l d0-d2/a0-a1,-(sp)
 
     jsr _mixer_vbl
+    jsr _music_tick
     jsr _hardware_playfield_handle_vbl
 
     move.w	#$2700,sr			; Stop all interrupts
