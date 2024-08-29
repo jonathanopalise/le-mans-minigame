@@ -4,11 +4,12 @@ static int16_t seconds_remaining;
 static int16_t old_seconds_remaining;
 
 static int32_t score;
-static int32_t old_score;
 static int32_t wip_score;
 
+int8_t wip_score_digits[8];
+
 static int16_t frames_in_current_second_remaining;
-static int16_t frames_until_score_update;
+static int16_t current_wip_score_digit;
 
 struct HudDigits hud_digits;
 
@@ -18,10 +19,9 @@ void hud_init()
     seconds_remaining = 50;
     frames_in_current_second_remaining = 49;
 
-    old_score = -1;
     score = 0;
 
-    frames_until_score_update = 1;
+    current_wip_score_digit = 7;
 
     for (uint16_t index = 0; index < TIME_DIGIT_COUNT; index++) {
         hud_digits.time_digits[index] = 0;
@@ -31,6 +31,8 @@ void hud_init()
         hud_digits.score_digits[index] = 0;
         hud_digits.high_score_digits[index] = 0;
     }
+
+    current_wip_score_digit = 7;
 }
 
 void hud_reduce_time()
@@ -69,29 +71,19 @@ void hud_update_digits()
         old_seconds_remaining = seconds_remaining;
     }
 
-    frames_until_score_update--;
-    if (frames_until_score_update == 0) {
-        frames_until_score_update = 10;
-        if (score != old_score) {
-            wip_score = score;
-            
-            hud_digits.score_digits[7] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[6] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[5] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[4] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[3] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[2] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[1] = wip_score % 10;
-            wip_score /= 10;
-            hud_digits.score_digits[0] = wip_score % 10;
-            old_score = score;
+    wip_score_digits[current_wip_score_digit] = wip_score % 10;
+    current_wip_score_digit--;
+
+    if (current_wip_score_digit == -1) {
+        // transfer wip_score_digits to hud_digits.score_digits
+        for (int index = 0; index < 8; index++) {
+            hud_digits.score_digits[index] = wip_score_digits[index];
         }
+
+        current_wip_score_digit = 7;
+        wip_score = score;
+    } else {
+        wip_score /= 10;
     }
 }
 
