@@ -424,7 +424,9 @@ void opponent_cars_process()
                     sprite_index = current_opponent_car->base_sprite_index - 7;
                 }*/
 
-                sprite_index = (RED_CAR_BASE_INDEX - 7) + road_scanline->sprite_index_adjust;
+                //sprite_index = (RED_CAR_BASE_INDEX - 7) + road_scanline->sprite_index_adjust;
+
+                sprite_index = (current_opponent_car->base_sprite_index - 7) + road_scanline->sprite_index_adjust;
  
                 opponent_car_xpos = lane_to_xpos_mappings[current_opponent_car->lane];
                 if (opponent_car_xpos > 0) {
