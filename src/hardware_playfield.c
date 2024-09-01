@@ -425,19 +425,25 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
 
     uint16_t word1,word2,word3,word4;
     uint16_t current_stripe_iterations;
+    uint16_t mapped_stripe_index;
 
     uint16_t *current_dest = hardware_playfield->buffer;
     for (uint16_t stripe_index = 15; stripe_index >= 3; stripe_index--) {
         // 80 words per line/20 iterations per line
         // 5 lines per stripe
         // so 80 iterations per stripe
-        word1 = (stripe_index & 1) ? 0xffff : 0;
-        word2 = (stripe_index >> 1 & 1) ? 0xffff: 0;
-        word3 = (stripe_index >> 2 & 1) ? 0xffff: 0;
-        word4 = (stripe_index >> 3 & 1) ? 0xffff: 0;
+        mapped_stripe_index = stripe_index;
+        if (mapped_stripe_index == 15) {
+            mapped_stripe_index = 2;
+        }
+
+        word1 = (mapped_stripe_index & 1) ? 0xffff : 0;
+        word2 = (mapped_stripe_index >> 1 & 1) ? 0xffff: 0;
+        word3 = (mapped_stripe_index >> 2 & 1) ? 0xffff: 0;
+        word4 = (mapped_stripe_index >> 3 & 1) ? 0xffff: 0;
 
         current_stripe_iterations = 5*20;
-        if (stripe_index == 3) {
+        if (mapped_stripe_index == 3) {
             current_stripe_iterations = 30*20;
         }
 
