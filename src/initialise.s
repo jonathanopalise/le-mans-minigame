@@ -79,10 +79,9 @@ vbl:
     move.l (a0)+,(a1)+ ; 8256, 8258
     move.l (a0)+,(a1)+ ; 825a, 825c
     ;move.w (a0)+,(a1)+ ; 825e sky gradient end
-    move.w (a0)+,$ffff8244.w
+    move.w (a0),$ffff8244.w
 
-    ;move.w (a0)+,$ffff825e.w  ; index 15 (lamppost illumination and stars)
-    move.w #777,$ffff825e.w  ; index 15 (lamppost illumination and stars)
+    move.w #$777,$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
     ;jsr _vbl_handler
     movem.l (sp)+,d0-d2/a0-a1
