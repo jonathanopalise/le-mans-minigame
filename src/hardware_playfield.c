@@ -422,6 +422,7 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
     memset(hardware_playfield->buffer, 0, HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES);
     hardware_playfield->current_bitplane_draw_record = hardware_playfield->bitplane_draw_records;
     hardware_playfield->sprites_drawn = 0;
+    hardware_playfield->stars_drawn = 0;
 
     uint16_t word1,word2,word3,word4;
     uint16_t current_stripe_iterations;

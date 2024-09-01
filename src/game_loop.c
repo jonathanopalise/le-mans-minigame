@@ -25,6 +25,7 @@
 void game_loop()
 {
     uint16_t player_car_sprite_definition_offset;
+    uint16_t is_night;
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
     if (!nf_init()) {
@@ -50,6 +51,8 @@ void game_loop()
 
     while (1) {
         //music_tick();
+        is_night = time_of_day_is_night();
+
         time_of_day_update();
         hud_reduce_time();
         hud_update_digits();
@@ -58,9 +61,17 @@ void game_loop()
         trackside_items_update_nearest();
         detect_collisions();
         road_corners_update();
-        mountains_render();
         road_render();
-        erase_stars();
+
+        if (!is_night) {
+            mountains_render();
+        }
+
+        if (drawing_playfield->stars_drawn) {
+            erase_stars();
+            drawing_playfield->stars_drawn = 0;
+        }
+
         hardware_playfield_erase_sprites();
         trackside_items_process();
         opponent_cars_process();
@@ -77,13 +88,12 @@ void game_loop()
             );
         }
 
-        /*display_list_add_sprite(
-            &sprite_definitions[SCENERY_TYPE_LAMPPOST],
-            16,
-            180
-        );*/
+        if (is_night) {
+            draw_stars();
+            drawing_playfield->stars_drawn = 1;
+        }
+        drawing_playfield->stars_drawn = is_night;
 
-        draw_stars();
         display_list_execute();
         hardware_playfield_frame_complete();
     }

@@ -66,3 +66,8 @@ void time_of_day_update()
         time_of_day_set_colours();
     }
 }
+
+uint16_t time_of_day_is_night()
+{
+    return time_of_day_offset >= 29*22 && time_of_day_offset <= 29*34;
+}

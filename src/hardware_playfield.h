@@ -20,6 +20,7 @@ struct HardwarePlayfield {
     struct BitplaneDrawRecord *current_bitplane_draw_record;
     uint16_t sprites_drawn;
     uint16_t star_block_offsets[STAR_COUNT];
+    uint16_t stars_drawn;
     struct HudDigits hud_digits;
 };
 
@@ -32,6 +33,5 @@ void hardware_playfield_erase_sprites();
 void hardware_playfield_init();
 void hardware_playfield_update_digits();
 void hardware_playfield_frame_complete();
-//struct HardwarePlayfield *hardware_playfield_get_drawing_playfield();
 
 #endif
