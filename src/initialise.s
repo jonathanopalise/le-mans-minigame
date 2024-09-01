@@ -66,18 +66,20 @@ vbl:
     lea.l _sky_gradient,a0
 
     move.w #$ee1,$ffff8242.w ; status panel colour
+    move.w #$070,$ffff8244.w ;TEST
 
     lea.l $ffff8246.w,a1
     ;move.w #$321,$ffff8242.w ; mountain colour 1
     ;move.w #$200,$ffff8244.w ; mountain colour 2
     ;move.l (a0)+,(a1)+ ; mountain colours 1 & 2 - 8242 and 8244
-    move.l (a0)+,(a1)+ ; sky gradient start
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.l (a0)+,(a1)+
-    move.w (a0)+,(a1)+ ; sky gradient end
+    move.l (a0)+,(a1)+ ; sky gradient start 8246
+    move.l (a0)+,(a1)+ ; 8248
+    move.l (a0)+,(a1)+ ; 824a
+    move.l (a0)+,(a1)+ ; 824c
+    move.l (a0)+,(a1)+ ; 824e
+    move.l (a0)+,(a1)+ ; 8250
+    move.w (a0)+,(a1)+ ; 8252 sky gradient end
+    move.w #$777,$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
     ;jsr _vbl_handler
     movem.l (sp)+,d0-d2/a0-a1
@@ -99,12 +101,12 @@ wait_timer_1:
     lea $ffff8242.w,a1
     move.l (a0)+,(a1)+ ; mountain colours 1, 2
     lea $ffff8248.w,a1
-    move.l (a0)+,(a1)+ ; indexes 4, 5
-    move.l (a0)+,(a1)+ ; indexes 6, 7
-    move.l (a0)+,(a1)+ ; indexes 8, 9
-    move.l (a0)+,(a1)+ ; indexes 10, 11
-    move.l (a0)+,(a1)+ ; indexes 12, 13
-    move.w (a0)+,(a1)+ ; index 14
+    move.l (a0)+,(a1)+ ; indexes 4, 5 8248, 824a
+    move.l (a0)+,(a1)+ ; indexes 6, 7 824c, 824e 
+    move.l (a0)+,(a1)+ ; indexes 8, 9 8250, 8252
+    move.l (a0)+,(a1)+ ; indexes 10, 11 8254, 8256
+    move.l (a0)+,(a1)+ ; indexes 12, 13 8258, 825a
+    move.w (a0)+,(a1)+ ; index 14 825c
     move.w #$777,(a1)+  ; index 15 (lamppost illumination and stars)
 
     ; tail lights should be at index 14

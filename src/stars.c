@@ -90,9 +90,9 @@ void draw_stars()
     struct StarPosition *current_star_position = star_positions;
     uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        shifted_star_xpos = -(current_star_position->original_xpos + normalised_mountains_shift);
+        shifted_star_xpos = current_star_position->original_xpos - normalised_mountains_shift;
         if (shifted_star_xpos < 0) {
-            shifted_star_xpos += 319;
+            shifted_star_xpos += 320;
         }
 
         background_colour = line_background_colours[current_star_position->ypos];
