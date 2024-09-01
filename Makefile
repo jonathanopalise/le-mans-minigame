@@ -29,6 +29,7 @@ OBJECT_FILES =\
     src/relocate_sprites.o\
     src/checkpoints.o\
     src/lookups.o\
+    src/stars.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -37,6 +38,7 @@ OBJECT_FILES =\
     src/generated/sprite_definitions.o\
     src/generated/status_definitions.o\
     src/generated/time_of_day.o\
+    src/generated/star_lookups.o\
 	src/initialise.o\
 	src/nf_asmv.o\
 	src/mixer_init.o\
@@ -56,7 +58,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h
@@ -169,6 +171,9 @@ src/generated/time_of_day.o: src/generated/time_of_day.c src/time_of_day.h
 
 src/generated/time_of_day.c: src/generate_time_of_day.php
 	$(PHP) src/generate_time_of_day.php src/generated/time_of_day.c
+
+src/generated/star_lookups.c: src/generate_star_lookups.php
+	$(PHP) src/generate_star_lookups.php src/generated/star_lookups.c
 
 src/initialise.o: src/initialise.s
 	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o

@@ -19,6 +19,7 @@
 #include "music.h"
 #include "relocate_sprites.h"
 #include "lookups.h"
+#include "stars.h"
 #include "natfeats.h"
 
 void game_loop()
@@ -59,6 +60,7 @@ void game_loop()
         road_corners_update();
         mountains_render();
         road_render();
+        erase_stars();
         hardware_playfield_erase_sprites();
         trackside_items_process();
         opponent_cars_process();
@@ -81,6 +83,7 @@ void game_loop()
             180
         );*/
 
+        draw_stars();
         display_list_execute();
         hardware_playfield_frame_complete();
     }

@@ -105,6 +105,7 @@ wait_timer_1:
     move.l (a0)+,(a1)+ ; indexes 10, 11
     move.l (a0)+,(a1)+ ; indexes 12, 13
     move.w (a0)+,(a1)+ ; index 14
+    move.w #$777,(a1)+  ; index 15 (lamppost illumination and stars)
 
     ; tail lights should be at index 14
     ;move.w #$f00,(a1)+ ; tail lights

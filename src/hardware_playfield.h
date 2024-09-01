@@ -8,6 +8,7 @@
 #include "draw_sprite.h"
 #include "bitplane_draw_record.h"
 #include "hud_digits.h"
+#include "stars.h"
 
 #define HARDWARE_PLAYFIELD_WIDTH 320
 #define HARDWARE_PLAYFIELD_HEIGHT 200
@@ -18,6 +19,7 @@ struct HardwarePlayfield {
     struct BitplaneDrawRecord bitplane_draw_records[SPRITE_COUNT];
     struct BitplaneDrawRecord *current_bitplane_draw_record;
     uint16_t sprites_drawn;
+    uint16_t star_block_offsets[STAR_COUNT];
     struct HudDigits hud_digits;
 };
 
