@@ -2,6 +2,7 @@
 #include "road_movement.h"
 #include "hardware_playfield.h"
 #include "star_lookups.h"
+#include "lookups.h"
 
 struct StarPosition {
     uint16_t original_xpos;
@@ -80,8 +81,8 @@ struct StarPosition star_positions[STAR_COUNT] = {
 void draw_stars()
 {
     int16_t shifted_star_xpos;
-    uint16_t *plot_source;
-    uint16_t *plot_dest;
+    uint32_t *plot_source;
+    uint32_t *plot_dest;
     uint16_t background_colour;
     uint16_t normalised_mountains_shift = mountains_shift >> 16;
     uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
@@ -96,15 +97,13 @@ void draw_stars()
         }
 
         background_colour = line_background_colours[current_star_position->ypos];
-        plot_source = &star_plot_values[(background_colour << 6) + ((shifted_star_xpos & 15) << 2)];
-        //plot_source = &star_erase_values[(background_colour << 2)];
+        // TODO: i can preshift these background colour values to save some cycles
+        plot_source = (uint32_t *)(&star_plot_values[(background_colour << 6) + ((shifted_star_xpos & 15) << 2)]);
 
-        block_offset = ((shifted_star_xpos >> 1) & 0xf8);
+        block_offset = multiply_160[current_star_position->ypos] + ((shifted_star_xpos >> 1) & 0xf8);
         *current_star_block_offset = block_offset;
-        plot_dest = (uint16_t *)((uint32_t)drawing_playfield_buffer + (current_star_position->ypos * 160) + block_offset);
+        plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + block_offset);
 
-        *plot_dest++ = *plot_source++;
-        *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
 
@@ -115,8 +114,8 @@ void draw_stars()
 
 void erase_stars()
 {
-    uint16_t *plot_source;
-    uint16_t *plot_dest;
+    uint32_t *plot_source;
+    uint32_t *plot_dest;
     uint16_t background_colour;
 
     uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
@@ -125,11 +124,9 @@ void erase_stars()
 
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
         background_colour = line_background_colours[current_star_position->ypos];
-        plot_source = &star_erase_values[(background_colour << 2)];
-        plot_dest = (uint16_t *)((uint32_t)drawing_playfield_buffer + (current_star_position->ypos * 160) + *current_star_block_offset);
+        plot_source = (uint32_t *)(&star_erase_values[(background_colour << 2)]);
+        plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + *current_star_block_offset);
 
-        *plot_dest++ = *plot_source++;
-        *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
 
