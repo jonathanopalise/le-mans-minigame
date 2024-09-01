@@ -214,6 +214,19 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     $bottomBlue = $timeOfDayColour[SKY_BOTTOM][2];
 
     $skyGradientColours = [];
+
+    // stars
+    $starsRed = 255;
+    $starsGreen = 255;
+    $starsBlue = 255;
+    /*if ($key > 8 && $key < 54) {
+        $tailLightsRed = 255;
+        $tailLightsGreen = 255;
+        $tailLightsBlue = 0;
+    }*/
+
+    $skyGradientColours[] = [$starsRed, $starsGreen, $starsBlue];
+
     for ($gradientIndex = 0; $gradientIndex < 13; $gradientIndex++) {
         $red = intval(round($topRed + (($bottomRed - $topRed) * $gradientIndex / 12)));
         $green = intval(round($topGreen + (($bottomGreen - $topGreen) * $gradientIndex / 12)));
@@ -227,6 +240,7 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     }
 
     $timeOfDayColours[$key]['skyGradientColours'] = array_reverse($skyGradientColours);
+
 
     //$skyTopRed = $timeOfDayColour[SKY_TOP][RED];
     //$skyTopGreen = $timeOfDayColour[SKY_TOP][GREEN];

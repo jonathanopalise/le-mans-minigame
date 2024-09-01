@@ -22,6 +22,7 @@ void time_of_day_set_colours()
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
+    *dest++ = *src++; // lamppost/star colours
 
     dest = &scenery_colours;
     *dest++ = *src++; // 2 colours for mountains
@@ -58,8 +59,8 @@ void time_of_day_update()
     if (quarter_hour_countdown == 0) {
 
         quarter_hour_countdown = 60*1;
-        time_of_day_offset += 29;
-        if (time_of_day_offset == 29*96) {
+        time_of_day_offset += 30;
+        if (time_of_day_offset == 30*96) {
             time_of_day_offset = 0;
         }
 
@@ -69,5 +70,5 @@ void time_of_day_update()
 
 uint16_t time_of_day_is_night()
 {
-    return time_of_day_offset >= 29*22 && time_of_day_offset <= 29*34;
+    return time_of_day_offset >= 30*22 && time_of_day_offset <= 30*34;
 }
