@@ -22,7 +22,7 @@ void time_of_day_set_colours()
     *dest++ = *src++;
     *dest++ = *src++;
     *dest++ = *src++;
-    *dest++ = *src++; // lamppost/star colours
+    *dest++ = *src++; // lamppost/star
 
     dest = &scenery_colours;
     *dest++ = *src++; // 2 colours for mountains

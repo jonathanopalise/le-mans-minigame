@@ -79,9 +79,9 @@ vbl:
     move.l (a0)+,(a1)+ ; 8256, 8258
     move.l (a0)+,(a1)+ ; 825a, 825c
     ;move.w (a0)+,(a1)+ ; 825e sky gradient end
-    move.w (a0),$ffff8244.w
+    move.w (a0)+,$ffff8244.w
 
-    move.w #$777,$ffff825e.w  ; index 15 (lamppost illumination and stars)
+    move.w (a0),$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
     ;jsr _vbl_handler
     movem.l (sp)+,d0-d2/a0-a1
@@ -109,7 +109,7 @@ wait_timer_1:
     move.l (a0)+,(a1)+ ; indexes 10, 11 8254, 8256
     move.l (a0)+,(a1)+ ; indexes 12, 13 8258, 825a
     move.w (a0)+,(a1)+ ; index 14 825c
-    move.w #$777,(a1)+  ; index 15 (lamppost illumination and stars)
+    ;move.w #$777,(a1)+  ; index 15 (lamppost illumination and stars)
 
     ; tail lights should be at index 14
     ;move.w #$f00,(a1)+ ; tail lights
@@ -179,6 +179,7 @@ _sky_gradient:
     dc.w $02f
     dc.w $09f
     dc.w $01f
+    dc.w $fff
 
 _scenery_colours:
     dc.w $321f

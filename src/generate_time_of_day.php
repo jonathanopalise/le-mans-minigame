@@ -216,16 +216,13 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     $skyGradientColours = [];
 
     // stars
-    $starsRed = 255;
-    $starsGreen = 255;
-    $starsBlue = 255;
     /*if ($key > 8 && $key < 54) {
         $tailLightsRed = 255;
         $tailLightsGreen = 255;
         $tailLightsBlue = 0;
     }*/
 
-    $skyGradientColours[] = [$starsRed, $starsGreen, $starsBlue];
+    //$skyGradientColours[] = [$starsRed, $starsGreen, $starsBlue];
 
     for ($gradientIndex = 0; $gradientIndex < 13; $gradientIndex++) {
         $red = intval(round($topRed + (($bottomRed - $topRed) * $gradientIndex / 12)));
@@ -329,8 +326,9 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
 }
 
 $outputWords = [];
-foreach ($timeOfDayColours as $timeOfDayColour) {
+foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     // sky gradient
+
     foreach ($timeOfDayColour['skyGradientColours'] as $rgbArray) {
         $red = $rgbArray[RED];
         $green = $rgbArray[GREEN];
@@ -338,6 +336,33 @@ foreach ($timeOfDayColours as $timeOfDayColour) {
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
     }
+
+    // stars
+    $starsRed = 255;
+    $starsGreen = 255;
+    $starsBlue = 255;
+    switch ($key) {
+        case 22:
+        case 35:
+            $starsRed = 64;
+            $starsGreen = 64;
+            $starsBlue = 64;
+            break;
+        case 23:
+        case 34:
+            $starsRed = 128;
+            $starsGreen = 128;
+            $starsBlue = 128;
+            break;
+        case 24:
+        case 33:
+            $starsRed = 192;
+            $starsGreen = 192;
+            $starsBlue = 192;
+            break;
+    }
+
+    $outputWords[] = generateStePaletteWord($starsRed, $starsGreen, $starsBlue);
 
     // mountain colours
     foreach ($timeOfDayColour['adjustedMountainColours'] as $rgbArray) {
