@@ -60,7 +60,9 @@ void hardware_playfield_handle_vbl()
             -1
         );*/
     } else {
+#ifdef __NATFEATS_DEBUG
         nf_print("Frame dropped :(");
+#endif
     }
 }
 

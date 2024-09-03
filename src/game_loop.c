@@ -28,11 +28,13 @@ void game_loop()
     uint16_t is_night;
     *((volatile uint16_t *)0xffff8240) = 0x0;
 
+#ifdef __NATFEATS_DEBUG
     if (!nf_init()) {
         while (1==1) {}
     }
 
     nf_print("hello from lemans!");
+#endif
 
     lookups_init();
     relocate_sprites();

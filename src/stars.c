@@ -88,6 +88,7 @@ void draw_stars()
     uint16_t normalised_mountains_shift = mountains_shift >> 16;
     uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
     uint16_t block_offset;
+    uint16_t ypos;
 
     struct StarPosition *current_star_position = star_positions;
     uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
@@ -97,19 +98,19 @@ void draw_stars()
             shifted_star_xpos += 320;
         }
 
-        background_colour = line_background_colours[current_star_position->ypos];
+        ypos = current_star_position->ypos;
+        background_colour = line_background_colours[ypos];
         // TODO: i can preshift these background colour values to save some cycles
         plot_source = (uint32_t *)(&star_plot_values[(background_colour << 6) + ((shifted_star_xpos & 15) << 2)]);
 
-        block_offset = multiply_160[current_star_position->ypos] + ((shifted_star_xpos >> 1) & 0xf8);
-        *current_star_block_offset = block_offset;
+        block_offset = multiply_160[ypos] + ((shifted_star_xpos >> 1) & 0xf8);
+        *current_star_block_offset++ = block_offset;
         plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + block_offset);
 
         *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
 
         current_star_position++;
-        current_star_block_offset++;
     }
 }
 

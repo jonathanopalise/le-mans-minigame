@@ -7,6 +7,7 @@
 #include "checkpoints.h"
 #include "hud.h"
 #include "play_sound.h"
+#include "road_movement.h"
 #include <stdio.h>
 
 #define PLAYER_CAR_STATE_NORMAL 0
@@ -70,14 +71,17 @@ void player_car_handle_inputs()
             player_car_altitude_change =- (player_car_altitude_change >> 1);
         }
 
-        if (player_car_altitude > 0) {
+        if ((player_car_altitude > 0) || (player_car_flip_image_tracker != 0 && player_car_flip_image_tracker != 12)) {
             player_car_flip_image_tracker++;
             if (player_car_flip_image_tracker == 24) {
                 player_car_flip_image_tracker = 0;
             }
+        }
+
+        if (player_car_altitude > 0) {
             player_car_speed -= 2;
         } else {
-            player_car_speed -=12;
+            player_car_speed -= 11;
         }
 
         if (player_car_speed < 0) {
@@ -233,13 +237,13 @@ uint16_t player_car_get_sprite_definition()
 
     uint16_t player_car_sprite_definition_offset = 8;
     if (player_car_speed > 0) {
-        if (player_car_steering <= -375) {
+        if (player_car_steering <= -375 && current_road_curvature > 160) {
             player_car_sprite_definition_offset += 16;
         } else if (player_car_steering <= -250) {
             player_car_sprite_definition_offset += 27;
         } else if (player_car_steering <= -125) {
             player_car_sprite_definition_offset += 26;
-        } else if (player_car_steering >= 375) {
+        } else if (player_car_steering >= 375 && current_road_curvature < -160) {
             player_car_sprite_definition_offset += 8;
         } else if (player_car_steering >= 250) {
             player_car_sprite_definition_offset += 25;

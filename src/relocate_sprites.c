@@ -26,6 +26,7 @@ void relocate_sprites()
         source_end_address = source_start_address + (data_size_bytes - 1);
 
         if ((source_start_address >> 16) != (source_end_address >> 16)) {
+#ifdef __NATFEATS_DEBUG
             // relocation required
             snprintf(
                 nf_strbuf,
@@ -36,6 +37,7 @@ void relocate_sprites()
             );
 
             nf_print(nf_strbuf);
+#endif
 
             dest_start_address = (uint32_t)dest;
             dest_end_address = dest_start_address + (data_size_bytes - 1);
