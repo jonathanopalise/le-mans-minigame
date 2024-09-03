@@ -243,6 +243,7 @@ $definitions = [
         'top' => 2003,
         'width' => 49,
         'height' => 32,
+        'permittedSkews' => [8],
     ],
     [
         'label' => 'red-car-left-intermediate-left-2',
@@ -250,6 +251,7 @@ $definitions = [
         'top' => 2003,
         'width' => 55,
         'height' => 32,
+        'permittedSkews' => [4],
     ],
     [
         'label' => 'red-car-right-intermediate-right-1',
@@ -257,6 +259,7 @@ $definitions = [
         'top' => 2039,
         'width' => 49,
         'height' => 32,
+        'permittedSkews' => [8],
     ],
     [
         'label' => 'red-car-right-intermediate-right-2',
@@ -264,6 +267,7 @@ $definitions = [
         'top' => 2039,
         'width' => 55,
         'height' => 32,
+        'permittedSkews' => [4],
     ],
 
     // yellow car centre offset 36
@@ -1336,6 +1340,7 @@ $definitions = [
         'top' => 1724,
         'width' => 105,
         'height' => 41,
+        'permittedSkews' => [12],
     ],
     [
         'label' => 'red-car-flip-2',
@@ -1343,6 +1348,7 @@ $definitions = [
         'top' => 1724,
         'width' => 108,
         'height' => 37,
+        'permittedSkews' => [10],
     ],
     [
         'label' => 'red-car-flip-3',
@@ -1350,6 +1356,7 @@ $definitions = [
         'top' => 1766,
         'width' => 111,
         'height' => 51,
+        'permittedSkews' => [8],
     ],
     [
         'label' => 'red-car-flip-4',
@@ -1357,6 +1364,7 @@ $definitions = [
         'top' => 1830,
         'width' => 108,
         'height' => 37,
+        'permittedSkews' => [10],
     ],
     [
         'label' => 'red-car-flip-5',
@@ -1364,6 +1372,7 @@ $definitions = [
         'top' => 1828,
         'width' => 105,
         'height' => 39,
+        'permittedSkews' => [12],
     ],
     [
         'label' => 'red-car-flip-6',
@@ -1371,6 +1380,7 @@ $definitions = [
         'top' => 1766,
         'width' => 112,
         'height' => 59,
+        'permittedSkews' => [8],
     ],
 
     // checkpoint gantry

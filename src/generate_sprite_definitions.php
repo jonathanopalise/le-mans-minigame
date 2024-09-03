@@ -103,13 +103,23 @@ foreach ($definitions as $definition) {
         if (str_contains($definition['label'], 'yellow-car') || str_contains($definition['label'], 'blue-car')) {
             $instructions = [];
         } else {
-            $builder = new CompiledSpriteBuilder(
-                $skewedCharData,
-                $widthIn16PixelBlocks,
-                $skewedMaskedSprite->getHeight(),
-                $skew
-            );
-            $instructions = $builder->runFirstPass();
+            if (isset($definition['permittedSkews'])) {
+                $permittedSkews = $definition['permittedSkews'];
+            } else {
+                $permittedSkews = [0, 2, 4, 6, 8, 10, 12, 14];
+            }
+
+            if (in_array($skew, $permittedSkews)) {
+                $builder = new CompiledSpriteBuilder(
+                    $skewedCharData,
+                    $widthIn16PixelBlocks,
+                    $skewedMaskedSprite->getHeight(),
+                    $skew
+                );
+                $instructions = $builder->runFirstPass();
+            } else {
+                $instructions = [];
+            }
         }
 
         if (count($instructions)) {
