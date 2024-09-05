@@ -5,6 +5,7 @@
 #include "hud_digits.h"
 
 extern struct HudDigits hud_digits;
+extern uint16_t frames_since_game_over;
 
 void hud_init();
 void hud_reduce_time();

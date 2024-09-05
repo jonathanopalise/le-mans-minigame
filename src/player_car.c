@@ -33,6 +33,7 @@ int32_t player_car_altitude_change;
 uint16_t player_car_flip_image_tracker;
 uint16_t active_opponent_cars;
 uint16_t opponent_lane_change_probability;
+uint32_t race_ticks;
 
 void player_car_initialise()
 {
@@ -52,6 +53,7 @@ void player_car_initialise()
     old_player_car_track_position = 0;
     active_opponent_cars = 1;
     opponent_lane_change_probability = 1;
+    race_ticks = 0;
 }
 
 void player_car_handle_inputs()
@@ -114,43 +116,45 @@ void player_car_handle_inputs()
             nf_print(nf_strbuf);*/
         }
 
-        if (joy_up/* && !hud_is_time_up()*/) {
-            player_car_speed += 3;
-            if (player_car_speed > 1200) {
-                player_car_speed = 1200;
-            }
-        } else if (joy_down) {
-            player_car_speed -= 14;
-            if (player_car_speed < 0) {
-                player_car_speed = 0;
-            }
-        } else {
-            player_car_speed -= 2;
-            if (player_car_speed < 0) {
-                player_car_speed = 0;
-            }
-        }
-
-        if (joy_left) {
-            player_car_steering += 125;
-            if (player_car_steering > 500) {
-                player_car_steering = 500;
-            }
-        } else if (joy_right) {
-            player_car_steering -= 125;
-            if (player_car_steering < -500) {
-                player_car_steering = -500;
-            }
-        } else {
-            if (player_car_steering > 0) {
-                player_car_steering -= 20;
-                if (player_car_steering < 0) {
-                    player_car_steering = 0;
+        if (race_ticks > 180) {
+            if (joy_up && !hud_is_time_up()) {
+                player_car_speed += 3;
+                if (player_car_speed > 1200) {
+                    player_car_speed = 1200;
                 }
-            } else if (player_car_steering < 0) {
-                player_car_steering += 20;
+            } else if (joy_down) {
+                player_car_speed -= 14;
+                if (player_car_speed < 0) {
+                    player_car_speed = 0;
+                }
+            } else {
+                player_car_speed -= 2;
+                if (player_car_speed < 0) {
+                    player_car_speed = 0;
+                }
+            }
+
+            if (joy_left) {
+                player_car_steering += 125;
+                if (player_car_steering > 500) {
+                    player_car_steering = 500;
+                }
+            } else if (joy_right) {
+                player_car_steering -= 125;
+                if (player_car_steering < -500) {
+                    player_car_steering = -500;
+                }
+            } else {
                 if (player_car_steering > 0) {
-                    player_car_steering = 0;
+                    player_car_steering -= 20;
+                    if (player_car_steering < 0) {
+                        player_car_steering = 0;
+                    }
+                } else if (player_car_steering < 0) {
+                    player_car_steering += 20;
+                    if (player_car_steering > 0) {
+                        player_car_steering = 0;
+                    }
                 }
             }
         }
@@ -206,6 +210,8 @@ void player_car_handle_inputs()
     if (player_car_invincible_countdown != 0) {
         player_car_invincible_countdown --;
     }
+
+    race_ticks++;
 }
 
 void player_car_crash()

@@ -1,4 +1,5 @@
 #include "hud.h"
+#include "player_car.h"
 
 static int16_t seconds_remaining;
 static int16_t old_seconds_remaining;
@@ -11,6 +12,8 @@ int8_t wip_score_digits[8];
 static int16_t frames_in_current_second_remaining;
 static int16_t current_wip_score_digit;
 
+uint16_t frames_since_game_over;
+
 struct HudDigits hud_digits;
 
 void hud_init()
@@ -18,6 +21,7 @@ void hud_init()
     old_seconds_remaining = -1;
     seconds_remaining = 50;
     frames_in_current_second_remaining = 49;
+    frames_since_game_over = 0;
 
     score = 0;
 
@@ -38,6 +42,9 @@ void hud_init()
 void hud_reduce_time()
 {
     if (seconds_remaining == 0 && frames_in_current_second_remaining == 0) {
+        if (player_car_speed == 0) {
+            frames_since_game_over++;
+        }
         return;
     }
 

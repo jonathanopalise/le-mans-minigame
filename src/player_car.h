@@ -20,6 +20,7 @@ extern uint16_t player_car_invincible_countdown;
 extern int32_t player_car_altitude;
 extern uint16_t active_opponent_cars;
 extern uint16_t opponent_lane_change_probability;
+extern uint32_t race_ticks;
 
 void player_car_initialise();
 void player_car_handle_inputs();

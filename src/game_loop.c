@@ -22,6 +22,8 @@
 #include "stars.h"
 #include "natfeats.h"
 
+#define GAME_OVER_DEFINITION_OFFSET 202
+
 void game_loop()
 {
     uint16_t player_car_sprite_definition_offset;
@@ -97,6 +99,15 @@ void game_loop()
         drawing_playfield->stars_drawn = is_night;
 
         display_list_execute();
+
+        if (frames_since_game_over) {
+            hardware_playfield_draw_sprite(
+                &sprite_definitions[GAME_OVER_DEFINITION_OFFSET],
+                160,
+                127
+            );
+        }
+
         hardware_playfield_frame_complete();
     }
 }

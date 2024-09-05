@@ -67,8 +67,9 @@ void insertionSort(struct DisplayListItem arr[], int n)
 void display_list_execute() {
     struct DisplayListItem *current_display_list_item = next_free_display_list_item - 1;
 
-    //*((volatile uint16_t *)0xffff8240) = 0x222;
     insertionSort(display_list, num_visible_objects);
+
+    //*((volatile uint16_t *)0xffff8240) = 0x222;
     //*((volatile uint16_t *)0xffff8240) = 0x444;
 
     while (current_display_list_item >= display_list) {

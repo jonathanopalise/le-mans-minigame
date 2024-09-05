@@ -1515,5 +1515,15 @@ $definitions = [
         'originx' => 2 + 6,
         'originy' => 12,
     ],
+
+    // game over (202)
+
+    [
+        'label' => 'game-over',
+        'left' => 24,
+        'top' => 2288,
+        'width' => 72,
+        'height' => 37,
+    ],
 ];
 
