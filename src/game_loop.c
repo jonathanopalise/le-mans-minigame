@@ -21,6 +21,7 @@
 #include "lookups.h"
 #include "stars.h"
 #include "natfeats.h"
+#include "random.h"
 
 #define GAME_OVER_DEFINITION_OFFSET 202
 
@@ -38,6 +39,7 @@ void game_loop()
     nf_print("hello from lemans!");
 #endif
 
+
     lookups_init();
     relocate_sprites();
     mixer_init();
@@ -52,6 +54,7 @@ void game_loop()
     trackside_items_process_init();
     time_of_day_init();
     road_render_init();
+    init_random();
 
     while (1) {
         //music_tick();
