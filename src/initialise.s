@@ -46,6 +46,13 @@ dummy:
 vbl:
     cmp.w #4,_game_state ; are we in game?
     beq.s in_game_vbl
+    cmp.w #2,_game_state ; are we on the title screen?
+    beq.s title_screen_vbl
+    rte
+
+title_screen_vbl:
+
+    move.w #0,_waiting_for_vbl
     rte
 
 in_game_vbl:

@@ -1,7 +1,7 @@
+#include <string.h>
 #include "game_loop.h"
 #include "hardware_playfield.h"
 #include "initialise.h"
-#include "vbl_handler.h"
 #include "road_movement.h"
 #include "mountains_render.h"
 #include "road_render.h"
@@ -20,6 +20,7 @@
 #include "relocate_sprites.h"
 #include "lookups.h"
 #include "stars.h"
+#include "title_screen_graphics.h"
 #include "natfeats.h"
 #include "random.h"
 
@@ -32,6 +33,8 @@
 #define GAME_STATE_IN_GAME_LOOP 4
 
 uint16_t game_state;
+uint16_t joy_fire, last_joy_fire;
+volatile uint16_t waiting_for_vbl;
 
 static void global_init()
 {
@@ -47,16 +50,44 @@ static void global_init()
     relocate_sprites();
     mixer_init();
     initialise();
+    hardware_playfield_global_init();
 
-    game_state = GAME_STATE_IN_GAME_INIT;
+    game_state = GAME_STATE_TITLE_SCREEN_INIT;
 }
 
 static void title_screen_init()
 {
+    waiting_for_vbl = 1;
+    game_state = GAME_STATE_TITLE_SCREEN_LOOP;
+
+    uint32_t visible_buffer_address = hardware_playfields[0].buffer;
+    memcpy((void *)visible_buffer_address, title_screen_graphics, 32000);
+
+    uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
+    uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
+    uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
+
+    *((volatile uint8_t *)0xffff8201) = address_high_byte;
+    *((volatile uint8_t *)0xffff8203) = address_mid_byte;
+    *((volatile uint8_t *)0xffff820d) = address_low_byte;
+
+    *((volatile uint8_t *)0xffff8205) = address_high_byte;
+    *((volatile uint8_t *)0xffff8207) = address_mid_byte;
+    *((volatile uint8_t *)0xffff8209) = address_low_byte;
+
+    game_state = GAME_STATE_TITLE_SCREEN_LOOP;
+    last_joy_fire = joy_fire;
 }
 
 static void title_screen_loop()
 {
+    last_joy_fire = joy_fire;
+    joy_fire = joy_data >> 7 & 1;
+    if (joy_fire == 1) {
+        game_state = GAME_STATE_IN_GAME_INIT;
+    } else {
+        while (waiting_for_vbl) {}
+    }
 }
 
 static void in_game_init()
@@ -140,7 +171,7 @@ static void in_game_loop()
 
     if (frames_since_game_over > 180) {
         music_stop();
-        game_state = GAME_STATE_IN_GAME_INIT;
+        game_state = GAME_STATE_TITLE_SCREEN_INIT;
     } else {
         hardware_playfield_frame_complete();
     }

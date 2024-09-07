@@ -11,7 +11,6 @@ OBJECT_FILES =\
 	src/hardware_playfield.o\
     src/draw_sprite.o\
     src/draw_status.o\
-	src/vbl_handler.o\
     src/road_movement.o\
     src/movement_update_inner.o\
     src/track_segments.o\
@@ -35,6 +34,7 @@ OBJECT_FILES =\
  	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
+    src/generated/title_screen_graphics.o\
     src/generated/sprite_definitions.o\
     src/generated/status_definitions.o\
     src/generated/time_of_day.o\
@@ -58,7 +58,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/vbl_handler.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/random.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/random.h src/title_screen_graphics.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h src/lookups.h
@@ -69,9 +69,6 @@ src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
 
 src/draw_status.o: src/draw_status.s src/draw_status.h
 	$(VASM) $(VASM_OPTS) src/draw_status.s -Felf -o src/draw_status.o
-
-src/vbl_handler.o: src/vbl_handler.c src/vbl_handler.h
-	$(CC) $(CFLAGS) -c src/vbl_handler.c -o src/vbl_handler.o
 
 src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
@@ -147,6 +144,12 @@ src/generated/road_graphics.o: src/generated/road_graphics.c src/road_graphics.h
 
 src/generated/road_graphics.c: src/generate_road_graphics.php
 	$(PHP) src/generate_road_graphics.php src/generated/road_graphics.c
+
+src/generated/title_screen_graphics.o: src/generated/title_screen_graphics.c src/title_screen_graphics.h
+	$(CC) $(CFLAGS) -c src/generated/title_screen_graphics.c -o src/generated/title_screen_graphics.o
+
+src/generated/title_screen_graphics.c: src/generate_title_screen_graphics.php src/library.php assets/title-screen.gif
+	$(PHP) src/generate_title_screen_graphics.php assets/title-screen.gif src/generated/title_screen_graphics.c
 
 src/generated/mountain_graphics.o: src/generated/mountain_graphics.c src/mountain_graphics.h
 	$(CC) $(CFLAGS) -c src/generated/mountain_graphics.c -o src/generated/mountain_graphics.o
