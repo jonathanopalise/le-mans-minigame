@@ -1524,6 +1524,30 @@ $definitions = [
         'top' => 2288,
         'width' => 72,
         'height' => 37,
+        'permittedSkews' => [12],
+    ],
+
+    // get ready (203)
+
+    [
+        'label' => 'get-ready',
+        'left' => 104,
+        'top' => 2288,
+        'width' => 90,
+        'height' => 37,
+        'height' => 37,
+        'permittedSkews' => [2],
+    ],
+
+    // go! (204)
+
+    [
+        'label' => 'go',
+        'left' => 206,
+        'top' => 2288,
+        'width' => 45,
+        'height' => 18,
+        'permittedSkews' => [10],
     ],
 ];
 

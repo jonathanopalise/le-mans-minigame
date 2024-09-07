@@ -19,7 +19,9 @@ if ($image === false) {
 
 
 $stePalette = [];
-for ($index = 0; $index < 16; $index++) {
+$colourCount = imagecolorstotal($image);
+
+for ($index = 0; $index < $colourCount; $index++) {
     $colours = imagecolorsforindex($image, $index);
 
     $red = $colours['red'];
@@ -31,6 +33,10 @@ for ($index = 0; $index < 16; $index++) {
     $steBlue = generateSteNibble($blue);
 
     $stePalette[] = ($steRed << 8) | ($steGreen << 4) | ($steBlue);
+}
+
+while (count($stePalette) < 16) {
+    $stePalette[] = 0;
 }
 
 $identifier = '_palette';

@@ -116,7 +116,7 @@ void player_car_handle_inputs()
             nf_print(nf_strbuf);*/
         }
 
-        if (race_ticks > 180) {
+        if (race_ticks > 200) {
             if (joy_up && !hud_is_time_up()) {
                 player_car_speed += 3;
                 if (player_car_speed > 1200) {
@@ -169,7 +169,6 @@ void player_car_handle_inputs()
 
     old_player_car_track_position = player_car_track_position;
     player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;
-
 
     for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {

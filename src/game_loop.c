@@ -25,6 +25,8 @@
 #include "random.h"
 
 #define GAME_OVER_DEFINITION_OFFSET 202
+#define GET_READY_DEFINITION_OFFSET 203
+#define GO_DEFINITION_OFFSET 204
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
@@ -35,6 +37,8 @@
 uint16_t game_state;
 uint16_t joy_fire, last_joy_fire;
 volatile uint16_t waiting_for_vbl;
+
+uint16_t title_screen_palette[] = {0x0,0x5,0x888,0xd00,0x133,0xa3b,0x333,0x1b6,0x55d,0xec7,0xdde,0xfda,0xff0,0xeff,0x0,0x0};
 
 static void global_init()
 {
@@ -57,6 +61,8 @@ static void global_init()
 
 static void title_screen_init()
 {
+    memcpy((void *)0xffff8240, title_screen_palette, 32);
+
     waiting_for_vbl = 1;
     game_state = GAME_STATE_TITLE_SCREEN_LOOP;
 
@@ -106,6 +112,7 @@ static void in_game_init()
 
     *((volatile uint16_t *)0xffff8240) = 0x0;
     game_state = GAME_STATE_IN_GAME_LOOP;
+    race_ticks = 0;
 }
 
 static void in_game_loop()
@@ -165,6 +172,20 @@ static void in_game_loop()
                 &sprite_definitions[GAME_OVER_DEFINITION_OFFSET],
                 160,
                 127
+            );
+        }
+    } else {
+        if (race_ticks > 30 && race_ticks < 150) {
+            hardware_playfield_draw_sprite(
+                &sprite_definitions[GET_READY_DEFINITION_OFFSET],
+                160,
+                127
+            );
+        } else if (race_ticks > 200 && race_ticks < 320) {
+            hardware_playfield_draw_sprite(
+                &sprite_definitions[GO_DEFINITION_OFFSET],
+                160,
+                119
             );
         }
     }

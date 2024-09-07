@@ -783,13 +783,15 @@ class CompiledSpriteBuilder {
         );
         $copyInstructionStream->add('move.w a0,(a3) ; set source address');
 
-        $copyInstructionStream->add(
-            sprintf(
-                'lea.l %d(a1),a1 ; calc destination address into a1',
-                $destinationAdvance
-            )
-        );
-        $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
+        if ($destinationAdvance != 0) {
+            $copyInstructionStream->add(
+                sprintf(
+                    'lea.l %d(a1),a1 ; calc destination address into a1',
+                    $destinationAdvance
+                )
+            );
+            $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
+        }
 
         if ($repeatControl) {
             $copyInstructionStream->add('rept '.$repeatControl);
