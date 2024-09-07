@@ -821,22 +821,47 @@ class CompiledSpriteBuilder {
     {
         $endmaskInstructionStream = new InstructionStream();
 
-        if (isset($changedEndmasks[1])) {
+        if (isset($changedEndmasks[1]) && isset($changedEndmasks[2])) {
+            $combinedEndmask = $changedEndmasks[1] << 16 | $changedEndmasks[2];
             $endmaskInstructionStream->add(
-                $this->generateSetEndmaskInstruction($changedEndmasks[1], 1)
+                $this->generateSetEndmaskInstruction($combinedEndmask, 1, 'l')
             );
-        }
 
-        if (isset($changedEndmasks[2])) {
-            $endmaskInstructionStream->add(
-                $this->generateSetEndmaskInstruction($changedEndmasks[2], 2)
-            );
-        }
+            if (isset($changedEndmasks[3])) {
+                $endmaskInstructionStream->add(
+                    $this->generateSetEndmaskInstruction($changedEndmasks[3], 3, 'w')
+                );
+            }
+        } else if (isset($changedEndmasks[2]) && isset($changedEndmasks[3])) {
+            if (isset($changedEndmasks[1])) {
+                $endmaskInstructionStream->add(
+                    $this->generateSetEndmaskInstruction($changedEndmasks[1], 1, 'w')
+                );
+            }
 
-        if (isset($changedEndmasks[3])) {
+            $combinedEndmask = $changedEndmasks[2] << 16 | $changedEndmasks[3];
             $endmaskInstructionStream->add(
-                $this->generateSetEndmaskInstruction($changedEndmasks[3], 3)
+                $this->generateSetEndmaskInstruction($combinedEndmask, 2, 'l')
             );
+        } else {
+
+            if (isset($changedEndmasks[1])) {
+                $endmaskInstructionStream->add(
+                    $this->generateSetEndmaskInstruction($changedEndmasks[1], 1, 'w')
+                );
+            }
+
+            if (isset($changedEndmasks[2])) {
+                $endmaskInstructionStream->add(
+                    $this->generateSetEndmaskInstruction($changedEndmasks[2], 2, 'w')
+                );
+            }
+
+            if (isset($changedEndmasks[3])) {
+                $endmaskInstructionStream->add(
+                    $this->generateSetEndmaskInstruction($changedEndmasks[3], 3, 'w')
+                );
+            }
         }
 
         // TODO: reinstate long write for multiple changed endmasks
@@ -885,7 +910,7 @@ class CompiledSpriteBuilder {
         }
     }
 
-    private function generateSetEndmaskInstruction(int $endmask, int $endmaskIndex): string
+    private function generateSetEndmaskInstruction(int $endmask, int $endmaskIndex, string $size): string
     {
         $destinations = [
             '(a2)',
@@ -898,7 +923,7 @@ class CompiledSpriteBuilder {
         }
 
         $source = 'd7';
-        if ($endmask != 0xffff) {
+        if ($endmask != 0xffff && $endmask != 0xffffffff) {
             $source = sprintf(
                 '#$%x',
                 $endmask
@@ -908,7 +933,8 @@ class CompiledSpriteBuilder {
         $destination = $destinations[$endmaskIndex - 1];
 
         return sprintf(
-            'move.w %s,%s ; set endmask%d',
+            'move.%s %s,%s ; set endmask%d',
+            $size,
             $source,
             $destination,
             $endmaskIndex
