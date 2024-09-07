@@ -715,7 +715,7 @@ class CompiledSpriteBuilder {
             );
             $instructionStream->appendStream($copyInstructionStream);
 
-            $instructionStream->add('rept 3');
+            //$instructionStream->add('rept 3');
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 2,
                 2,
@@ -723,8 +723,11 @@ class CompiledSpriteBuilder {
                 $useFxsr,
                 $useNfsr
             );
-            $instructionStream->appendStream($copyInstructionStream);
-            $instructionStream->add('endr');
+            //$instructionStream->appendStream($copyInstructionStream);
+            //$instructionStream->add('endr');
+
+            $this->addLoopInstructions($instructionStream, $copyInstructionStream, 3, $loopIndex, 'd5');
+            $loopIndex++;
 
             $resetDestinationAdvance = (($copyInstructionIterations - 1) * $destinationAdvance) - 6;
             $instructionStream->add(
@@ -752,7 +755,7 @@ class CompiledSpriteBuilder {
             );          
 
             if ($copyInstructionIterations > 1) {
-                $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex);
+                $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex, 'd6');
                 $loopIndex++;
             } else {
                 $instructionStream->appendStream($copyInstructionStream);
@@ -766,15 +769,16 @@ class CompiledSpriteBuilder {
         InstructionStream $instructionStream,
         InstructionStream $copyInstructionStream,
         $copyInstructionIterations,
-        $loopIndex
+        $loopIndex,
+        $loopRegister
     ) {
         $instructionStream->add('');
-        $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).',d6');
+        $instructionStream->add('moveq.l #'.($copyInstructionIterations - 1).','.$loopRegister);
         $instructionStream->add('.loop'.$loopIndex.':');
 
         $instructionStream->appendStream($copyInstructionStream);
 
-        $instructionStream->add('dbra d6,.loop'.$loopIndex);
+        $instructionStream->add('dbra '.$loopRegister.',.loop'.$loopIndex);
     }
 
     private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr, $repeatControl = null): InstructionStream
