@@ -2,6 +2,7 @@
 #include <mint/sysbind.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdio.h>
 #include "hardware_playfield.h"
 #include "blitter.h"
 #include "draw_sprite.h"
@@ -163,7 +164,26 @@ void hardware_playfield_erase_sprites()
 
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
 {
+#ifdef __NATFEATS_DEBUG
+            // relocation required
+            snprintf(
+                nf_strbuf,
+                256,
+                "clearing playfield at address: %x\n",
+                hardware_playfield->buffer
+            );
+
+            nf_print(nf_strbuf);
+#endif
+
     memset(hardware_playfield->buffer, 0, HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES);
+
+    /*uint8_t *bufptr = hardware_playfield->buffer;
+    for (int index = 0; index < HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES; index++) {
+        *bufptr = index & 255;
+        bufptr++;
+    }*/
+
     hardware_playfield->current_bitplane_draw_record = hardware_playfield->bitplane_draw_records;
     hardware_playfield->sprites_drawn = 0;
     hardware_playfield->stars_drawn = 0;

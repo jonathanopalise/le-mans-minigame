@@ -44,6 +44,12 @@ dummy:
 	rte
 
 vbl:
+    cmp.w #4,_game_state ; are we in game?
+    beq.s in_game_vbl
+    rte
+
+in_game_vbl:
+
     movem.l d0-d2/a0-a1,-(sp)
 
     jsr _mixer_vbl
