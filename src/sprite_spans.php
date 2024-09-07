@@ -654,14 +654,19 @@ class CompiledSpriteBuilder {
             }
         }
 
-        $instructionStream->add('rts');
+        $instructionArray = $instructionStream->getArray();
+        $instructionArrayReversed = array_reverse($instructionArray);
 
-        if (count($instructionStream->getArray()) == 2) {
-            echo("FAIL2");
-            exit(1);
+        while (str_starts_with($instructionArrayReversed[0], 'lea')) {
+            array_shift($instructionArrayReversed);
         }
 
-        return $instructionStream->getArray();
+        $instructionArray = array_reverse($instructionArrayReversed);
+        $instructionArray[] = 'rts';
+
+        return $instructionArray;
+
+        //return $instructionStream->getArray();
     }
 
     private function addConfirmCopyInstructions(
