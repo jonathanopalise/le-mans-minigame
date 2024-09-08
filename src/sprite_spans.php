@@ -812,18 +812,26 @@ class CompiledSpriteBuilder {
             }
         }
 
-        foreach ($instructionArray as $key => $instruction) {
-            if (str_contains($instruction, 'set endmask' . $highestUsageEndmask)) {
-                $commaPosition = strpos($instruction, ',');
-                $instructionArray[$key] = substr($instruction, 0, $commaPosition) . ',(a2) ; set endmask'.$highestUsageEndmask.' REGISTER';
-            } elseif (str_contains($instruction, 'cache endmask')) {
-                $endmaskToRegMappings = [
-                    1 => 'ffff8a28',
-                    2 => 'ffff8a2a',
-                    3 => 'ffff8a2c',
-                ];
+        if ($highestUsageValue > 1) {
+            foreach ($instructionArray as $key => $instruction) {
+                if (str_contains($instruction, 'set endmask' . $highestUsageEndmask)) {
+                    $commaPosition = strpos($instruction, ',');
+                    $instructionArray[$key] = substr($instruction, 0, $commaPosition) . ',(a2) ; set endmask'.$highestUsageEndmask.' REGISTER';
+                } elseif (str_contains($instruction, 'cache endmask')) {
+                    $endmaskToRegMappings = [
+                        1 => 'ffff8a28',
+                        2 => 'ffff8a2a',
+                        3 => 'ffff8a2c',
+                    ];
 
-                $instructionArray[$key] = 'lea $'.$endmaskToRegMappings[$highestUsageEndmask].'.w,a2        ; cache endmask' . $highestUsageEndmask;
+                    $instructionArray[$key] = 'lea $'.$endmaskToRegMappings[$highestUsageEndmask].'.w,a2        ; cache endmask' . $highestUsageEndmask;
+                }
+            }
+        } else {
+            foreach ($instructionArray as $key => $instruction) {
+                if (str_contains($instruction, 'cache endmask')) {
+                    $instructionArray[$key] = '; cache endmask instruction removed';
+                }
             }
         }
 
