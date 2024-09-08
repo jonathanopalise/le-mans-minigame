@@ -788,7 +788,7 @@ class CompiledSpriteBuilder {
                 $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
                 if (isset($offsetRegisterMappings[$offsetValue])) {
                     $commaPosition = strpos($instruction, ',');
-                    $newInstruction = 'move.w ' . $offsetRegisterMappings[$offsetValue] . substr($instruction, $commaPosition) . ' REGISTER';
+                    $newInstruction = 'move.w ' . $offsetRegisterMappings[$offsetValue] . substr($instruction, $commaPosition) . ' REGISTER (3)';
                     $instructionArray[$key] = $newInstruction;
                 }
             }
@@ -796,7 +796,11 @@ class CompiledSpriteBuilder {
 
         $prefixedInstructions = [];
         foreach ($offsetRegisterMappings as $offset => $registerName) {
-            $instruction = 'move.w #'.$offset.','.$registerName;
+            if ($offset >= -128 && $offset <= 127) { 
+                $instruction = 'moveq.l #'.$offset.','.$registerName;
+            } else {
+                $instruction = 'move.w #'.$offset.','.$registerName;
+            }
             array_unshift($instructionArray, $instruction);
         }
 
@@ -1078,17 +1082,22 @@ class CompiledSpriteBuilder {
             $useNfsr ? 'true' : 'false',
         );
 
+        // alternative implementation - unfortunately results in higher file size
         if ($useNfsr) {
             if ($useFxsr) {
-                $copyInstructions[] = 'move.w d4,(a6) ; set blitter control, fxsr = true, nfsr = true';
+                $controlValue = 0xc0c0 | $this->skewed;
+                return 'move.w #'.$controlValue.',(a6) ; set blitter control, fxsr = true, nfsr = true';
             } else {
-                $copyInstructions[] = 'move.w d3,(a6) ; set blitter control, fxsr = false, nfsr = true';
+                $controlValue = 0xc040 | $this->skewed; 
+                return 'move.w #'.$controlValue.',(a6) ; set blitter control, fxsr = false, nfsr = true';
             }
         } else {
             if ($useFxsr) {
-                $copyInstructions[] = 'move.w d2,(a6) ; set blitter control, fxsr = true, nfsr = false';
+                $controlValue = 0xc080 | $this->skewed;
+                return 'move.w #'.$controlValue.',(a6) ; set blitter control, fxsr = true, nfsr = false';
             } else {
-                $copyInstructions[] = 'move.w d1,(a6) ; set blitter control, fxsr = false, nfsr = false';
+                $controlValue = 0xc000 | $this->skewed;
+                return 'move.w #'.$controlValue.',(a6) ; set blitter control, fxsr = false, nfsr = false';
             }
         }
     }
