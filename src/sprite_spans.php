@@ -737,9 +737,16 @@ class CompiledSpriteBuilder {
             }
         }
 
-        arsort($commonOffsets);
-        $reindexedCommonOffsets = [];
+        $filteredCommonOffsets = [];
         foreach ($commonOffsets as $offset => $occurrences) {
+            if ($occurrences > 1) {
+                $filteredCommonOffsets[$offset] = $occurrences;
+            }
+        }
+
+        arsort($filteredCommonOffsets);
+        $reindexedCommonOffsets = [];
+        foreach ($filteredCommonOffsets as $offset => $occurrences) {
             $reindexedCommonOffsets[] = $offset;
         }
         // now i need an array with keys as offsets and values as register names
