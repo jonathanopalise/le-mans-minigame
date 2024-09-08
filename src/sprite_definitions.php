@@ -986,6 +986,7 @@ $definitions = [
         'top' => 899,
         'width' => 48,
         'height' => 49,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-2',
@@ -993,6 +994,7 @@ $definitions = [
         'top' => 899,
         'width' => 36,
         'height' => 37,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-3',
@@ -1000,6 +1002,7 @@ $definitions = [
         'top' => 899,
         'width' => 27,
         'height' => 28,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-4',
@@ -1007,6 +1010,7 @@ $definitions = [
         'top' => 899,
         'width' => 20,
         'height' => 20,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-5',
@@ -1014,6 +1018,7 @@ $definitions = [
         'top' => 899,
         'width' => 15,
         'height' => 15,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-6',
@@ -1021,6 +1026,7 @@ $definitions = [
         'top' => 899,
         'width' => 11,
         'height' => 11,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-7',
@@ -1028,6 +1034,7 @@ $definitions = [
         'top' => 899,
         'width' => 8,
         'height' => 8,
+        'permittedSkews' => [],
     ],
     [
         'label' => 'left-arrow-8',
@@ -1035,6 +1042,7 @@ $definitions = [
         'top' => 899,
         'width' => 6,
         'height' => 6,
+        'permittedSkews' => [],
     ],
 
     // right arrow offset 112 UPDATED

@@ -94,7 +94,7 @@ src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_g
 src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h src/play_sound.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
-src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h src/lookups.h
+src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h src/lookups.h src/trackside_items.h
 	$(CC) $(CFLAGS) -c src/opponent_cars.c -o src/opponent_cars.o
 
 src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h

@@ -7,6 +7,7 @@
 #include "random.h"
 #include "natfeats.h"
 #include "lookups.h"
+#include "trackside_items.h"
 #include <stdio.h>
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
@@ -17,11 +18,9 @@ struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
 uint16_t lane_to_xpos_mappings[4] = {-2, -1, 1, 2};
 
-void rewrite_compiled_sprite_pointers(struct SpriteDefinition *destination_definition)
+void rewrite_compiled_sprite_pointers(struct SpriteDefinition *source_definition, struct SpriteDefinition *destination_definition, uint16_t count)
 {
-    struct SpriteDefinition *source_definition = &sprite_definitions[RED_CAR_BASE_INDEX - 7];
-
-    for (uint16_t index = 0; index < 24; index++) {
+    for (uint16_t index = 0; index < count; index++) {
         destination_definition->compiled_sprite_0 = source_definition->compiled_sprite_0;
         destination_definition->compiled_sprite_1 = source_definition->compiled_sprite_1;
         destination_definition->compiled_sprite_2 = source_definition->compiled_sprite_2;
@@ -90,8 +89,13 @@ void opponent_cars_init()
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
-    rewrite_compiled_sprite_pointers(&sprite_definitions[YELLOW_CAR_BASE_INDEX - 7]);
-    rewrite_compiled_sprite_pointers(&sprite_definitions[BLUE_CAR_BASE_INDEX - 7]);
+    // TODO: following code should be moved to global startup
+
+    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[YELLOW_CAR_BASE_INDEX - 7], 24);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[BLUE_CAR_BASE_INDEX - 7], 24);
+
+    // doesn't really belong here as scenery related
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW], 8);
 }
 
 static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
