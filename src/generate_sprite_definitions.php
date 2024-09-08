@@ -61,15 +61,15 @@ foreach ($definitions as $definition) {
     ];
 
     for ($skew = 0; $skew < 16; $skew++) {
-        printf(
+        /*printf(
             "masked sprite width: %d\n",
             $maskedSprite->getWidth()
-        );
+        );*/
         $skewedMaskedSprite = $maskedSprite->getShiftedCopy($skew);
-        printf(
+        /*printf(
             "skewed masked sprite width: %d\n",
             $skewedMaskedSprite->getWidth()
-        );
+        );*/
         //$skewedMaskedSprite = $maskedSprite;
         $planarData = $maskedSprite->exportToPlanarData();
         $skewedPlanarData = $skewedMaskedSprite->exportToPlanarData();
@@ -92,13 +92,13 @@ foreach ($definitions as $definition) {
             $skewedCharData .= chr($word & 255);
         }
 
-        echo("-------------------\n");
+        //echo("-------------------\n");
         $widthInPixels = $skewedMaskedSprite->getWidth();
-        var_dump($widthInPixels);
+        //var_dump($widthInPixels);
         $widthIn16PixelBlocks = $skewedMaskedSprite->getWidth() / 16;
-        var_dump($widthIn16PixelBlocks);
-        printf("skew is %d\n", $skew);
-        printf("width in 16 pixel blocks: %d\n", $widthIn16PixelBlocks);
+        //var_dump($widthIn16PixelBlocks);
+        //printf("skew is %d\n", $skew);
+        //printf("width in 16 pixel blocks: %d\n", $widthIn16PixelBlocks);
 
         if (str_contains($definition['label'], 'yellow-car') || str_contains($definition['label'], 'blue-car')) {
             $instructions = [];

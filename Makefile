@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBU -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
+CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBUG -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
