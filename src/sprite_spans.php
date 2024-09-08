@@ -726,9 +726,17 @@ class CompiledSpriteBuilder {
         $commonOffsets = [];
         if (count($freeBlitterControlRegisters)) {
             foreach ($instructionArray as $instruction) {
-                if (str_contains($instruction, 'calc destination address') || str_contains($instruction, 'calc destination address')) {
+                if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
                     $instructionStartingAtNumber = substr($instruction, 6);
                     $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+                    if (!isset($commonOffsets[$offsetValue])) {
+                        $commonOffsets[$offsetValue] = 0;
+                    }
+                    $commonOffsets[$offsetValue]++;
+                } elseif (str_starts_with($instruction, 'move.w #')) {
+                    $instructionStartingAtNumber = substr($instruction, 8);
+                    $commaPosition = strpos($instructionStartingAtNumber, ',');
+                    $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
                     if (!isset($commonOffsets[$offsetValue])) {
                         $commonOffsets[$offsetValue] = 0;
                     }
@@ -1117,7 +1125,7 @@ class CompiledSpriteBuilder {
         $source = 'd7';
         if ($endmask != 0xffff && $endmask != 0xffffffff) {
             $source = sprintf(
-                '#$%x',
+                '#%d',
                 $endmask
             );
         }
