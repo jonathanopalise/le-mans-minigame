@@ -654,7 +654,58 @@ class CompiledSpriteBuilder {
             }
         }
 
+
         $instructionArray = $instructionStream->getArray();
+
+        // another hack to remove redundant leas :)
+
+        $lastSourceResetKey = null;
+        $lastSourceResetValue = null;
+        $lastDestinationResetKey = null;
+        $lastDestinationResetValue = null;
+        $lastSourceBlitterWriteKey = null;
+        $lastDestinationBlitterWriteKey = null;
+        foreach ($instructionArray as $key => $instruction) {
+            if (str_starts_with($instruction, 'move.w a1,(a4)')) {
+                $lastDestinationBlitterWriteKey = $key;
+            } elseif (str_starts_with($instruction, 'move.w a0,(a3)')) {
+                $lastSourceBlitterWriteKey = $key;
+            } elseif (str_contains($instruction, 'reset destination address')) {
+                $lastDestinationResetKey = $key;
+                $instructionStartingAtNumber = substr($instruction, 6);
+                $lastDestinationResetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+            } elseif (str_contains($instruction, 'reset source address')) {
+                $lastSourceResetKey = $key;
+                $instructionStartingAtNumber = substr($instruction, 6);
+                $lastSourceResetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+            } elseif (str_contains($instruction, 'calc destination address')) {
+                if ($lastDestinationResetKey) {
+                    $instructionStartingAtNumber = substr($instruction, 6);
+                    $calcValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+                    $adjustedValue = $calcValue + $lastDestinationResetValue;
+
+                    $instructionArray[$lastDestinationResetKey] = '; redundant instruction removed!';
+                    $instructionArray[$key] = 'lea.l '.$adjustedValue.'(a1),a1 ; calc destination address into a1 ADJUSTED';
+                    $lastDestinationResetKey = null;
+                }
+            } elseif (str_contains($instruction, 'calc source address')) {
+                if ($lastSourceResetKey) {
+                    $instructionStartingAtNumber = substr($instruction, 6);
+                    $calcValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+                    $adjustedValue = $calcValue + $lastSourceResetValue;
+
+                    $instructionArray[$lastSourceResetKey] = '; redundant instruction removed!';
+                    $instructionArray[$key] = 'lea.l '.$adjustedValue.'(a0),a0 ; calc source address into a0 ADJUSTED';
+                    $lastSourceResetKey = null;
+                }
+            } elseif (str_starts_with($instruction, '.loop')) {
+                $lastSourceResetKey = null;
+                $lastDestinationResetKey = null;
+            }
+        }
+
+        // eliminate any redundant lea instructions at end of stream... very hacky!
+
         $instructionArrayReversed = array_reverse($instructionArray);
 
         while (str_starts_with($instructionArrayReversed[0], 'lea')) {
@@ -662,6 +713,7 @@ class CompiledSpriteBuilder {
         }
 
         $instructionArray = array_reverse($instructionArrayReversed);
+
         $instructionArray[] = 'rts';
 
         return $instructionArray;
@@ -732,7 +784,7 @@ class CompiledSpriteBuilder {
             $resetDestinationAdvance = (($copyInstructionIterations - 1) * $destinationAdvance) - 6;
             $instructionStream->add(
                 sprintf(
-                    'lea.l %d(a1),a1 ; calc destination address into a1',
+                    'lea.l %d(a1),a1 ; reset destination address into a1',
                     $resetDestinationAdvance
                 )
             );
@@ -740,7 +792,7 @@ class CompiledSpriteBuilder {
             $resetSourceAdvance = (($copyInstructionIterations - 1) * $sourceAdvance) - 6;
             $instructionStream->add(
                 sprintf(
-                    'lea.l %d(a0),a0 ; calc source address into a0',
+                    'lea.l %d(a0),a0 ; reset source address into a0',
                     $resetSourceAdvance
                 )
             );
