@@ -710,12 +710,15 @@ class CompiledSpriteBuilder {
         // DON'T FORGET TO SET REGISTER VALUES AT START!
 
         $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
                     unset($freeBlitterControlRegisters[$registerName]);
                 }
+            }
+            if (str_starts_with($instruction, 'dbra d5')) {
+                unset($freeBlitterControlRegisters['d5']);
             }
         }
 
@@ -752,7 +755,7 @@ class CompiledSpriteBuilder {
         }
 
         foreach ($instructionArray as $key => $instruction) {
-            if (str_contains($instruction, 'calc destination address') || str_contains($instruction, 'calc destination address')) {
+            if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
                 $instructionStartingAtNumber = substr($instruction, 6);
                 $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
 
