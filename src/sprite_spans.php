@@ -704,6 +704,74 @@ class CompiledSpriteBuilder {
             }
         }
 
+        // are any of the precomputed blitter control registers unused?
+        // if so, use them for something else!
+
+        // DON'T FORGET TO SET REGISTER VALUES AT START!
+
+        $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true];
+        foreach ($instructionArray as $instruction) {
+            foreach ($blitterControlRegisters as $registerName) {
+                if (str_starts_with($instruction, 'move.w '.$registerName)) {
+                    unset($freeBlitterControlRegisters[$registerName]);
+                }
+            }
+        }
+
+        $commonOffsets = [];
+        if (count($freeBlitterControlRegisters)) {
+            foreach ($instructionArray as $instruction) {
+                if (str_contains($instruction, 'calc destination address') || str_contains($instruction, 'calc destination address')) {
+                    $instructionStartingAtNumber = substr($instruction, 6);
+                    $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+                    if (!isset($commonOffsets[$offsetValue])) {
+                        $commonOffsets[$offsetValue] = 0;
+                    }
+                    $commonOffsets[$offsetValue]++;
+                }
+            }
+        }
+
+        arsort($commonOffsets);
+        $reindexedCommonOffsets = [];
+        foreach ($commonOffsets as $offset => $occurrences) {
+            $reindexedCommonOffsets[] = $offset;
+        }
+        // now i need an array with keys as offsets and values as register names
+
+        while (count($freeBlitterControlRegisters) > count($reindexedCommonOffsets)) {
+            array_pop($freeBlitterControlRegisters);
+        }
+
+        $offsetRegisterMappings = [];
+        $commonOffsetIndex = 0;
+        foreach ($freeBlitterControlRegisters as $registerName => $value) {
+            $offsetRegisterMappings[$reindexedCommonOffsets[$commonOffsetIndex]] = $registerName;
+            $commonOffsetIndex++;
+        }
+
+        foreach ($instructionArray as $key => $instruction) {
+            if (str_contains($instruction, 'calc destination address') || str_contains($instruction, 'calc destination address')) {
+                $instructionStartingAtNumber = substr($instruction, 6);
+                $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+
+                if (isset($offsetRegisterMappings[$offsetValue])) {
+                    if (str_contains($instruction, 'calc destination address')) {
+                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a1 ; calc destination address into a1 REGISTER';
+                    } else {
+                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a0 ; calc source address into a0 REGISTER';
+                    }
+                }
+            }
+        }
+
+        $prefixedInstructions = [];
+        foreach ($offsetRegisterMappings as $offset => $registerName) {
+            $instruction = 'move.w #'.$offset.','.$registerName;
+            array_unshift($instructionArray, $instruction);
+        }
+
         // eliminate any redundant lea instructions at end of stream... very hacky!
 
         $instructionArrayReversed = array_reverse($instructionArray);
