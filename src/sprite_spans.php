@@ -708,7 +708,7 @@ class CompiledSpriteBuilder {
         // if so, use them for something else!
 
         $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true/*, 'd6' => true*/];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
@@ -718,6 +718,9 @@ class CompiledSpriteBuilder {
             if (str_starts_with($instruction, 'dbra d5')) {
                 unset($freeBlitterControlRegisters['d5']);
             }
+            /*if (str_starts_with($instruction, 'dbra d6')) {
+                unset($freeBlitterControlRegisters['d6']);
+            }*/
         }
 
         $commonOffsets = [];
@@ -780,6 +783,41 @@ class CompiledSpriteBuilder {
         foreach ($offsetRegisterMappings as $offset => $registerName) {
             $instruction = 'move.w #'.$offset.','.$registerName;
             array_unshift($instructionArray, $instruction);
+        }
+
+        // select most commonly used endmask to cache address of
+
+        $endmaskCounts = [1 => 0, 2 => 0, 3 => 0];
+        foreach ($instructionArray as $key => $instruction) {
+            for ($index = 1; $index <= 3; $index++) {
+                if (str_contains($instruction, 'set endmask' . $index)) {
+                    $endmaskCounts[$index]++;
+                }
+            }
+        }
+
+        $highestUsageValue = 0;
+        $highestUsageEndmask = 0;
+        for ($index = 1; $index <= 3; $index++) {
+            if ($endmaskCounts[$index] > $highestUsageValue) {
+                $highestUsageValue = $endmaskCounts[$index];
+                $highestUsageEndmask = $index;
+            }
+        }
+
+        foreach ($instructionArray as $key => $instruction) {
+            if (str_contains($instruction, 'set endmask' . $highestUsageEndmask)) {
+                $commaPosition = strpos($instruction, ',');
+                $instructionArray[$key] = substr($instruction, 0, $commaPosition) . ',(a2) ; set endmask'.$highestUsageEndmask.' REGISTER';
+            } elseif (str_contains($instruction, 'cache endmask')) {
+                $endmaskToRegMappings = [
+                    1 => 'ffff8a28',
+                    2 => 'ffff8a2a',
+                    3 => 'ffff8a2c',
+                ];
+
+                $instructionArray[$key] = 'lea $'.$endmaskToRegMappings[$highestUsageEndmask].'.w,a2        ; cache endmask' . $highestUsageEndmask;
+            }
         }
 
         // eliminate any redundant lea instructions at end of stream... very hacky!
@@ -1052,7 +1090,7 @@ class CompiledSpriteBuilder {
     private function generateSetEndmaskInstruction(int $endmask, int $endmaskIndex, string $size): string
     {
         $destinations = [
-            '(a2)',
+            '$ffff8a28.w',
             '$ffff8a2a.w',
             '$ffff8a2c.w',
         ];
