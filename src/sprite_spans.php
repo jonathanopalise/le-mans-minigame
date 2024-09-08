@@ -707,8 +707,6 @@ class CompiledSpriteBuilder {
         // are any of the precomputed blitter control registers unused?
         // if so, use them for something else!
 
-        // DON'T FORGET TO SET REGISTER VALUES AT START!
-
         $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
         $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true];
         foreach ($instructionArray as $instruction) {
@@ -765,6 +763,15 @@ class CompiledSpriteBuilder {
                     } else {
                         $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a0 ; calc source address into a0 REGISTER';
                     }
+                }
+            } elseif (str_starts_with($instruction, 'move.w #')) {
+                $instructionStartingAtNumber = substr($instruction, 8);
+                $commaPosition = strpos($instructionStartingAtNumber, ',');
+                $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
+                if (isset($offsetRegisterMappings[$offsetValue])) {
+                    $commaPosition = strpos($instruction, ',');
+                    $newInstruction = 'move.w ' . $offsetRegisterMappings[$offsetValue] . substr($instruction, $commaPosition) . ' REGISTER';
+                    $instructionArray[$key] = $newInstruction;
                 }
             }
         }
