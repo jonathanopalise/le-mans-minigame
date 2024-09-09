@@ -253,6 +253,25 @@ class SpanCollection
         return $spanCollection;
     }
 
+    public function getSpansOrderedByStartOffset(): array
+    {
+        $spans = $this->getSpans();
+        usort($spans, ['SpanCollection', 'compare']);
+
+        return $spans;
+    }
+
+    static function compare($a, $b)
+    {
+        $aStartOffset = $a->getStartOffset();
+        $bStartOffset = $b->getStartOffset();
+
+        if ($aStartOffset == $bStartOffset) {
+            return 0;
+        }
+        return ($aStartOffset < $bStartOffset) ? -1 : 1;
+    }
+
     private function checkThatBlockCollectionMatches(Span $span): void
     {
         if (!empty($this->spans)) {
@@ -581,7 +600,7 @@ class CompiledSpriteBuilder {
                 foreach ($nfsrOptions as $useNfsr) {
                     $nfsrBasedSpanCollection = $fxsrBasedSpanCollection->getSpanCollectionByNfsrEligibility($useNfsr, $this->skewed);
 
-                    $spans = $nfsrBasedSpanCollection->getSpans();
+                    $spans = $nfsrBasedSpanCollection->getSpansOrderedByStartOffset();
 
                     $oldSourceYIncrement = null;
                     foreach ($spans as $key => $span) {
