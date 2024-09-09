@@ -80,9 +80,13 @@ for ($index = 0; $index < 80; $index++) {
     $asphaltLeft = ($midpointTexturePosition - 0.5 * $roadMultiplier);
     $asphaltRight = ($midpointTexturePosition + 0.5 * $roadMultiplier);
 
-    $indexedBitmap = IndexedBitmap::create($roundedPixelWidth, 1);
+    $imagePixelWidth = $roundedPixelWidth;
+    if ($index == 79) {
+        $imagePixelWidth = $roundedPixelWidth + 96;
+    }
+    $indexedBitmap = IndexedBitmap::create($imagePixelWidth, 1);
 
-    for ($xpos = 0; $xpos < $roundedPixelWidth; $xpos++) {
+    for ($xpos = 0; $xpos < $imagePixelWidth; $xpos++) {
         if (($texturePosition > $leftRumbleStripLeft) && ($texturePosition < $leftRumbleStripRight)) {
             $pixelColour = $roadLinesColour; // left rumble strip
         } elseif (($texturePosition > $rightRumbleStripLeft) && ($texturePosition < $rightRumbleStripRight)) {

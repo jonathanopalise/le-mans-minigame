@@ -27,6 +27,7 @@
 #define GAME_OVER_DEFINITION_OFFSET 202
 #define GET_READY_DEFINITION_OFFSET 203
 #define GO_DEFINITION_OFFSET 204
+#define SPEEDO_DEFINITION_OFFSET 205
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
@@ -146,8 +147,6 @@ static void in_game_loop()
     trackside_items_process();
     opponent_cars_process();
 
-    hardware_playfield_update_digits();
-
     player_car_sprite_definition_offset = player_car_get_sprite_definition();
 
     if ((player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) && player_car_state != PLAYER_CAR_STATE_RETURN_TO_TRACK) {
@@ -189,6 +188,13 @@ static void in_game_loop()
             );
         }
     }
+
+    hardware_playfield_draw_sprite(
+        &sprite_definitions[SPEEDO_DEFINITION_OFFSET],
+        271,
+        164 
+    );
+    hardware_playfield_update_digits();
 
     if (frames_since_game_over > 180) {
         music_stop();

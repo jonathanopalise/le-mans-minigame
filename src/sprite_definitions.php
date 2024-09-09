@@ -1557,5 +1557,18 @@ $definitions = [
         'height' => 18,
         'permittedSkews' => [10],
     ],
+
+    // speedo (205)
+
+    [
+        'label' => 'go',
+        'left' => 4,
+        'top' => 2338,
+        'width' => 39,
+        'height' => 26,
+        'originx' => 0,
+        'originy' => 0,
+    ],
+
 ];
 

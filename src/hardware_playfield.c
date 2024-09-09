@@ -14,7 +14,7 @@
 #include "hud.h"
 #include "hud_digits.h"
 #include "lookups.h"
-
+#include "player_car.h"
 
 static int16_t visible_index;
 volatile static int16_t ready_index;
@@ -232,19 +232,19 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
     );
 
     draw_status(
-        status_definitions[STATUS_DEFS_HIGH].words, // confirmed correct
-        &hardware_playfield->buffer[160 * 8 + (1 * 8)],
-        status_definitions[STATUS_DEFS_HIGH].source_data_width_pixels,
-        status_definitions[STATUS_DEFS_HIGH].source_data_height_lines,
-        0
+        status_definitions[STATUS_DEFS_SCORE].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 8],
+        status_definitions[STATUS_DEFS_SCORE].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_SCORE].source_data_height_lines,
+        9
     );
 
     draw_status(
-        status_definitions[STATUS_DEFS_SCORE].words, // confirmed correct
-        &hardware_playfield->buffer[160 * 8 + (14 * 8)],
-        status_definitions[STATUS_DEFS_SCORE].source_data_width_pixels,
-        status_definitions[STATUS_DEFS_SCORE].source_data_height_lines,
-        0
+        status_definitions[STATUS_DEFS_HIGH].words, // confirmed correct
+        &hardware_playfield->buffer[160 * 8 + (17 * 8)],
+        status_definitions[STATUS_DEFS_HIGH].source_data_width_pixels,
+        status_definitions[STATUS_DEFS_HIGH].source_data_height_lines,
+        2
     );
 
     draw_status(
@@ -252,7 +252,7 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         &hardware_playfield->buffer[160 * 19 + (8 * 8)],
         status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_width_pixels,
         status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_height_lines,
-        13 // 128 + 13 = 141
+        15 // 128 + 13 = 141
     );
 
     draw_status(
@@ -260,7 +260,7 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         &hardware_playfield->buffer[160 * 19 + (10 * 8)],
         status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_width_pixels,
         status_definitions[STATUS_DEFS_LARGE_DIGITS_BASE].source_data_height_lines,
-        2 // 160 + 2 = 162
+        0 // 160 + 2 = 162
     );
 
     for (uint16_t index = 0; index < TIME_DIGIT_COUNT; index++) {
@@ -314,7 +314,7 @@ void hardware_playfield_update_digits()
                     &drawing_playfield->buffer[160 * 19 + (8 * 8)],
                     status_definition->source_data_width_pixels,
                     status_definition->source_data_height_lines,
-                    13 // 128 + 13 = 141
+                    15 // 128 + 13 = 143
                 );
             } else {
                 draw_status(
@@ -322,7 +322,7 @@ void hardware_playfield_update_digits()
                     &drawing_playfield->buffer[160 * 19 + (10 * 8)],
                     status_definition->source_data_width_pixels,
                     status_definition->source_data_height_lines,
-                    2 // 160 + 2 = 162
+                    0 // 160 + 2 = 160
                 );
             }
         }
@@ -386,6 +386,41 @@ void hardware_playfield_update_digits()
             );
         }
     }
+
+    // speedo starts at x = 271, y = 164
+    // first digit at x = 275 ()
+    // second digit at x = 286
+    // third digit at x = 297
+
+
+    uint32_t player_car_display_speed = player_car_speed >> 2; 
+
+    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed / 100 % 10];
+    draw_status(
+        status_definition->words, // confirmed correct
+        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
+        status_definition->source_data_width_pixels,
+        status_definition->source_data_height_lines,
+        2
+    );
+
+    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed / 10 % 10];
+    draw_status(
+        status_definition->words, // confirmed correct
+        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
+        status_definition->source_data_width_pixels,
+        status_definition->source_data_height_lines,
+        13
+    );
+
+    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed % 10];
+    draw_status(
+        status_definition->words, // confirmed correct
+        &drawing_playfield->buffer[160 * 174 + (8 * 18)],
+        status_definition->source_data_width_pixels,
+        status_definition->source_data_height_lines,
+        8
+    );
 }
 
 static void hardware_playfield_error()
