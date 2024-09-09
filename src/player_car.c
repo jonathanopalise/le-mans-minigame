@@ -88,6 +88,19 @@ void player_car_handle_inputs()
 
         if (player_car_speed < 0) {
             player_car_speed = 0;
+            if (player_car_logical_xpos > 8000000 || player_car_logical_xpos < -8000000) {
+                player_car_state = PLAYER_CAR_STATE_RETURN_TO_TRACK;
+            } else {
+                player_car_state = PLAYER_CAR_STATE_NORMAL;
+                player_car_invincible_countdown = 180;
+            }
+        }
+    } else if (player_car_state == PLAYER_CAR_STATE_RETURN_TO_TRACK) {
+        if (player_car_logical_xpos > 8000000) {
+            player_car_logical_xpos -= 150000;
+        } else if (player_car_logical_xpos < -8000000) {
+            player_car_logical_xpos += 150000;
+        } else {
             player_car_state = PLAYER_CAR_STATE_NORMAL;
             player_car_invincible_countdown = 180;
         }

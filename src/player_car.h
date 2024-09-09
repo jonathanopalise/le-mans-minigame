@@ -2,6 +2,7 @@
 #define __PLAYER_CAR_H
 
 #define PLAYER_CAR_DISTANCE 2280
+#define PLAYER_CAR_STATE_RETURN_TO_TRACK 3
 
 #include<inttypes.h>
 #include "track_segments.h"

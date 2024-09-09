@@ -150,7 +150,7 @@ static void in_game_loop()
 
     player_car_sprite_definition_offset = player_car_get_sprite_definition();
 
-    if (player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) {
+    if ((player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) && player_car_state != PLAYER_CAR_STATE_RETURN_TO_TRACK) {
         display_list_add_sprite(
             &sprite_definitions[player_car_sprite_definition_offset],
             160,
