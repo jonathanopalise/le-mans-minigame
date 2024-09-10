@@ -1,9 +1,10 @@
 #ifndef __DRAW_SPRITE_H
 #define __DRAW_SPRITE_H
 
+#include <inttypes.h>
 #include "bitplane_draw_record.h"
 
-void draw_sprite(
+uint16_t draw_sprite(
     int16_t xpos,
     int16_t ypos,
     void *source_data,

@@ -130,7 +130,7 @@ zeroskew:
     tst.w     d2                       ; set flags for d2
     bpl.s     label_7a348              ; jump when no left clipping required
     tst.w     d6                       ; bytes to skip after each line
-    bmi       alldone                  ; if negative, nothing to draw
+    bmi       nothingtodraw            ; if negative, nothing to draw
     move.w    d2,d0
     moveq     #0,d2                    ; clip scenery against left (left endmask should be 0xffff)
                                        ; at this point, left endmask needs be to 0xffff
@@ -163,7 +163,7 @@ label_7a348:
     cmp.w     #$14,d6
     bmi.s     label_7a35e              ; something to do with clipping against right side of screen
     cmp.w     #$14,d2                  ; does sprite need clipping on right edge?
-    bpl       alldone            ; something to do with clipping - if sprite is entirely off screen?
+    bpl       nothingtodraw            ; something to do with clipping - if sprite is entirely off screen?
     move.w    d6,d0
     subi.w    #$14,d0
     sub.w     d0,d4                    ; this is chopping off the sprite on the right edge
@@ -178,7 +178,7 @@ label_7a35e:
     sub.w     #199,d7
     addq.w    #1,d7
     sub.w     d7,d3           ; cut the bottom off the sprite
-    bls     alldone
+    bls     nothingtodraw
 
 label_7a374:
     move.w    d4,d6
@@ -217,7 +217,7 @@ label_7a374:
 
     add.w     d2,a1    ; a1.l is final destination address for BitplaneDrawRecord
     tst.w     d4
-    beq       alldone
+    beq       nothingtodraw
 
     move.l    a1,(a4)  ; set BitplaneDrawRecord destination_address
     move.w    final_ypos,10(a4)
@@ -441,8 +441,13 @@ blitterstart:
     move.b d6,(a6)
 
 alldone:
+    moveq.l #1,d0              ; return value: something was drawn
     movem.l (sp)+,d2-d7/a2-a6
+    rts
 
+nothingtodraw:
+    moveq.l #0,d0              ; return value: nothing was drawn
+    movem.l (sp)+,d2-d7/a2-a6
     rts
 
 leftendmasks:

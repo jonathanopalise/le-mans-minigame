@@ -1561,7 +1561,7 @@ $definitions = [
     // speedo (205)
 
     [
-        'label' => 'go',
+        'label' => 'speedo',
         'left' => 4,
         'top' => 2338,
         'width' => 39,
