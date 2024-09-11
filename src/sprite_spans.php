@@ -985,21 +985,21 @@ class CompiledSpriteBuilder {
             );
         }
 
-        /*if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
+        if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
 
             $instructionStream->add('');
             $instructionStream->add('; 4 bitplane multiple line copy START');
 
             $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
 
-            $copyInstructionStream = $this->generateCopyInstructionStream(
-                $sourceAdvance,
-                $destinationAdvance,
+            /*$copyInstructionStream = $this->generateCopyInstructionStream(
+                null,
+                null,
                 'd6',
                 $useFxsr,
                 $useNfsr
             );
-            $instructionStream->appendStream($copyInstructionStream);
+            $instructionStream->appendStream($copyInstructionStream);*/
 
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 2,
@@ -1009,10 +1009,13 @@ class CompiledSpriteBuilder {
                 $useNfsr
             );
 
-            $this->addLoopInstructions($instructionStream, $copyInstructionStream, 3, $loopIndex, 'd5');
+            $this->drawOffsetSourceAdjust = 8;
+            $this->drawOffsetDestinationAdjust = 8;
+
+            $this->addLoopInstructions($instructionStream, $copyInstructionStream, 4, $loopIndex, 'd5');
             $loopIndex++;
 
-        } else {*/
+        } else {
             if ($copyInstructionIterations > 1) {
                 $copyInstructionStream = $this->generateCopyInstructionStream(
                     $sourceAdvance,
@@ -1047,7 +1050,7 @@ class CompiledSpriteBuilder {
                 $instructionStream->appendStream($copyInstructionStream);
                 $instructionStream->add('; single span copy END');
             }
-        //}
+        }
 
         return $loopIndex;
     }
@@ -1239,8 +1242,8 @@ class CompiledSpriteBuilder {
 
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
-        //if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            /*$sourceYIncrement = ($loopState['loopStartSourceAdvance'] + 10) - ($length * 10);
+        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            $sourceYIncrement = ($loopState['subsequentSourceAdvance'] + 10) - ($length * 10);
 
             if ($loopState['useFxsr']) {
                 $sourceYIncrement -= 10;
@@ -1248,9 +1251,9 @@ class CompiledSpriteBuilder {
 
             if ($loopState['useNfsr']) {
                 $sourceYIncrement += 10;
-            }*/
+            }
 
-        //} else {
+        } else {
             $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
             if ($loopState['useFxsr']) {
                 $sourceYIncrement -= 10;
@@ -1260,7 +1263,7 @@ class CompiledSpriteBuilder {
                 $sourceYIncrement += 10;
             }
 
-        //}
+        }
 
         return $sourceYIncrement;
     }
@@ -1268,11 +1271,11 @@ class CompiledSpriteBuilder {
     private function calculateDestinationYIncrement(array $loopState, int $length): int
     {
         // TODO: needs to act differently when number of lines > 6
-        //if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            //return 168 - ($length * 8);
-        //} else {
+        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            return 168 - ($length * 8);
+        } else {
             return -((8 * ($length - 1)) - 2);
-        //}
+        }
     }
 
     private function generateSourceYIncrementInstruction(int $sourceYIncrement): string
