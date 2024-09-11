@@ -677,8 +677,8 @@ class CompiledSpriteBuilder {
                             //$instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop ('.$loopState['loopStartDestinationAdvance'].' - '.$this->drawOffsetDestinationAdjust.')');
 
                             $instructionStream->add('');
-                            $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; advance source at beginning of loop (('.$sourceOffset.' - '.$loopState['loopStartSourceOffset'].') - '.$this->drawOffsetSourceAdjust.')');
-                            $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop (('.$destinationOffset.' - '.$loopState['loopStartDestinationOffset'].') - '.$this->drawOffsetDestinationAdjust.')');
+                            $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; calc source address');
+                            $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; calc destination address');
 
                             $loopState = $state;
                         } else {
@@ -725,8 +725,8 @@ class CompiledSpriteBuilder {
                                 //$instructionStream->add('; drawOffsetDestinationAdjust = '.$this->drawOffsetDestinationAdjust);
 
                                 $instructionStream->add('');
-                                $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; advance source at beginning of loop (('.$sourceOffset.' - '.$loopState['loopStartSourceOffset'].') - '.$this->drawOffsetSourceAdjust.')');
-                                $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop (('.$destinationOffset.' - '.$loopState['loopStartDestinationOffset'].') - '.$this->drawOffsetDestinationAdjust.')');
+                                $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; calc source address');
+                                $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; calc destination address');
 
                                 $loopState = $state;
                             } else {
@@ -804,11 +804,23 @@ class CompiledSpriteBuilder {
             }
         }*/
 
+        // remove redundant lea instructions
+        // should probably do this elsewhere
+        // might relate to breakage of the lampposts!
+
+        foreach ($instructionArray as $key => $instruction) {
+            if (str_starts_with($instruction, 'lea 0(a0),a0')) {
+                $instructionArray[$key] = '; redundant a0 lea instruction removed';
+            } elseif (str_starts_with($instruction, 'lea 0(a1),a1')) {
+                $instructionArray[$key] = '; redundant a1 lea instruction removed';
+            }
+        }
+
         // are any of the precomputed blitter control registers unused?
         // if so, use them for something else!
 
-        /*$blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true];
+        $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true, 'd6' => true];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
@@ -818,15 +830,19 @@ class CompiledSpriteBuilder {
             if (str_starts_with($instruction, 'dbra d5')) {
                 unset($freeBlitterControlRegisters['d5']);
             }
+            if (str_starts_with($instruction, 'dbra d6')) {
+                unset($freeBlitterControlRegisters['d6']);
+            }
         }
 
         $commonOffsets = [];
         if (count($freeBlitterControlRegisters)) {
             foreach ($instructionArray as $instruction) {
                 if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
-                    $instructionStartingAtNumber = substr($instruction, 6);
+                    $instructionStartingAtNumber = substr($instruction, 4);
                     $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
                     if (!isset($commonOffsets[$offsetValue])) {
+                        //echo("offset value ".$offsetValue." found in instruction ".$instruction."\n");
                         $commonOffsets[$offsetValue] = 0;
                     }
                     $commonOffsets[$offsetValue]++;
@@ -835,6 +851,7 @@ class CompiledSpriteBuilder {
                     $commaPosition = strpos($instructionStartingAtNumber, ',');
                     $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
                     if (!isset($commonOffsets[$offsetValue])) {
+                        //echo("offset value ".$offsetValue." found in instruction ".$instruction."\n");
                         $commonOffsets[$offsetValue] = 0;
                     }
                     $commonOffsets[$offsetValue]++;
@@ -868,8 +885,14 @@ class CompiledSpriteBuilder {
 
         foreach ($instructionArray as $key => $instruction) {
             if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
-                $instructionStartingAtNumber = substr($instruction, 6);
-                $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
+                $instructionStartingAtNumber = substr($instruction, 4);
+                $offsetValueStr = substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '('));
+                $offsetValue = intval($offsetValueStr);
+
+                if (!is_numeric($offsetValueStr)) {
+                    echo("FAIL: ".$instruction."\n");
+                    exit(1);
+                }
 
                 if (isset($offsetRegisterMappings[$offsetValue])) {
                     if (str_contains($instruction, 'calc destination address')) {
@@ -890,7 +913,6 @@ class CompiledSpriteBuilder {
             }
         }
 
-        $prefixedInstructions = [];
         foreach ($offsetRegisterMappings as $offset => $registerName) {
             if ($offset >= -128 && $offset <= 127) { 
                 $instruction = 'moveq.l #'.$offset.','.$registerName;
@@ -899,6 +921,14 @@ class CompiledSpriteBuilder {
             }
             array_unshift($instructionArray, $instruction);
         }
+
+        // something to do with endmasks
+
+        $endmaskCounts = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+        ];
 
         foreach ($instructionArray as $key => $instruction) {
             for ($index = 1; $index <= 3; $index++) {
@@ -929,7 +959,7 @@ class CompiledSpriteBuilder {
                         3 => 'ffff8a2c',
                     ];
 
-                    $instructionArray[$key] = 'lea $'.$endmaskToRegMappings[$highestUsageEndmask].'.w,a2        ; cache endmask' . $highestUsageEndmask;
+                    $instructionArray[$key] = 'lea $'.$endmaskToRegMappings[$highestUsageEndmask].'.w,a2        ; post process cache endmask' . $highestUsageEndmask;
                 }
             }
         } else {
@@ -938,17 +968,17 @@ class CompiledSpriteBuilder {
                     $instructionArray[$key] = '; cache endmask instruction removed';
                 }
             }
-        }*/
+        }
 
         // eliminate any redundant lea instructions at end of stream... very hacky!
 
-        $instructionArrayReversed = array_reverse($instructionArray);
+        /*$instructionArrayReversed = array_reverse($instructionArray);
 
         while (str_starts_with($instructionArrayReversed[0], 'lea')) {
             array_shift($instructionArrayReversed);
         }
 
-        $instructionArray = array_reverse($instructionArrayReversed);
+        $instructionArray = array_reverse($instructionArrayReversed);*/
 
         $instructionArray[] = 'rts';
 
@@ -1089,10 +1119,10 @@ class CompiledSpriteBuilder {
             $this->generateBlitterControlInstruction($useFxsr, $useNfsr)
         );
 
-        if ($sourceAdvance) {
+        if ($sourceAdvance !== 0) {
             $copyInstructionStream->add(
                 sprintf(
-                    'lea.l %d(a0),a0 ; calc source address into a0',
+                    'lea %d(a0),a0 ; calc source address into a0',
                     $sourceAdvance
                 )
             );
@@ -1101,7 +1131,7 @@ class CompiledSpriteBuilder {
         if ($destinationAdvance) {
             $copyInstructionStream->add(
                 sprintf(
-                    'lea.l %d(a1),a1 ; calc destination address into a1',
+                    'lea %d(a1),a1 ; calc destination address into a1',
                     $destinationAdvance
                 )
             );
