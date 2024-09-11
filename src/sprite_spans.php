@@ -820,7 +820,7 @@ class CompiledSpriteBuilder {
         // if so, use them for something else!
 
         $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true/*, 'd6' => true*/];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true, 'd7' => true/*, 'd6' => true*/];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
@@ -1258,13 +1258,13 @@ class CompiledSpriteBuilder {
             throw new RuntimeException('Invalid endmask index ');
         }
 
-        $source = 'd7';
-        if ($endmask != 0xffff && $endmask != 0xffffffff) {
+        /*$source = 'd7';
+        if ($endmask != 0xffff && $endmask != 0xffffffff) {*/
             $source = sprintf(
                 '#%d',
                 $endmask
             );
-        }
+        //}
 
         $destination = $destinations[$endmaskIndex - 1];
 
