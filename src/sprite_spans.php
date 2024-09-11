@@ -669,7 +669,7 @@ class CompiledSpriteBuilder {
                             $instructionStream->add('; - sourceOffset = '.$sourceOffset);
                             $instructionStream->add('; - destinationOffset = '.$destinationOffset);
                             $instructionStream->add('; - loopStartSourceOffset = '.$loopState['loopStartSourceOffset']);
-                            $instructionStream->add('; - loopStartDestinationOffset = '.$loopState['loopStartSourceOffset']);
+                            $instructionStream->add('; - loopStartDestinationOffset = '.$loopState['loopStartDestinationOffset']);
                             $instructionStream->add('; drawOffsetSourceAdjust = '.$this->drawOffsetSourceAdjust);
                             $instructionStream->add('; drawOffsetDestinationAdjust = '.$this->drawOffsetDestinationAdjust);
 
@@ -691,10 +691,10 @@ class CompiledSpriteBuilder {
                             if ($sourceAdvance != $loopState['subsequentSourceAdvance'] || $destinationAdvance != $loopState['subsequentDestinationAdvance'] || count($changedEndmasks)) {
                                 $instructionStream->add('');
                                 $instructionStream->add('; loop terminated at '.$loopState['copyInstructionIterations'].' iterations, writing instructions because:');
-                                if ($sourceAdvance != $oldSourceAdvance) {
+                                if ($loopState['subsequentSourceAdvance'] != $sourceAdvance) {
                                     $instructionStream->add('; - sourceAdvance changed from '.$loopState['subsequentSourceAdvance'].' to '.$sourceAdvance);
                                 }
-                                if ($sourceAdvance != $oldSourceAdvance) {
+                                if ($loopState['subsequentDestinationAdvance'] != $destinationAdvance) {
                                     $instructionStream->add('; - destinationAdvance changed from '.$loopState['subsequentDestinationAdvance'].' to '.$destinationAdvance);
                                 }
                                 if (count($changedEndmasks)) {
@@ -722,8 +722,8 @@ class CompiledSpriteBuilder {
                                 $instructionStream->add('; drawOffsetSourceAdjust = '.$this->drawOffsetSourceAdjust);
                                 $instructionStream->add('; drawOffsetDestinationAdjust = '.$this->drawOffsetDestinationAdjust);
 
-                                $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; advance source at beginning of loop ('.($sourceOffset - $loopState['loopStartSourceOffset']).' - '.$this->drawOffsetSourceAdjust.')');
-                                $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop ('.($destinationOffset - $loopState['loopStartDestinationOffset']).' - '.$this->drawOffsetDestinationAdjust.')');
+                                $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; advance source at beginning of loop (('.$sourceOffset.' - '.$loopState['loopStartSourceOffset'].') - '.$this->drawOffsetSourceAdjust.')');
+                                $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop (('.$destinationOffset.' - '.$loopState['loopStartDestinationOffset'].') - '.$this->drawOffsetDestinationAdjust.')');
 
                                 $loopState = $state;
                             } else {
@@ -1239,19 +1239,8 @@ class CompiledSpriteBuilder {
 
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
-        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            /*$width = $this->widthInSixteenPixelBlocks;
-            if ($this->skewed) {
-                $width--;
-            }*/
-
-            $sourceYIncrement = ($loopState['loopStartSourceAdvance'] + 10) - ($length * 10);
-
-            /*if ($length == 1) {
-                $sourceYIncrement += 10;
-            }*/
-
-            //$sourceYIncrement = (($width + 1) * 10) - ($length * 10);
+        //if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            /*$sourceYIncrement = ($loopState['loopStartSourceAdvance'] + 10) - ($length * 10);
 
             if ($loopState['useFxsr']) {
                 $sourceYIncrement -= 10;
@@ -1259,10 +1248,9 @@ class CompiledSpriteBuilder {
 
             if ($loopState['useNfsr']) {
                 $sourceYIncrement += 10;
-            }
+            }*/
 
-            //$sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
-        } else {
+        //} else {
             $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
             if ($loopState['useFxsr']) {
                 $sourceYIncrement -= 10;
@@ -1272,7 +1260,7 @@ class CompiledSpriteBuilder {
                 $sourceYIncrement += 10;
             }
 
-        }
+        //}
 
         return $sourceYIncrement;
     }
@@ -1280,12 +1268,11 @@ class CompiledSpriteBuilder {
     private function calculateDestinationYIncrement(array $loopState, int $length): int
     {
         // TODO: needs to act differently when number of lines > 6
-        if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            //$test= -((8 * ($length - 1)) - 2);
-            return 168 - ($length * 8);
-        } else {
+        //if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
+            //return 168 - ($length * 8);
+        //} else {
             return -((8 * ($length - 1)) - 2);
-        }
+        //}
     }
 
     private function generateSourceYIncrementInstruction(int $sourceYIncrement): string
