@@ -820,7 +820,7 @@ class CompiledSpriteBuilder {
         // if so, use them for something else!
 
         $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true, 'd6' => true];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true/*, 'd6' => true*/];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
@@ -830,9 +830,12 @@ class CompiledSpriteBuilder {
             if (str_starts_with($instruction, 'dbra d5')) {
                 unset($freeBlitterControlRegisters['d5']);
             }
-            if (str_starts_with($instruction, 'dbra d6')) {
+            /*if (str_starts_with($instruction, 'dbra d6')) {
                 unset($freeBlitterControlRegisters['d6']);
             }
+            if (str_starts_with($instruction, 'moveq') && str_contains($instruction, 'd6')) {
+                unset($freeBlitterControlRegisters['d6']);
+            }*/
         }
 
         $commonOffsets = [];
