@@ -608,13 +608,6 @@ class CompiledSpriteBuilder {
 
                         $applicableEndmasks = $span->getApplicableEndmasks();
 
-                        // temporarily black out endmasks
-                        /*$applicableEndmasks = [
-                            1 => 0,
-                            2 => 0,
-                            3 => 0,
-                        ];*/
-
                         $changedEndmasks = [];
                         for ($index = 1; $index <= 3; $index++) {
                             if (isset($applicableEndmasks[$index])) {
@@ -645,17 +638,47 @@ class CompiledSpriteBuilder {
                         $state = [
                             'loopStartSourceAdvance' => $sourceAdvance,
                             'loopStartDestinationAdvance' => $destinationAdvance,
+                            'subsequentSourceAdvance' => null,
+                            'subsequentDestinationAdvance' => null,
                             'copyInstructionIterations' => 1,
                             'useFxsr' => $useFxsr,
                             'useNfsr' => $useNfsr,
                             'changedEndmasks' => $changedEndmasks,
                         ];
 
+                        //$instructionStream->add('; span index '.$key);
                         if ($key == array_key_first($spans)) {
+                            //$instructionStream->add('; first iteration');
+                            $instructionStream->add('');
+                            $instructionStream->add('; new loop started at beginning of fxsr group spans');
+                            $instructionStream->add('; - loopStartSourceAdvance = '.$sourceAdvance);
+                            $instructionStream->add('; - loopStartSourceAdvance = '.$destinationAdvance);
                             $loopState = $state;
+
+                            $instructionStream->add('lea '.($loopState['loopStartSourceAdvance']).'(a0),a0 ; advance source at beginning of loop');
+                            $instructionStream->add('lea '.($loopState['loopStartDestinationAdvance']).'(a1),a1 ; advance source at beginning of loop');
                         } else {
-                            if ($sourceAdvance != $oldSourceAdvance || $destinationAdvance != $oldDestinationAdvance || count($changedEndmasks)) {
-                                // NOTE: destination y increment will change depending upon whether it's a dbra loop or blitter loop 
+                            if ($loopState['copyInstructionIterations'] == 1) {
+                                $loopState['subsequentSourceAdvance'] = $sourceAdvance;
+                                $loopState['subsequentDestinationAdvance'] = $destinationAdvance;
+                                $instructionStream->add('');
+                                $instructionStream->add('; first iteration');
+                                $instructionStream->add('; - set loopstate subsequent source advance to '.$sourceAdvance);
+                                $instructionStream->add('; - set loopstate subsequent destination advance to '.$destinationAdvance);
+
+                            }
+                            if ($sourceAdvance != $loopState['subsequentSourceAdvance'] || $destinationAdvance != $loopState['subsequentDestinationAdvance'] || count($changedEndmasks)) {
+                                $instructionStream->add('');
+                                $instructionStream->add('; loop terminated at '.$loopState['copyInstructionIterations'].' iterations, writing instructions because:');
+                                if ($sourceAdvance != $oldSourceAdvance) {
+                                    $instructionStream->add('; - sourceAdvance changed from '.$loopState['subsequentSourceAdvance'].' to '.$sourceAdvance);
+                                }
+                                if ($sourceAdvance != $oldSourceAdvance) {
+                                    $instructionStream->add('; - destinationAdvance changed from '.$loopState['subsequentDestinationAdvance'].' to '.$destinationAdvance);
+                                }
+                                if (count($changedEndmasks)) {
+                                    $instructionStream->add('; - endmasks changed');
+                                }
 
                                 $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
                                 $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
@@ -669,7 +692,15 @@ class CompiledSpriteBuilder {
                                 $oldSourceYIncrement = $sourceYIncrement;
                                 $oldDestinationYIncrement = $destinationYIncrement;
 
+                                $instructionStream->add('');
+                                $instructionStream->add('; new loop started elsewhere in spans');
+                                $instructionStream->add('; - loopStartSourceAdvance = '.$sourceAdvance);
+                                $instructionStream->add('; - loopStartDestinationAdvance = '.$destinationAdvance);
+
                                 $loopState = $state;
+
+                                $instructionStream->add('lea '.($loopState['loopStartSourceAdvance']).'(a0),a0 ; advance source at beginning of loop');
+                                $instructionStream->add('lea '.($loopState['loopStartDestinationAdvance']).'(a1),a1 ; advance source at beginning of loop');
                             } else {
                                 $loopState['copyInstructionIterations']++;
                             }
@@ -678,6 +709,8 @@ class CompiledSpriteBuilder {
                         if ($key == array_key_last($spans)) {
                             $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
                             $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
+                            $instructionStream->add('');
+                            $instructionStream->add('; loop terminated because end of fxsr group spans, writing instructions');
                             $loopIndex = $this->addConfirmCopyInstructions(
                                 $loopState,
                                 $instructionStream,
@@ -689,7 +722,6 @@ class CompiledSpriteBuilder {
                             $oldSourceYIncrement = $sourceYIncrement;
                         }
                     }
-
                 }
             }
         }
@@ -699,7 +731,7 @@ class CompiledSpriteBuilder {
 
         // another hack to remove redundant leas :)
 
-        $lastSourceResetKey = null;
+        /*$lastSourceResetKey = null;
         $lastSourceResetValue = null;
         $lastDestinationResetKey = null;
         $lastDestinationResetValue = null;
@@ -742,13 +774,13 @@ class CompiledSpriteBuilder {
                 $lastSourceResetKey = null;
                 $lastDestinationResetKey = null;
             }
-        }
+        }*/
 
         // are any of the precomputed blitter control registers unused?
         // if so, use them for something else!
 
-        $blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
-        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true/*, 'd6' => true*/];
+        /*$blitterControlRegisters = ['d1', 'd2', 'd3', 'd4'];
+        $freeBlitterControlRegisters = ['d1' => true, 'd2' => true, 'd3' => true, 'd4' => true, 'd5' => true];
         foreach ($instructionArray as $instruction) {
             foreach ($blitterControlRegisters as $registerName) {
                 if (str_starts_with($instruction, 'move.w '.$registerName)) {
@@ -758,9 +790,6 @@ class CompiledSpriteBuilder {
             if (str_starts_with($instruction, 'dbra d5')) {
                 unset($freeBlitterControlRegisters['d5']);
             }
-            /*if (str_starts_with($instruction, 'dbra d6')) {
-                unset($freeBlitterControlRegisters['d6']);
-            }*/
         }
 
         $commonOffsets = [];
@@ -797,7 +826,6 @@ class CompiledSpriteBuilder {
         foreach ($filteredCommonOffsets as $offset => $occurrences) {
             $reindexedCommonOffsets[] = $offset;
         }
-        // now i need an array with keys as offsets and values as register names
 
         while (count($freeBlitterControlRegisters) > count($reindexedCommonOffsets)) {
             array_pop($freeBlitterControlRegisters);
@@ -844,9 +872,6 @@ class CompiledSpriteBuilder {
             array_unshift($instructionArray, $instruction);
         }
 
-        // select most commonly used endmask to cache address of
-
-        $endmaskCounts = [1 => 0, 2 => 0, 3 => 0];
         foreach ($instructionArray as $key => $instruction) {
             for ($index = 1; $index <= 3; $index++) {
                 if (str_contains($instruction, 'set endmask' . $index)) {
@@ -885,7 +910,7 @@ class CompiledSpriteBuilder {
                     $instructionArray[$key] = '; cache endmask instruction removed';
                 }
             }
-        }
+        }*/
 
         // eliminate any redundant lea instructions at end of stream... very hacky!
 
@@ -914,8 +939,8 @@ class CompiledSpriteBuilder {
         $copyInstructionIterations = $loopState['copyInstructionIterations'];
         $useFxsr = $loopState['useFxsr'];
         $useNfsr = $loopState['useNfsr'];
-        $sourceAdvance = $loopState['loopStartSourceAdvance'];
-        $destinationAdvance = $loopState['loopStartDestinationAdvance'];
+        $sourceAdvance = $loopState['subsequentSourceAdvance'];
+        $destinationAdvance = $loopState['subsequentDestinationAdvance'];
         $changedEndmasks = $loopState['changedEndmasks'];
 
         $instructionStream->add('');
@@ -935,9 +960,10 @@ class CompiledSpriteBuilder {
             );
         }
 
-        if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
+        /*if ($copyInstructionIterations > self::BLITTER_COPY_THRESHOLD) {
 
-            //$instructionStream->add('move.l #'.rand().',$2DC6C0');
+            $instructionStream->add('');
+            $instructionStream->add('; 4 bitplane multiple line copy START');
 
             $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
 
@@ -950,7 +976,6 @@ class CompiledSpriteBuilder {
             );
             $instructionStream->appendStream($copyInstructionStream);
 
-            //$instructionStream->add('rept 3');
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 2,
                 2,
@@ -958,44 +983,32 @@ class CompiledSpriteBuilder {
                 $useFxsr,
                 $useNfsr
             );
-            //$instructionStream->appendStream($copyInstructionStream);
-            //$instructionStream->add('endr');
 
             $this->addLoopInstructions($instructionStream, $copyInstructionStream, 3, $loopIndex, 'd5');
             $loopIndex++;
 
-            $resetDestinationAdvance = (($copyInstructionIterations - 1) * $destinationAdvance) - 6;
-            $instructionStream->add(
-                sprintf(
-                    'lea.l %d(a1),a1 ; reset destination address into a1',
-                    $resetDestinationAdvance
-                )
-            );
-
-            $resetSourceAdvance = (($copyInstructionIterations - 1) * $sourceAdvance) - 6;
-            $instructionStream->add(
-                sprintf(
-                    'lea.l %d(a0),a0 ; reset source address into a0',
-                    $resetSourceAdvance
-                )
-            );
-
-        } else {
+        } else {*/
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 $sourceAdvance,
                 $destinationAdvance,
                 'd0',
                 $useFxsr,
                 $useNfsr 
-            );          
+            );      
 
             if ($copyInstructionIterations > 1) {
+                $instructionStream->add('');
+                $instructionStream->add('; looped span copy START');
                 $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex, 'd6');
+                $instructionStream->add('; looped span copy END');
                 $loopIndex++;
             } else {
+                $instructionStream->add('');
+                $instructionStream->add('; single span copy START');
                 $instructionStream->appendStream($copyInstructionStream);
+                $instructionStream->add('; single span copy END');
             }
-        }
+        //}
 
         return $loopIndex;
     }
@@ -1016,25 +1029,30 @@ class CompiledSpriteBuilder {
         $instructionStream->add('dbra '.$loopRegister.',.loop'.$loopIndex);
     }
 
-    private function generateCopyInstructionStream(int $sourceAdvance, int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr, $repeatControl = null): InstructionStream
+    private function generateCopyInstructionStream(?int $sourceAdvance, ?int $destinationAdvance, string $ycountSource, bool $useFxsr, bool $useNfsr, $repeatControl = null): InstructionStream
     {
         $copyInstructionStream = new InstructionStream();
-        $copyInstructionStream->add(
-            sprintf(
-                'lea.l %d(a0),a0 ; calc source address into a0',
-                $sourceAdvance
-            )
-        );
-        $copyInstructionStream->add('move.w a0,(a3) ; set source address');
 
-        if ($destinationAdvance != 0) {
+        $copyInstructionStream->add('move.w a0,(a3) ; set source address');
+        // TODO: beware of type-based bugs here
+        if ($sourceAdvance) {
+            $copyInstructionStream->add(
+                sprintf(
+                    'lea.l %d(a0),a0 ; calc source address into a0',
+                    $sourceAdvance
+                )
+            );
+        }
+
+        $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
+        // TODO: beware of type-based bugs here
+        if ($destinationAdvance) {
             $copyInstructionStream->add(
                 sprintf(
                     'lea.l %d(a1),a1 ; calc destination address into a1',
                     $destinationAdvance
                 )
             );
-            $copyInstructionStream->add('move.w a1,(a4) ; set destination address');
         }
 
         if ($repeatControl) {
