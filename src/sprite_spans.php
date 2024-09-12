@@ -875,6 +875,7 @@ class CompiledSpriteBuilder {
             $reindexedCommonOffsets[] = $offset;
         }
 
+        // if I have more free registers than values I need to store, remove registers from the free list
         while (count($freeBlitterControlRegisters) > count($reindexedCommonOffsets)) {
             array_pop($freeBlitterControlRegisters);
         }
@@ -883,6 +884,7 @@ class CompiledSpriteBuilder {
         $commonOffsetIndex = 0;
         foreach ($freeBlitterControlRegisters as $registerName => $value) {
             $offsetRegisterMappings[$reindexedCommonOffsets[$commonOffsetIndex]] = $registerName;
+            unset($reindexedCommonOffsets[$commonOffsetIndex]);
             $commonOffsetIndex++;
         }
 
@@ -899,9 +901,9 @@ class CompiledSpriteBuilder {
 
                 if (isset($offsetRegisterMappings[$offsetValue])) {
                     if (str_contains($instruction, 'calc destination address')) {
-                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a1 ; calc destination address into a1 REGISTER';
+                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a1 ; destination address into a1 REGISTER';
                     } else {
-                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a0 ; calc source address into a0 REGISTER';
+                        $instructionArray[$key] = 'add.w '.$offsetRegisterMappings[$offsetValue].',a0 ; source address into a0 REGISTER';
                     }
                 }
             } elseif (str_starts_with($instruction, 'move.w #')) {
@@ -916,6 +918,111 @@ class CompiledSpriteBuilder {
             }
         }
 
+        // are there any remaining common offsets that I wasn't able to assign to registers in the initial pass?
+        // can i assign any of the remaining values to registers?
+
+        foreach ($reindexedCommonOffsets as $commonOffset) {
+            foreach ($freeBlitterControlRegisters as $registerName => $value) {
+                $firstRegisterUsageKey = null;
+                $lastRegisterUsageKey = null;
+                foreach ($instructionArray as $key => $instruction) {
+                    if (str_starts_with($instruction, 'move.w ' . $registerName) || str_starts_with($instruction, 'add.w ' . $registerName)) {
+                        if (is_null($firstRegisterUsageKey)) {
+                            $firstRegisterUsageKey = $key;
+                        } else {
+                            $lastRegisterUsageKey = $key;
+                        }
+                    }
+                }
+
+                if (is_null($firstRegisterUsageKey)) {
+                    echo("failed to find existing usage of ".$registerName." - abort!\n");
+                    exit();
+                }
+
+                //$firstCommonOffsetUsageKey = null;
+                //$lastCommonOffsetUsageKey = null;
+                $overlap = false;
+                foreach ($instructionArray as $key => $instruction) {
+                    $offsetValue = null;
+                    if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
+                        $instructionStartingAtNumber = substr($instruction, 4);
+                        $offsetValueStr = substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '('));
+                        $offsetValue = intval($offsetValueStr);
+                    } elseif (str_starts_with($instruction, 'move.w #')) { 
+                        $instructionStartingAtNumber = substr($instruction, 8);
+                        $commaPosition = strpos($instructionStartingAtNumber, ',');
+                        $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
+                    }
+
+                    if (!is_null($offsetValue) && $key >= $firstRegisterUsageKey && $key <= $lastRegisterUsageKey) {
+                        $overlap = true;
+                        /*if (is_null($firstCommonOffsetUsageKey)) {
+                            $firstCommonOffsetUsageKey = $key;
+                        } else {
+                            $lastCommonOffsetUsageKey = $key;
+                        }*/
+                    }
+                }
+
+                if (!$overlap) {
+                    // we can assign this value to this register starting after $lastRegisterUsageKey
+                    // i.e.
+                    // - we insert a 'move.w #commonOffset,$registerName' after $lastRegisterUsageKey
+                    // - and then all lea/move.w instructions after that get updated
+                    //echo("WIN1\n");
+                    //var_dump($firstCommonOffsetUsageKey);
+                    //var_dump($lastRegisterUsageKey);
+                    //echo('last usage of register '.$registerName.' is at '.$lastRegisterUsageKey.', first usage of common offset '.$commonOffset.' is at '.$firstCommonOffsetUsageKey."\n");
+                    //echo("-----------------------\n");
+                    /*foreach ($instructionArray as $key => $instruction) {
+                        if ($key > $lastRegisterUsageKey) {
+                            if (str_contains($instruction, 'calc source address') || str_contains($instruction, 'calc destination address')) {
+                                $instructionStartingAtNumber = substr($instruction, 4);
+                                $offsetValueStr = substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '('));
+                                $offsetValue = intval($offsetValueStr);
+
+                                if ($offsetValue == $commonOffset) {
+                                    if (str_contains($instruction, 'calc destination address')) {
+                                        $instructionArray[$key] = 'add.w '.$registerName.',a1 ; destination address into a1 REGISTER';
+                                    } else {
+                                        $instructionArray[$key] = 'add.w '.$registerName.',a0 ; source address into a0 REGISTER';
+                                    }
+                                }
+                            } elseif (str_starts_with($instruction, 'move.w #')) {
+                                $instructionStartingAtNumber = substr($instruction, 8);
+                                $commaPosition = strpos($instructionStartingAtNumber, ',');
+                                $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
+                                if ($offsetValue == $commonOffset) {
+                                    $commaPosition = strpos($instruction, ',');
+                                    $newInstruction = 'move.w ' . $registerName . substr($instruction, $commaPosition) . ' REGISTER (4)';
+                                    $instructionArray[$key] = $newInstruction;
+                                }
+                            } elseif (str_starts_with($instruction, 'add.w #')) {
+                                $instructionStartingAtNumber = substr($instruction, 7);
+                                $commaPosition = strpos($instructionStartingAtNumber, ',');
+                                $offsetValue = intval(substr($instructionStartingAtNumber, 0, $commaPosition));
+                                if ($offsetValue == $commonOffset) {
+                                    $commaPosition = strpos($instruction, ',');
+                                    $newInstruction = 'add.w ' . $registerName . substr($instruction, $commaPosition) . ' REGISTER (4)';
+                                    $instructionArray[$key] = $newInstruction;
+                                }
+                            }
+                        }
+                    }
+
+                    foreach ($instructionArray as $instruction) {
+                        echo($instruction."\n");
+                    }*/
+
+                    //echo("WIN1\n");
+                    //exit();
+                }
+            }
+        }
+
+        // end
+
         foreach ($offsetRegisterMappings as $offset => $registerName) {
             if ($offset >= -128 && $offset <= 127) { 
                 $instruction = 'moveq.l #'.$offset.','.$registerName;
@@ -924,6 +1031,7 @@ class CompiledSpriteBuilder {
             }
             array_unshift($instructionArray, $instruction);
         }
+
 
         // something to do with endmasks
 
