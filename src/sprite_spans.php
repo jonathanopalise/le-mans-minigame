@@ -445,9 +445,9 @@ class CompiledSpriteBuilder {
 
     public function runFirstPass()
     {
-        if ($this->skewed & 1) {
+        /*if ($this->skewed & 1) {
             return [];
-        }
+        }*/
 
         $sixteenPixelBlockOffset = 0;
         $destinationOffset = 0;

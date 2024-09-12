@@ -15,5 +15,12 @@ uint16_t draw_sprite(
     uint8_t *compiled_sprites 
 );
 
+void draw_compiled_sprite(
+    void *source_data,
+    void *destination,
+    uint8_t *compiled_sprites,
+    uint16_t skew
+);
+
 #endif
 

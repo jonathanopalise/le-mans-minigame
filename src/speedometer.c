@@ -1,11 +1,12 @@
 #include "speedometer.h"
 #include "player_car.h"
 #include "hardware_playfield.h"
-#include "status_definitions.h"
-#include "draw_status.h"
 #include "sprite_definitions.h"
+#include "lookups.h"
+#include "draw_sprite.h"
 
 #define SPEEDO_DEFINITION_OFFSET 205
+#define SPEEDO_DIGITS_OFFSET_BASE 206
 
 uint8_t digit_lookup[] = {
     0,0,0,0,
@@ -257,50 +258,6 @@ uint8_t digit_lookup[] = {
     2,3,5,0,
     2,3,6,0,
     2,3,7,0,
-    2,2,7,0,
-    2,2,8,0,
-    2,2,9,0,
-    2,3,0,0,
-    2,3,1,0,
-    2,3,2,0,
-    2,3,3,0,
-    2,3,4,0,
-    2,3,5,0,
-    2,3,6,0,
-    2,3,7,0,
-    2,2,7,0,
-    2,2,8,0,
-    2,2,9,0,
-    2,3,0,0,
-    2,3,1,0,
-    2,3,2,0,
-    2,3,3,0,
-    2,3,4,0,
-    2,3,5,0,
-    2,3,6,0,
-    2,3,7,0,
-    2,2,7,0,
-    2,2,8,0,
-    2,2,9,0,
-    2,3,0,0,
-    2,3,1,0,
-    2,3,2,0,
-    2,3,3,0,
-    2,3,4,0,
-    2,3,5,0,
-    2,3,6,0,
-    2,3,7,0,
-    2,2,7,0,
-    2,2,8,0,
-    2,2,9,0,
-    2,3,0,0,
-    2,3,1,0,
-    2,3,2,0,
-    2,3,3,0,
-    2,3,4,0,
-    2,3,5,0,
-    2,3,6,0,
-    2,3,7,0,
     2,3,8,0,
     2,3,9,0,
     2,4,0,0,
@@ -357,46 +314,49 @@ uint8_t digit_lookup[] = {
 
 void speedometer_draw()
 {
-    struct StatusDefinition *status_definition;
-    uint32_t player_car_display_speed = player_car_speed >> 2; 
+    struct SpriteDefinition *sprite_definition;
+    uint32_t player_car_display_speed = player_car_speed >> 2;
 
-    hardware_playfield_draw_sprite(
-        &sprite_definitions[SPEEDO_DEFINITION_OFFSET],
-        271,
-        164 
-    );
+    // xpos = 273
+    sprite_definition = sprite_definition_pointers[SPEEDO_DEFINITION_OFFSET];
+    draw_compiled_sprite(
+        sprite_definition->words,
+        &drawing_playfield->buffer[160 * 164 + (8 * 17)],
+        &(sprite_definition->compiled_sprite_0),
+        1
+    ); 
 
     uint8_t *current_digit = &digit_lookup[player_car_display_speed << 2];
 
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + *current_digit];
-    draw_status(
-        status_definition->words, // confirmed correct
+    // xpos = 277
+    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    draw_compiled_sprite(
+        sprite_definition->words,
         &drawing_playfield->buffer[160 * 174 + (8 * 17)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        2
+        &(sprite_definition->compiled_sprite_0),
+        5
     );
 
     current_digit++;
 
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + *current_digit];
-    draw_status(
-        status_definition->words, // confirmed correct
-        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        13
-    );
-
-    current_digit++;
-
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + *current_digit];
-    draw_status(
-        status_definition->words, // confirmed correct
+    // xpos = 288
+    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    draw_compiled_sprite(
+        sprite_definition->words,
         &drawing_playfield->buffer[160 * 174 + (8 * 18)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        8
+        &(sprite_definition->compiled_sprite_0),
+        0
+    );
+
+    current_digit++;
+
+    // xpos = 299
+    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    draw_compiled_sprite(
+        sprite_definition->words,
+        &drawing_playfield->buffer[160 * 174 + (8 * 18)],
+        &(sprite_definition->compiled_sprite_0),
+        11
     );
 }
 

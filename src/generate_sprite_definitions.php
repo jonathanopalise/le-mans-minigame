@@ -110,6 +110,7 @@ foreach ($definitions as $definition) {
             }
 
             if (in_array($skew, $permittedSkews)) {
+                //echo("** attempting ".$definition['label']." skew ".$skew."\n");
                 $builder = new CompiledSpriteBuilder(
                     $skewedCharData,
                     $widthIn16PixelBlocks,
@@ -162,6 +163,7 @@ foreach ($definitions as $definition) {
             $binaryCode = file_get_contents($outputFilename);
             $exportedSprite['skew_' . $skew] = unpack('C*', $binaryCode); 
         } else {
+            //echo("failed to export ".$definition['label']." skew ".$skew."\n");
             $exportedSprite['skew_' . $skew] = null;
         }
     }

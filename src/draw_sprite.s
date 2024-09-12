@@ -1,4 +1,5 @@
     public _draw_sprite
+    public _draw_compiled_sprite
 
 leftclipped:
     dc.w 0
@@ -14,6 +15,26 @@ source_data_address:
 
 final_ypos:
     dc.w 0
+
+_draw_compiled_sprite:
+    move.l sp,a0
+
+    movem.l d2-d7/a2-a6,-(sp)
+
+    ; a0 needs to be source
+    ; a1 needs to be dest
+    ; d0 needs to be skew
+    ; a2 needs to be address of compiled sprite table
+
+;foo:
+;    bra.s foo
+
+    move.l 8(a0),a1  ; destination
+    move.l 12(a0),a2 ; address of compiled sprite table
+    move.w 18(a0),d0 ; skew
+    move.l 4(a0),source_data_address  ; source data
+
+    bra _draw_compiled_sprite_entry
 
 _draw_sprite:
 
@@ -259,6 +280,12 @@ label_7a374:
 
     move.l a3,d0               ; get desired xpos of scenery object
     and.w #$e,d0               ; convert to skew value for blitter
+
+_draw_compiled_sprite_entry:
+    ; a0 needs to be source
+    ; a1 needs to be dest
+    ; d0 needs to be skew
+    ; a2 needs to be address of compiled sprite table
 
     move.w #$c000,d1           ; blitter control
     or.w d0,d1                 ; apply skew

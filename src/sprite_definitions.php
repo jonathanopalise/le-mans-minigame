@@ -1568,6 +1568,7 @@ $definitions = [
         'height' => 26,
         'originx' => 0,
         'originy' => 0,
+        'permittedSkews' => [1],
     ],
 
     // speedo digits (206-)
@@ -1579,6 +1580,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-1',
@@ -1587,6 +1591,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-2',
@@ -1595,6 +1602,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-3',
@@ -1603,6 +1613,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-4',
@@ -1611,6 +1624,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-5',
@@ -1619,6 +1635,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-6',
@@ -1627,6 +1646,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-7',
@@ -1635,6 +1657,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-8',
@@ -1643,6 +1668,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
     [
         'label' => 'speedo-9',
@@ -1651,7 +1679,9 @@ $definitions = [
         'width' => 9,
         'height' => 12,
         'targetLine' => 19,
+        'originx' => 0,
+        'originy' => 0,
+        'permittedSkews' => [0, 5, 11],
     ],
-
 ];
 
