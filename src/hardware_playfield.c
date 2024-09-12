@@ -402,34 +402,6 @@ void hardware_playfield_update_digits()
     // third digit at x = 297
 
 
-    uint32_t player_car_display_speed = player_car_speed >> 2; 
-
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed / 100 % 10];
-    draw_status(
-        status_definition->words, // confirmed correct
-        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        2
-    );
-
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed / 10 % 10];
-    draw_status(
-        status_definition->words, // confirmed correct
-        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        13
-    );
-
-    status_definition = &status_definitions[STATUS_DEFS_SPEEDO_DIGITS_BASE + player_car_display_speed % 10];
-    draw_status(
-        status_definition->words, // confirmed correct
-        &drawing_playfield->buffer[160 * 174 + (8 * 18)],
-        status_definition->source_data_width_pixels,
-        status_definition->source_data_height_lines,
-        8
-    );
 }
 
 static void hardware_playfield_error()

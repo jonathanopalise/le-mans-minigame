@@ -29,6 +29,7 @@ OBJECT_FILES =\
     src/checkpoints.o\
     src/lookups.o\
     src/stars.o\
+    src/speedometer.o\
     src/natfeats.o\
     src/generated/trackside_items.o\
  	src/generated/road_geometry.o\
@@ -123,6 +124,9 @@ src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geo
 
 src/stars.o: src/stars.c src/stars.h src/lookups.h src/road_movement.h src/hardware_playfield.h src/star_lookups.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/stars.c -o src/stars.o
+
+src/speedometer.o: src/speedometer.c src/speedometer.h src/player_car.h src/hardware_playfield.h src/status_definitions.h src/draw_status.h src/sprite_definitions.h
+	$(CC) $(CFLAGS) -c src/speedometer.c -o src/speedometer.o
 
 src/natfeats.o: src/natfeats.c src/natfeats.h
 	$(CC) $(CFLAGS) -c src/natfeats.c -o src/natfeats.o

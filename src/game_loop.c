@@ -23,11 +23,11 @@
 #include "title_screen_graphics.h"
 #include "natfeats.h"
 #include "random.h"
+#include "speedometer.h"
 
 #define GAME_OVER_DEFINITION_OFFSET 202
 #define GET_READY_DEFINITION_OFFSET 203
 #define GO_DEFINITION_OFFSET 204
-#define SPEEDO_DEFINITION_OFFSET 205
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
@@ -189,12 +189,8 @@ static void in_game_loop()
         }
     }
 
-    hardware_playfield_draw_sprite(
-        &sprite_definitions[SPEEDO_DEFINITION_OFFSET],
-        271,
-        164 
-    );
     hardware_playfield_update_digits();
+    speedometer_draw();
 
     if (frames_since_game_over > 180) {
         music_stop();
