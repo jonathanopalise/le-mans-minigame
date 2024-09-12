@@ -1153,10 +1153,20 @@ class CompiledSpriteBuilder {
                 $useNfsr
             );
 
-            $this->drawOffsetSourceAdjust = 8;
-            $this->drawOffsetDestinationAdjust = 8;
+            $copyInstructionStreamAfterLoop = $this->generateCopyInstructionStream(
+                null,
+                null,
+                'd6',
+                $useFxsr,
+                $useNfsr
+            );
 
-            $this->addLoopInstructions($instructionStream, $copyInstructionStream, 4, $loopIndex, 'd5');
+
+            $this->drawOffsetSourceAdjust = 6;
+            $this->drawOffsetDestinationAdjust = 6;
+
+            $this->addLoopInstructions($instructionStream, $copyInstructionStream, 3, $loopIndex, 'd5');
+            $instructionStream->appendStream($copyInstructionStreamAfterLoop);
             $instructionStream->add('; 4 bitplane multiple line copy END');
             $loopIndex++;
 
@@ -1178,6 +1188,41 @@ class CompiledSpriteBuilder {
                 $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations, $loopIndex, 'd6');
                 $instructionStream->add('; looped span copy END');
                 $loopIndex++;
+
+                // alternative implementation that doesn't have excess instructions but needs more memory
+                /*$copyInstructionStream = $this->generateCopyInstructionStream(
+                    $sourceAdvance,
+                    $destinationAdvance,
+                    'd0',
+                    $useFxsr,
+                    $useNfsr
+                );
+                $copyInstructionStreamAfterLoop = $this->generateCopyInstructionStream(
+                    null,
+                    null,
+                    'd0',
+                    $useFxsr,
+                    $useNfsr
+                );
+
+                $this->drawOffsetSourceAdjust = ($copyInstructionIterations - 1) * $sourceAdvance;
+                $this->drawOffsetDestinationAdjust = ($copyInstructionIterations - 1) * $destinationAdvance;
+
+                if ($copyInstructionIterations == 2) {
+                    $instructionStream->add('');
+                    $instructionStream->add('; 2 iteration span copy START');
+                    $instructionStream->appendStream($copyInstructionStream);
+                    $instructionStream->appendStream($copyInstructionStreamAfterLoop);
+                    $instructionStream->add('; 2 iteration span copy END');
+                } else {
+                    $instructionStream->add('');
+                    $instructionStream->add('; looped span copy START');
+                    $this->addLoopInstructions($instructionStream, $copyInstructionStream, $copyInstructionIterations - 1, $loopIndex, 'd6');
+                    $instructionStream->appendStream($copyInstructionStreamAfterLoop);
+                    $instructionStream->add('; looped span copy END');
+                    $loopIndex++;
+                }*/
+
             } else {
                 $copyInstructionStream = $this->generateCopyInstructionStream(
                     null,
