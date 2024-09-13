@@ -138,7 +138,9 @@ static void in_game_loop()
     road_corners_update();
     road_render();
 
-    if (!is_night) {
+    if (is_night) {
+        drawing_playfield->mountains_scroll_pixels = -1;
+    } else {
         mountains_render();
     }
 

@@ -23,6 +23,8 @@ struct HardwarePlayfield {
     uint16_t star_block_offsets[STAR_COUNT];
     uint16_t stars_drawn;
     struct HudDigits hud_digits;
+    uint16_t tallest_sprite_ypos;
+    int16_t mountains_scroll_pixels;
 };
 
 extern struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];

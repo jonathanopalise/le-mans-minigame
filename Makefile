@@ -83,7 +83,7 @@ src/track_segments.o: src/track_segments.c src/track_segments.h
 src/trackside_items_process.o: src/trackside_items_process.c src/trackside_items_process.h src/trackside_items.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/trackside_items_process.c -o src/trackside_items_process.o
 
-src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mountain_graphics.h src/hardware_playfield.h src/blitter.h src/road_movement.h
+src/mountains_render.o: src/mountains_render.c src/mountains_render.h src/mountain_graphics.h src/hardware_playfield.h src/blitter.h src/road_movement.h src/lookups.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/mountains_render.c -o src/mountains_render.o
 
 src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h src/player_car.h src/road_render_fast.h src/player_car.h src/checkpoints.h

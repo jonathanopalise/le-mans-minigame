@@ -88,20 +88,22 @@ void hardware_playfield_handle_vbl()
         );*/
     } else {
 #ifdef __NATFEATS_DEBUG
-        nf_print("Frame dropped :(");
+        //nf_print("Frame dropped :(");
 #endif
     }
 }
 
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
 {
+    int16_t normalised_ypos = ypos - sprite_definition->origin_y;
+
     //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
     // need a return value from draw_sprite if nothing gets draw
     // so that we don't advance current_bitplane_draw_record
     uint16_t sprite_drawn = draw_sprite(
         xpos - sprite_definition->origin_x,
-        ypos - sprite_definition->origin_y,
+        normalised_ypos,
         sprite_definition->words,
         sprite_definition->source_data_width,
         sprite_definition->source_data_height,
@@ -111,6 +113,9 @@ void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, 
     );
 
     if (sprite_drawn) {
+        if (normalised_ypos < drawing_playfield->tallest_sprite_ypos) {
+            drawing_playfield->tallest_sprite_ypos = normalised_ypos;
+        }
         drawing_playfield->current_bitplane_draw_record++;
     }
     //drawing_playfield->sprites_drawn++;
@@ -195,6 +200,7 @@ void hardware_playfield_erase_sprites()
 
     drawing_playfield->current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
     drawing_playfield->sprites_drawn = 0;
+    drawing_playfield->tallest_sprite_ypos = 200;
 }
 
 static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
@@ -245,6 +251,7 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
     hardware_playfield->current_bitplane_draw_record = hardware_playfield->bitplane_draw_records;
     //hardware_playfield->sprites_drawn = 0;
     hardware_playfield->stars_drawn = 0;
+    hardware_playfield->mountains_scroll_pixels = -1;
 
     uint16_t word1,word2,word3,word4;
     uint16_t current_stripe_iterations;
