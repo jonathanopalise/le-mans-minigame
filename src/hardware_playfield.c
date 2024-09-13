@@ -369,6 +369,33 @@ void hardware_playfield_init()
     }
 }
 
+void hardware_playfield_copy_score()
+{
+    *((volatile int16_t *)BLITTER_ENDMASK_1) = 0x3;
+    *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
+    *((volatile int16_t *)BLITTER_ENDMASK_3) = 0xfc00;
+    *((volatile int16_t *)BLITTER_SOURCE_X_INCREMENT) = 8;
+    *((volatile int16_t *)BLITTER_SOURCE_Y_INCREMENT) = (160 - 8 * 5); // originally 158
+    *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
+    *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = (160 - 8*5);
+    *((volatile int16_t *)BLITTER_X_COUNT) = 6;
+    *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0203;
+
+    uint32_t drawing_playfield_buffer = (uint32_t)(drawing_playfield->buffer);
+    uint32_t source = (drawing_playfield_buffer + 160*19) - 8;
+    uint32_t destination = (drawing_playfield_buffer + 160*19) + (8 * 14);
+    uint16_t blitter_control_word = 0xc0c5;
+
+    for (uint16_t index = 0; index < 4; index++) {
+        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = source; // 8a32
+        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination; // 8a32
+        *((volatile int16_t *)BLITTER_Y_COUNT) = 9; // 8a38
+        *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+        source += 2;
+        destination += 2;
+    }
+}
+
 void hardware_playfield_update_digits()
 {
     //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
@@ -401,12 +428,16 @@ void hardware_playfield_update_digits()
         }
     }
 
+    // TODO: we should be able to shortcut the logic in here
+    // can we have a score value held against the playfield?
     hardware_playfield_update_scoring_digits(
         &score_drawing_positions[7],
         hud_digits.score_digits,
         drawing_playfield->hud_digits.score_digits,
         drawing_playfield
     );
+
+    hardware_playfield_copy_score();
 }
 
 static void hardware_playfield_error()
