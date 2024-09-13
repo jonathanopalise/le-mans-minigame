@@ -375,7 +375,7 @@ void hardware_playfield_copy_score()
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = 0xfc00;
     *((volatile int16_t *)BLITTER_SOURCE_X_INCREMENT) = 8;
-    *((volatile int16_t *)BLITTER_SOURCE_Y_INCREMENT) = (160 - 8 * 5); // originally 158
+    *((volatile int16_t *)BLITTER_SOURCE_Y_INCREMENT) = (160 - 8 * 5) - 8; // originally 158
     *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8;
     *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = (160 - 8*5);
     *((volatile int16_t *)BLITTER_X_COUNT) = 6;
@@ -384,7 +384,7 @@ void hardware_playfield_copy_score()
     uint32_t drawing_playfield_buffer = (uint32_t)(drawing_playfield->buffer);
     uint32_t source = (drawing_playfield_buffer + 160*19) - 8;
     uint32_t destination = (drawing_playfield_buffer + 160*19) + (8 * 14);
-    uint16_t blitter_control_word = 0xc0c5;
+    uint16_t blitter_control_word = 0xc085;
 
     for (uint16_t index = 0; index < 4; index++) {
         *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = source; // 8a32
