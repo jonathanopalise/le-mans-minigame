@@ -56,6 +56,7 @@ static void global_init()
     relocate_sprites();
     mixer_init();
     initialise();
+    hud_init();
     hardware_playfield_global_init();
 
     game_state = GAME_STATE_TITLE_SCREEN_INIT;
@@ -101,7 +102,7 @@ static void title_screen_loop()
 static void in_game_init()
 {
     music_init();
-    hud_init();
+    hud_game_init();
     hardware_playfield_init();
     road_corners_init();
     player_car_initialise();
@@ -129,7 +130,7 @@ static void in_game_loop()
 
     time_of_day_update();
     hud_reduce_time();
-    hud_update_digits();
+    hud_update_score_digits();
     player_car_handle_inputs();
     opponent_cars_update();
     trackside_items_update_nearest();

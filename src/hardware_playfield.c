@@ -25,6 +25,33 @@ uint16_t hardware_playfield_shaking = 0;
 
 struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 
+struct ScoreDrawingPosition {
+    uint16_t blocks_across;
+    uint16_t skew;
+};
+
+struct ScoreDrawingPosition score_drawing_positions[] = {
+    {0, 9}, // 9
+    {1, 2},
+    {1, 11},
+    {2, 4},
+    {2, 13},
+    {3, 6},
+    {3, 15},
+    {4, 8}
+};
+
+struct ScoreDrawingPosition high_score_drawing_positions[] = {
+    {14, 14}, // 238
+    {15, 7}, // 247
+    {16, 0}, // 256
+    {16, 9}, // 265
+    {17, 2}, // 274
+    {17, 11}, // 283
+    {18, 4}, // 292
+    {18, 13} // 301
+};
+
 void hardware_playfield_handle_vbl()
 {
 	if (ready_index >= 0) {
@@ -170,6 +197,29 @@ void hardware_playfield_erase_sprites()
     drawing_playfield->sprites_drawn = 0;
 }
 
+static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
+{
+    int8_t desired_digit;
+    struct StatusDefinition *status_definition;
+
+    for (int16_t index = SCORE_DIGIT_COUNT - 1; index >=0; index--) {
+        desired_digit = desired_score_digits[index];
+        if (desired_digit != current_score_digits[index]) {
+            current_score_digits[index] = desired_digit;
+            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + desired_digit];
+            draw_status(
+                status_definition->words, // confirmed correct
+                &hardware_playfield->buffer[160 * 19 + (current_score_drawing_position->blocks_across * 8)],
+                status_definition->source_data_width_pixels,
+                status_definition->source_data_height_lines,
+                current_score_drawing_position->skew
+            );
+
+        }
+        current_score_drawing_position--;
+    }
+}
+
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
 {
 #ifdef __NATFEATS_DEBUG
@@ -280,6 +330,21 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         hardware_playfield->hud_digits.score_digits[index] = -1;
         hardware_playfield->hud_digits.high_score_digits[index] = -1;
     }
+
+    // TODO: i think we need to get rid of hardware_playfield->hud_digits.high_score_digits if possible
+    hardware_playfield_update_scoring_digits(
+        &high_score_drawing_positions[7],
+        hud_digits.high_score_digits,
+        hardware_playfield->hud_digits.high_score_digits,
+        hardware_playfield
+    );
+
+    hardware_playfield_update_scoring_digits(
+        &score_drawing_positions[7],
+        hud_digits.score_digits,
+        hardware_playfield->hud_digits.score_digits,
+        hardware_playfield
+    );
 }
 
 void hardware_playfield_global_init()
@@ -288,7 +353,6 @@ void hardware_playfield_global_init()
     hardware_playfields[0].buffer = phys_base;
     hardware_playfields[1].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES / 2;
     hardware_playfields[2].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES;
-
 }
 
 void hardware_playfield_init()
@@ -337,71 +401,12 @@ void hardware_playfield_update_digits()
         }
     }
 
-    uint16_t blocks_across;
-    uint16_t skew;
-    for (int16_t index = SCORE_DIGIT_COUNT - 1; index >=0; index--) {
-        desired_digit = hud_digits.score_digits[index];
-        if (desired_digit != drawing_playfield->hud_digits.score_digits[index]) {
-            drawing_playfield->hud_digits.score_digits[index] = desired_digit;
-            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + desired_digit];
-            // start at xpos = 9, increment by 9
-            switch (index) {
-                case 0:
-                    blocks_across = 0;
-                    skew = 9;
-                    break;
-                case 1:
-                    // 18 = 16 + 2
-                    blocks_across = 1;
-                    skew = 2;
-                    break;
-                case 2:
-                    // 27 = 16 + 11
-                    blocks_across = 1;
-                    skew = 11;
-                    break;
-                case 3:
-                    // 36 = 32 + 4
-                    blocks_across = 2;
-                    skew = 4;
-                    break;
-                case 4:
-                    // 45 = 32 + 13
-                    blocks_across = 2;
-                    skew = 13;
-                    break;
-                case 5:
-                    // 54 = 48 + 6
-                    blocks_across = 3;
-                    skew = 6;
-                    break;
-                case 6:
-                    // 63 = 48 + 15
-                    blocks_across = 3;
-                    skew = 15;
-                    break;
-                case 7:
-                    // 72 = 64 + 6
-                    blocks_across = 4;
-                    skew = 8;
-                    break;
-            }
-            draw_status(
-                status_definition->words, // confirmed correct
-                &drawing_playfield->buffer[160 * 19 + (blocks_across * 8)],
-                status_definition->source_data_width_pixels,
-                status_definition->source_data_height_lines,
-                skew
-            );
-        }
-    }
-
-    // speedo starts at x = 271, y = 164
-    // first digit at x = 275 ()
-    // second digit at x = 286
-    // third digit at x = 297
-
-
+    hardware_playfield_update_scoring_digits(
+        &score_drawing_positions[7],
+        hud_digits.score_digits,
+        drawing_playfield->hud_digits.score_digits,
+        drawing_playfield
+    );
 }
 
 static void hardware_playfield_error()
@@ -423,10 +428,5 @@ void hardware_playfield_frame_complete()
 
     drawing_playfield = &hardware_playfields[drawing_index];
 }
-
-/*struct HardwarePlayfield *hardware_playfield_get_drawing_playfield()
-{
-    return &hardware_playfields[drawing_index];
-}*/
 
 
