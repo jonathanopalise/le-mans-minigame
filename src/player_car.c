@@ -209,8 +209,8 @@ void player_car_handle_inputs()
 
     if (player_car_altitude == 0) {
         if ((player_car_logical_xpos > 11500000 || player_car_logical_xpos < -11500000)) {
-            if (player_car_speed > 100) {
-                player_car_speed -= 8;
+            if (player_car_speed > 200) {
+                player_car_speed -= 6;
             }
             if (player_car_speed < 0) {
                 player_car_speed = 0;

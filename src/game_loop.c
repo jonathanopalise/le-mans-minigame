@@ -159,7 +159,7 @@ static void in_game_loop()
         display_list_add_sprite(
             &sprite_definitions[player_car_sprite_definition_offset],
             160,
-            194 - (player_car_altitude >> 8)
+            194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
         );
     }
 
