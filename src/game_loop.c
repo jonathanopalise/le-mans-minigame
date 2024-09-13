@@ -28,6 +28,7 @@
 #define GAME_OVER_DEFINITION_OFFSET 202
 #define GET_READY_DEFINITION_OFFSET 203
 #define GO_DEFINITION_OFFSET 204
+#define TIME_EXTEND_DEFINITION_OFFSET 216
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
@@ -114,6 +115,8 @@ static void in_game_init()
     *((volatile uint16_t *)0xffff8240) = 0x0;
     game_state = GAME_STATE_IN_GAME_LOOP;
     race_ticks = 0;
+    time_extend_countdown = 0;
+    passed_start_line = 0;
 }
 
 static void in_game_loop()
@@ -186,6 +189,15 @@ static void in_game_loop()
                 160,
                 119
             );
+        } else if (time_extend_countdown > 0) {
+            if (time_extend_countdown & 8) {
+                hardware_playfield_draw_sprite(
+                    &sprite_definitions[TIME_EXTEND_DEFINITION_OFFSET],
+                    160,
+                    119
+                );
+            }
+            time_extend_countdown--;
         }
     }
 

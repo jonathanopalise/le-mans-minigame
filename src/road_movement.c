@@ -89,6 +89,7 @@ void road_corners_update() {
     player_car_logical_xpos += player_xpos_shift;
 
     if (player_xpos_shift < -500000 || player_xpos_shift > 500000) {
+        // skidding sound
         play_sound(7);
     }
 

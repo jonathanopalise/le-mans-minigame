@@ -22,6 +22,8 @@ extern int32_t player_car_altitude;
 extern uint16_t active_opponent_cars;
 extern uint16_t opponent_lane_change_probability;
 extern uint32_t race_ticks;
+extern uint16_t time_extend_countdown;
+extern uint16_t passed_start_line;
 
 void player_car_initialise();
 void player_car_handle_inputs();

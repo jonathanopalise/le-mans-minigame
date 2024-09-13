@@ -34,6 +34,8 @@ uint16_t player_car_flip_image_tracker;
 uint16_t active_opponent_cars;
 uint16_t opponent_lane_change_probability;
 uint32_t race_ticks;
+uint16_t time_extend_countdown;
+uint16_t passed_start_line;
 
 void player_car_initialise()
 {
@@ -54,6 +56,8 @@ void player_car_initialise()
     active_opponent_cars = 1;
     opponent_lane_change_probability = 1;
     race_ticks = 0;
+    time_extend_countdown = 0;
+    passed_start_line = 0;
 }
 
 void player_car_handle_inputs()
@@ -187,7 +191,11 @@ void player_car_handle_inputs()
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
             play_sound(3);
             hud_increase_time(25);
+            if (passed_start_line) {
+                time_extend_countdown = 128;
+            }
             if (index == 0) {
+                passed_start_line = 1;
                 if (active_opponent_cars < 4) {
                     active_opponent_cars++;
                 }
