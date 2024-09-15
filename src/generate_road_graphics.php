@@ -15,6 +15,7 @@ const COLOUR_LIGHT_ASPHALT = 3;  // 1101 -> 1101
 const COLOUR_GRASS_1 = 1;        // 1100 -> 1000
 
 $padding = 18;
+$additionalPadding = 12;
 
 $byteOffsets = [];
 $outputWords = [];
@@ -44,7 +45,11 @@ $outputWords = array_merge($outputWords, $bitplaneMergedWords);
 
 $actualPixelWidth = 10;
 for ($index = 0; $index < 80; $index++) {
-    $roundedPixelWidth = (($actualPixelWidth - 1) & 0xffe0) + 32 + ($padding * 16);
+    $roundedPixelWidth = (($actualPixelWidth - 1) & 0xffe0) + 32 + ($padding * 16) + ($additionalPadding * 16);
+    // additional padding stops bits of road appearing on screen edges
+    if ($index == 4 || $index == 8 || $index == 12) {
+        $additionalPadding -= 4;
+    }
 
     $textureStep = 1.0 / (float)$actualPixelWidth;
     $texturePosition = 0;
