@@ -1817,5 +1817,14 @@ $definitions = [
         'height' => 6,
         'permittedSkews' => [],
     ],
+
+    // player car shadow 233
+    [
+        'label' => 'car-shadow',
+        'left' => 3,
+        'top' => 2386,
+        'width' => 89,
+        'height' => 10,
+    ],
 ];
 

@@ -30,6 +30,7 @@
 #define GET_READY_DEFINITION_OFFSET 203
 #define GO_DEFINITION_OFFSET 204
 #define TIME_EXTEND_DEFINITION_OFFSET 216
+#define SHADOW_DEFINITION_OFFSET 233
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
@@ -125,6 +126,7 @@ static void in_game_loop()
 {
     static uint16_t player_car_sprite_definition_offset;
     static uint16_t is_night;
+    static uint16_t player_car_visible;
 
     //music_tick();
     is_night = time_of_day_is_night();
@@ -156,21 +158,38 @@ static void in_game_loop()
 
     player_car_sprite_definition_offset = player_car_get_sprite_definition();
 
-    if ((player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) && player_car_state != PLAYER_CAR_STATE_RETURN_TO_TRACK) {
-        display_list_add_sprite(
-            &sprite_definitions[player_car_sprite_definition_offset],
-            160,
-            194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
-        );
-    }
-
     if (is_night) {
         draw_stars_fast(drawing_playfield->star_block_offsets, drawing_playfield->buffer);
         drawing_playfield->stars_drawn = 1;
     }
     drawing_playfield->stars_drawn = is_night;
 
+    player_car_visible = (player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) && player_car_state != PLAYER_CAR_STATE_RETURN_TO_TRACK;
+    if (player_car_visible) {
+        if (player_car_altitude > 0) {
+            display_list_add_sprite(
+                &sprite_definitions[SHADOW_DEFINITION_OFFSET],
+                160,
+                194
+            );
+        } else {
+            display_list_add_sprite(
+                &sprite_definitions[player_car_sprite_definition_offset],
+                160,
+                194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
+            );
+        }
+    }
+
     display_list_execute();
+
+    if (player_car_visible && player_car_altitude > 0) {
+        hardware_playfield_draw_sprite(
+            &sprite_definitions[player_car_sprite_definition_offset],
+            160,
+            194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
+        );
+    }
 
     if (frames_since_game_over) {
         {
@@ -198,7 +217,7 @@ static void in_game_loop()
                 hardware_playfield_draw_sprite(
                     &sprite_definitions[TIME_EXTEND_DEFINITION_OFFSET],
                     160,
-                    119
+                    109
                 );
             }
             time_extend_countdown--;

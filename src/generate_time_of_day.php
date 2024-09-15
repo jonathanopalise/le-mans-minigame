@@ -287,9 +287,9 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     }
 
     // tail lights switch on and off depending upon time of day
-    $tailLightsRed = 118;
-    $tailLightsGreen = 33;
-    $tailLightsBlue = 33;
+    $tailLightsRed = 255;
+    $tailLightsGreen = 0;
+    $tailLightsBlue = 0;
     if ($key > 8 && $key < 54) {
         $tailLightsRed = 255;
         $tailLightsGreen = 0;
