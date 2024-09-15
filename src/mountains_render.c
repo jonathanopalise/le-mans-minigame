@@ -33,7 +33,7 @@ void mountains_render()
         uint16_t lines_to_skip = drawing_playfield->tallest_sprite_ypos - 90;
         if (lines_to_skip >= 28) {
 #ifdef __NATFEATS_DEBUG
-        nf_print("No mountains to draw!");
+        //nf_print("No mountains to draw!");
 #endif
             return;
         }

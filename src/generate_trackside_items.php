@@ -820,19 +820,28 @@ function cmp($a, $b)
     return $a["track_position"] > $b["track_position"];
 }
 
+$duplicateTracker = [];
+
 $tracksideItems = [];
 foreach ($definitions as $definition) {
     $trackPosition = $definition['track_position'];
     $types = $definition['types'];
     $gap = $definition['gap'];
     $typesArrayIndex = 0;
+    $xpos = $definition['xpos'];
 
     for ($index = 0; $index < $definition['count']; $index++) {
-        $tracksideItems[] = [
-            'type' => $types[$typesArrayIndex],
-            'xpos' => $definition['xpos'],
-            'track_position' => $trackPosition,
-        ];
+        if (isset($duplicateTracker[$trackPosition . '-' . $xpos])) {
+            echo('ignored overlapping track item: '.$trackPosition.' at '.$xpos."\n");
+        } else {
+            $tracksideItems[] = [
+                'type' => $types[$typesArrayIndex],
+                'xpos' => $xpos,
+                'track_position' => $trackPosition,
+            ];
+
+            $duplicateTracker[$trackPosition . '-' . $xpos] = true;
+        }
 
         $trackPosition += $gap;
 

@@ -88,7 +88,7 @@ void hardware_playfield_handle_vbl()
         );*/
     } else {
 #ifdef __NATFEATS_DEBUG
-        //nf_print("Frame dropped :(");
+        nf_print("Frame dropped :(");
 #endif
     }
 }

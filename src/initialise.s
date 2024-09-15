@@ -57,7 +57,7 @@ title_screen_vbl:
 
 in_game_vbl:
 
-    movem.l d0-d2/a0-a1,-(sp)
+    movem.l d0-d1/a0-a1,-(sp)
 
     jsr _mixer_vbl
     jsr _music_tick
@@ -97,7 +97,7 @@ in_game_vbl:
     move.w (a0),$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
     ;jsr _vbl_handler
-    movem.l (sp)+,d0-d2/a0-a1
+    movem.l (sp)+,d0-d1/a0-a1
     rte
 
     ; timer 1 - top of mountains
