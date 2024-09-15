@@ -96,6 +96,8 @@ void opponent_cars_init()
 
     // doesn't really belong here as scenery related
     rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW], 8);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_RIGHT_ARROW_YELLOW], 8);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW_YELLOW], 8);
 }
 
 static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)

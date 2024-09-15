@@ -52,7 +52,7 @@ $definitions = [
         'gap' => 7000,
     ],
     [
-        'types' => ['SCENERY_TYPE_RIGHT_ARROW'],
+        'types' => ['SCENERY_TYPE_RIGHT_ARROW_YELLOW'],
         'xpos' => -3,
         'track_position' => 240000,
         'count' => 7,
@@ -138,7 +138,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_LEFT_ARROW',
+            'SCENERY_TYPE_LEFT_ARROW_YELLOW',
         ],
         'xpos' => 3,
         'track_position' => 525000,
@@ -195,7 +195,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 800000,
@@ -233,7 +233,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 1050000,
@@ -373,7 +373,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 1710000,
@@ -495,7 +495,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 2285000,
@@ -549,7 +549,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 2490000,
@@ -662,7 +662,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_LEFT_ARROW',
+            'SCENERY_TYPE_LEFT_ARROW_YELLOW',
         ],
         'xpos' => 3,
         'track_position' => 3095000,
@@ -734,7 +734,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 3335000,
@@ -797,7 +797,7 @@ $definitions = [
     ],
     [
         'types' => [
-            'SCENERY_TYPE_RIGHT_ARROW',
+            'SCENERY_TYPE_RIGHT_ARROW_YELLOW',
         ],
         'xpos' => -3,
         'track_position' => 3683000,

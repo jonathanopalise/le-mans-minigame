@@ -58,7 +58,7 @@ void time_of_day_update()
     quarter_hour_countdown--;
     if (quarter_hour_countdown == 0) {
 
-        quarter_hour_countdown = 60*1; // TODO: revert to 3
+        quarter_hour_countdown = 60*3;
         time_of_day_offset += 30;
         if (time_of_day_offset == 30*96) {
             time_of_day_offset = 0;
