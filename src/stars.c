@@ -9,7 +9,24 @@ struct StarPosition {
     uint16_t ypos;
 };
 
-uint8_t line_background_colours[100] = {
+uint16_t line_background_colours[100] = {
+    15*64, 15*64, 15*64, 15*64, 15*64, // 15
+    14*64, 14*64, 14*64, 14*64, 14*64, // 14
+    13*64, 13*64, 13*64, 13*64, 13*64, // 13
+    12*64, 12*64, 12*64, 12*64, 12*64, // 12
+    11*64, 11*64, 11*64, 11*64, 11*64, // 11
+    10*64, 10*64, 10*64, 10*64, 10*64, // 10
+    9*64, 9*64, 9*64, 9*64, 9*64, // 9
+    8*64, 8*64, 8*64, 8*64, 8*64, // 8
+    7*64, 7*64, 7*64, 7*64, 7*64, // 7
+    6*64, 6*64, 6*64, 6*64, 6*64, // 6
+    5*64, 5*64, 5*64, 5*64, 5*64, // 5
+    4*64, 4*64, 4*64, 4*64, 4*64, // 4
+    3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, // 3
+    3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64
+};
+
+uint16_t line_background_colours_2[100] = {
     15, 15, 15, 15, 15, // 15
     14, 14, 14, 14, 14, // 14
     13, 13, 13, 13, 13, // 13
@@ -25,6 +42,7 @@ uint8_t line_background_colours[100] = {
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 3
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 };
+
 
 struct StarPosition star_positions[STAR_COUNT] = {
     {154, 85},
@@ -125,7 +143,7 @@ void erase_stars()
     uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
 
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        background_colour = line_background_colours[current_star_position->ypos];
+        background_colour = line_background_colours_2[current_star_position->ypos];
         plot_source = (uint32_t *)(&star_erase_values[(background_colour << 2)]);
         plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + *current_star_block_offset);
 
