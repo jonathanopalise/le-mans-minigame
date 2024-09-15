@@ -20,6 +20,7 @@
 #include "relocate_sprites.h"
 #include "lookups.h"
 #include "stars.h"
+#include "stars_fast.h"
 #include "title_screen_graphics.h"
 #include "natfeats.h"
 #include "random.h"
@@ -164,7 +165,7 @@ static void in_game_loop()
     }
 
     if (is_night) {
-        draw_stars();
+        draw_stars_fast(drawing_playfield->star_block_offsets, drawing_playfield->buffer);
         drawing_playfield->stars_drawn = 1;
     }
     drawing_playfield->stars_drawn = is_night;

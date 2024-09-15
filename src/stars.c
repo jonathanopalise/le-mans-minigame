@@ -9,7 +9,7 @@ struct StarPosition {
     uint16_t ypos;
 };
 
-uint16_t line_background_colours[100] = {
+uint8_t line_background_colours[100] = {
     15, 15, 15, 15, 15, // 15
     14, 14, 14, 14, 14, // 14
     13, 13, 13, 13, 13, // 13

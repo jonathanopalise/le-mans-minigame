@@ -47,6 +47,7 @@ OBJECT_FILES =\
 	src/mixer_variables.o\
 	src/mixer_vbl.o\
 	src/play_sound.o\
+   	src/stars_fast.o\
     src/music.o\
 
 ASSETS_GIF = assets/round-tree.gif
@@ -202,6 +203,9 @@ src/mixer_vbl.o: src/mixer_vbl.s
 
 src/play_sound.o: src/play_sound.s
 	$(VASM) $(VASM_OPTS) src/play_sound.s -Felf -o src/play_sound.o
+
+src/stars_fast.o: src/stars_fast.s
+	$(VASM) $(VASM_OPTS) src/stars_fast.s -Felf -o src/stars_fast.o
 
 src/music.o: src/music.s src/music.h src/jracer.snd
 	$(VASM) $(VASM_OPTS) src/music.s -Felf -o src/music.o
