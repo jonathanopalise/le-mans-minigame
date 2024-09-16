@@ -4,6 +4,7 @@
 
 uint32_t quarter_hour_countdown = 60*1;
 uint32_t time_of_day_offset = 0;
+uint16_t time_of_day_is_night;
 
 void time_of_day_set_colours()
 {
@@ -49,6 +50,7 @@ void time_of_day_init()
 {
     quarter_hour_countdown = 60;
     time_of_day_offset = 30*80;
+    time_of_day_is_night = 0;
 
     time_of_day_set_colours();
 }
@@ -58,17 +60,14 @@ void time_of_day_update()
     quarter_hour_countdown--;
     if (quarter_hour_countdown == 0) {
 
-        quarter_hour_countdown = 60*3;
+        quarter_hour_countdown = 60;
         time_of_day_offset += 30;
         if (time_of_day_offset == 30*96) {
             time_of_day_offset = 0;
         }
 
+        time_of_day_is_night = time_of_day_offset >= 30*22 && time_of_day_offset <= 30*34;
+
         time_of_day_set_colours();
     }
-}
-
-uint16_t time_of_day_is_night()
-{
-    return time_of_day_offset >= 30*22 && time_of_day_offset <= 30*34;
 }

@@ -3,7 +3,8 @@
 
 void time_of_day_init();
 void time_of_day_update();
-uint16_t time_of_day_is_night();
+
+extern uint16_t time_of_day_is_night;
 
 #endif
 

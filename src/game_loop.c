@@ -39,7 +39,7 @@
 #define GAME_STATE_IN_GAME_LOOP 4
 
 uint16_t game_state;
-uint16_t joy_fire, last_joy_fire;
+uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
 
 uint16_t title_screen_palette[] = {0x0,0x5,0x888,0xd00,0x133,0xa3b,0x333,0x1b6,0x55d,0xec7,0xdde,0xfda,0xff0,0xeff,0x0,0x0};
@@ -87,12 +87,10 @@ static void title_screen_init()
     *((volatile uint8_t *)0xffff8209) = address_low_byte;
 
     game_state = GAME_STATE_TITLE_SCREEN_LOOP;
-    last_joy_fire = joy_fire;
 }
 
 static void title_screen_loop()
 {
-    last_joy_fire = joy_fire;
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
         game_state = GAME_STATE_IN_GAME_INIT;
@@ -125,11 +123,9 @@ static void in_game_init()
 static void in_game_loop()
 {
     static uint16_t player_car_sprite_definition_offset;
-    static uint16_t is_night;
     static uint16_t player_car_visible;
 
     //music_tick();
-    is_night = time_of_day_is_night();
 
     time_of_day_update();
     hud_reduce_time();
@@ -141,7 +137,7 @@ static void in_game_loop()
     road_corners_update();
     road_render();
 
-    if (is_night) {
+    if (time_of_day_is_night) {
         drawing_playfield->mountains_scroll_pixels = -1;
     } else {
         mountains_render();
@@ -158,11 +154,11 @@ static void in_game_loop()
 
     player_car_sprite_definition_offset = player_car_get_sprite_definition();
 
-    if (is_night) {
+    if (time_of_day_is_night) {
         draw_stars_fast(drawing_playfield->star_block_offsets, drawing_playfield->buffer);
         drawing_playfield->stars_drawn = 1;
     }
-    drawing_playfield->stars_drawn = is_night;
+    drawing_playfield->stars_drawn = time_of_day_is_night;
 
     player_car_visible = (player_car_invincible_countdown == 0 || player_car_invincible_countdown & 2) && player_car_state != PLAYER_CAR_STATE_RETURN_TO_TRACK;
     if (player_car_visible) {

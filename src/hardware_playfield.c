@@ -15,6 +15,7 @@
 #include "hud_digits.h"
 #include "lookups.h"
 #include "player_car.h"
+#include "time_of_day_process.h"
 
 static int16_t visible_index;
 volatile static int16_t ready_index;
@@ -135,12 +136,20 @@ void hardware_playfield_erase_sprites()
 
     int16_t lines_to_draw;
     uint8_t *destination_address;
+    uint16_t four_bitplane_line_count;
+    uint16_t two_bitplane_line_count;
+    uint16_t end_ypos;
 
     *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
     *((volatile int16_t *)BLITTER_DESTINATION_X_INCREMENT) = 8; // TODO: check value
     *((volatile int16_t *)BLITTER_ENDMASK_1) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_2) = -1;
     *((volatile int16_t *)BLITTER_ENDMASK_3) = -1;
+
+    uint16_t four_bitplane_threshold = 90;
+    if (time_of_day_is_night) {
+        four_bitplane_threshold += 29;
+    }
 
     //for (uint16_t index = drawing_playfield->sprites_drawn; index > 0; index--) {
     while (current_bitplane_draw_record < drawing_playfield->current_bitplane_draw_record) {
@@ -151,49 +160,69 @@ void hardware_playfield_erase_sprites()
         *((volatile int16_t *)BLITTER_DESTINATION_Y_INCREMENT) = current_bitplane_draw_record->destination_y_increment;
         *((volatile int16_t *)BLITTER_X_COUNT) = current_bitplane_draw_record->x_count;
 
-        if (current_bitplane_draw_record->ypos < 90) {
-            lines_to_draw = 90 - current_bitplane_draw_record->ypos;
+        if (current_bitplane_draw_record->ypos < four_bitplane_threshold) {
+            end_ypos = current_bitplane_draw_record->ypos + current_bitplane_draw_record->y_count;
+            if (end_ypos > four_bitplane_threshold) {
+                four_bitplane_line_count = four_bitplane_threshold - current_bitplane_draw_record->ypos;
+                two_bitplane_line_count = end_ypos - four_bitplane_threshold;
+            } else {
+                four_bitplane_line_count = current_bitplane_draw_record->y_count;
+                two_bitplane_line_count = 0;
+            }
+        } else {
+            four_bitplane_line_count = 0;
+            two_bitplane_line_count = current_bitplane_draw_record->y_count;
+        }
 
+        if (four_bitplane_line_count) {
             *((volatile uint16_t *)BLITTER_HOP_OP) = 0xf;
 
             *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-            *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = four_bitplane_line_count;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
             destination_address += 2;
 
             *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-            *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = four_bitplane_line_count;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
             destination_address += 2;
 
-            *((volatile uint16_t *)BLITTER_HOP_OP) = 0;
+            *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0;
 
             *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-            *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = four_bitplane_line_count;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
             destination_address += 2;
 
             *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-            *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = four_bitplane_line_count;
             *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
-            destination_address -= 2;
-            destination_address += multiply_160[lines_to_draw];
-            lines_to_draw = current_bitplane_draw_record->y_count - lines_to_draw;
-        } else {
-            lines_to_draw = current_bitplane_draw_record->y_count;
-            destination_address += 4;
+            destination_address -= 6;
+            destination_address += multiply_160[four_bitplane_line_count];
         }
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-        *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-        *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
 
-        destination_address += 2;
+        /*} else {
+            lines_to_draw = current_bitplane_draw_record->y_count;
+            destination_address += 4;
 
-        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
-        *((volatile int16_t *)BLITTER_Y_COUNT) = lines_to_draw;
-        *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+            *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0;
+        }*/
+
+        if (two_bitplane_line_count) {
+            destination_address += 4;
+
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = two_bitplane_line_count;
+            *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+
+            destination_address += 2;
+
+            *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
+            *((volatile int16_t *)BLITTER_Y_COUNT) = two_bitplane_line_count;
+            *((volatile uint8_t *)BLITTER_CONTROL) = 0xc0;
+        }
 
         current_bitplane_draw_record++;
     }

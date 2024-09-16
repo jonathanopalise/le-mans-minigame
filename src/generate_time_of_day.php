@@ -232,6 +232,12 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         if ($blue < 32) {
             $blue = 32;
         }
+        if ($green < 16) {
+            $green = 16;
+        }
+        if ($red < 16) {
+            $red = 16;
+        }
 
         $skyGradientColours[] = [$red, $green, $blue];
     }
@@ -262,6 +268,12 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $adjustedMountainBlue = intval(round($naturalMountainBlue * $skyBottomBlue / 255));
         if ($adjustedMountainBlue < 32) {
             $adjustedMountainBlue = 32;
+        }
+        if ($adjustedMountainGreen < 16) {
+            $adjustedMountainGreen = 16;
+        }
+        if ($adjustedMountainRed < 16) {
+            $adjustedMountainRed = 16;
         }
 
         $adjustedMountainColours[] = [$adjustedMountainRed, $adjustedMountainGreen, $adjustedMountainBlue];
