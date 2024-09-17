@@ -52,8 +52,6 @@ _erase_sprite:
     
     ; non-split erase here
 
-    move.w d2,d4 ; two_bitplane_line_count (d4) = current_bitplane_draw_record->y_count
-
     bra.s _two_bitplane_start
 
 _above_threshold: ; start in 4bpl region
@@ -66,7 +64,7 @@ _above_threshold: ; start in 4bpl region
     ; non-split erase starts here
 
     move.w d2,d3 ; four_bitplane_line_count (d3) = current_bitplane_draw_record->y_count
-    moveq.l #0,d4 ; two_bitplane_line_count (d4) = 0
+    moveq.l #0,d2 ; two_bitplane_line_count (d2) = 0
 
     bra.s _erase_calcs_complete
 
@@ -76,9 +74,9 @@ _split_erase:
     move.w d0,d3
     sub.w d1,d3
 
-    ; d4 (two_bitplane_line_count) = end_ypos (d5) - four_bitplane_threshold (d0)
-    move.w d5,d4
-    sub.w d0,d4
+    ; d2 (two_bitplane_line_count) = end_ypos (d5) - four_bitplane_threshold (d0)
+    move.w d5,d2
+    sub.w d0,d2
 
 _erase_calcs_complete:
 
@@ -115,7 +113,7 @@ _erase_calcs_complete:
 
 _four_bitplane_end:
 
-    tst.w d4 ; two_bitplane_line_count - anything to do?
+    tst.w d2 ; two_bitplane_line_count - anything to do?
     beq.s _erase_sprite
 
 _two_bitplane_start:
@@ -124,12 +122,12 @@ _two_bitplane_start:
 
     addq.l #4,a3
     move.w a3,(a4)    ; blitter destination
-    move.w d4,(a5)    ; ycount
+    move.w d2,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
 
     addq.l #2,a3
     move.w a3,(a4)    ; blitter destination
-    move.w d4,(a5)    ; ycount
+    move.w d2,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
 
 _two_bitplane_end:
