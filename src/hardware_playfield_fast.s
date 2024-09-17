@@ -115,7 +115,7 @@ _erase_calcs_complete:
 _four_bitplane_end:
 
     tst.w d4 ; two_bitplane_line_count - anything to do?
-    beq.s _two_bitplane_end
+    beq.s _erase_sprite
 
     ; two bitplane erase
 
