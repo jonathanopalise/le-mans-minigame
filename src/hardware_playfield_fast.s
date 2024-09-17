@@ -24,6 +24,7 @@ _hardware_playfield_erase_sprites_fast:
 
     lea $ffff8a34.w,a4 ; blitter destination (note: points to 2nd word of register)
     lea $ffff8a38.w,a5 ; blitter ycount
+    lea $ffff8a3a.w,a2 ; hop/op
     lea $ffff8a3c.w,a6 ; blitter_control
 
     moveq.l #90,d0 ; four_bitplane_threshold
@@ -84,7 +85,7 @@ _erase_calcs_complete:
     beq.s _four_bitplane_end
 
     ; four bitplane erase
-    move.w #$f,$ffff8a3a.w ; hop/op
+    move.w #$f,(a2) ; hop/op
 
     move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
@@ -96,7 +97,7 @@ _erase_calcs_complete:
     move.b d7,(a6)  ; blitter control
     addq.l #2,a3
 
-    move.w #$0,$ffff8a3a.w ; hop/op
+    move.w #$0,(a2) ; hop/op
 
     move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
@@ -118,7 +119,7 @@ _four_bitplane_end:
 
     ; two bitplane erase
 
-    move.w #0,$ffff8a3a.w ; hop/op
+    move.w #0,(a2) ; hop/op
 
     addq.l #4,a3
     move.w a3,(a4)    ; blitter destination
