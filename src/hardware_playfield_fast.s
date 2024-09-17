@@ -38,11 +38,11 @@ _erase_sprite:
     cmp.l d6,a0 ; while (current_bitplane_draw_record < drawing_playfield->current_bitplane_draw_record)
     beq _all_done
 
-    move.l (a0),a3  ; destination_address = current_bitplane_draw_record->destination_address
-    move.w 4(a0),$ffff8a30.w ; blitter dest y increment = current_bitplane_draw_record->destination_y_increment
-    move.w 6(a0),$ffff8a36.w  ; blitter x count = current_bitplane_draw_record->x_count
-    move.w 8(a0),d2 ; d2 is current_bitplane_draw_record->y_count
-    move.w 10(a0),d1 ; fetch current_bitplane_draw_record->ypos
+    move.l (a0)+,a3  ; destination_address = current_bitplane_draw_record->destination_address
+    move.w (a0)+,$ffff8a30.w ; blitter dest y increment = current_bitplane_draw_record->destination_y_increment
+    move.w (a0)+,$ffff8a36.w  ; blitter x count = current_bitplane_draw_record->x_count
+    move.w (a0)+,d2 ; d2 is current_bitplane_draw_record->y_count
+    move.w (a0)+,d1 ; fetch current_bitplane_draw_record->ypos
 
     cmp.w d0,d1 ; compare current_bitplane_draw_record->ypos (d1) with four_bitplane_threshold (d0)
 
@@ -133,7 +133,6 @@ _four_bitplane_end:
 
 _two_bitplane_end:
 
-    lea 12(a0),a0 ; next bitplane draw record
     bra _erase_sprite
 
 _all_done:
