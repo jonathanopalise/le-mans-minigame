@@ -31,7 +31,7 @@ _hardware_playfield_erase_sprites_fast:
 
     move.w #90,d0 ; four_bitplane_threshold
     tst.w _time_of_day_is_night
-    bne.s _erase_sprite
+    beq.s _erase_sprite
 
     add.w #29,d0 ; adjust four_bitplane_threshold
 
