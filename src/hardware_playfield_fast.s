@@ -41,7 +41,7 @@ _erase_sprite:
     cmp.l d6,a0 ; while (current_bitplane_draw_record < drawing_playfield->current_bitplane_draw_record)
     beq _all_done
 
-    // TODO: does the destination need to be a long?
+    ; TODO: does the destination need to be a long?
     move.l (a0)+,a3  ; destination_address = current_bitplane_draw_record->destination_address
     move.w (a0)+,$ffff8a30.w ; blitter dest y increment = current_bitplane_draw_record->destination_y_increment
     move.w (a0)+,$ffff8a36.w  ; blitter x count = current_bitplane_draw_record->x_count
@@ -98,7 +98,7 @@ _erase_calcs_complete:
     move.b d7,(a6)  ; blitter control
     addq.l #2,a3
 
-    move.w #$0,(a2) ; hop/op
+    clr.w (a2) ; hop/op
 
     move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
