@@ -20,6 +20,7 @@ _hardware_playfield_erase_sprites_fast:
     move.w d0,$ffff8a2c.w
     move.w #8,$ffff8a2e.w
     moveq.l #-64,d7 ; control word - aka $c0
+    moveq.l #$f,d4
 
     lea.l _multiply_160,a1 ; a1 is multiply_160
 
@@ -40,6 +41,7 @@ _erase_sprite:
     cmp.l d6,a0 ; while (current_bitplane_draw_record < drawing_playfield->current_bitplane_draw_record)
     beq _all_done
 
+    // TODO: does the destination need to be a long?
     move.l (a0)+,a3  ; destination_address = current_bitplane_draw_record->destination_address
     move.w (a0)+,$ffff8a30.w ; blitter dest y increment = current_bitplane_draw_record->destination_y_increment
     move.w (a0)+,$ffff8a36.w  ; blitter x count = current_bitplane_draw_record->x_count
@@ -84,7 +86,7 @@ _erase_calcs_complete:
     beq.s _four_bitplane_end
 
     ; four bitplane erase
-    move.w #$f,(a2) ; hop/op
+    move.w d4,(a2) ; hop/op
 
     move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
@@ -130,8 +132,6 @@ _two_bitplane_start:
     move.w a3,(a4)    ; blitter destination
     move.w d2,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
-
-_two_bitplane_end:
 
     bra _erase_sprite
 
