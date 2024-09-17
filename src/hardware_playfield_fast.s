@@ -29,6 +29,7 @@ _hardware_playfield_erase_sprites_fast:
     lea $ffff8a3c.w,a6 ; blitter_control
 
     moveq.l #90,d0 ; four_bitplane_threshold
+    move.w #0,(a2) ; hop/op ; initial state of hop/op - means that we don't need to set for 2bpl passes
     tst.w _time_of_day_is_night
     beq.s _erase_sprite
 
@@ -51,10 +52,9 @@ _erase_sprite:
     
     ; non-split erase here
 
-    move.w #0,d3 ; four_bitplane_line_count (d3) = 0
     move.w d2,d4 ; two_bitplane_line_count (d4) = current_bitplane_draw_record->y_count
 
-    bra.s _erase_calcs_complete
+    bra.s _two_bitplane_start
 
 _above_threshold: ; start in 4bpl region
 
@@ -66,7 +66,7 @@ _above_threshold: ; start in 4bpl region
     ; non-split erase starts here
 
     move.w d2,d3 ; four_bitplane_line_count (d3) = current_bitplane_draw_record->y_count
-    move.w #0,d4 ; two_bitplane_line_count (d4) = 0
+    moveq.l #0,d4 ; two_bitplane_line_count (d4) = 0
 
     bra.s _erase_calcs_complete
 
@@ -118,9 +118,9 @@ _four_bitplane_end:
     tst.w d4 ; two_bitplane_line_count - anything to do?
     beq.s _erase_sprite
 
-    ; two bitplane erase
+_two_bitplane_start:
 
-    move.w #0,(a2) ; hop/op
+    ; two bitplane erase
 
     addq.l #4,a3
     move.w a3,(a4)    ; blitter destination
