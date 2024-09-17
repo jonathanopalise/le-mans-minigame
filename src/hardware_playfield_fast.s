@@ -10,15 +10,16 @@ _hardware_playfield_erase_sprites_fast:
     ; pass in drawing_playfield->buffer and assign to a2
     ; pass in drawing_playfield->bitplane_draw_records and assign to a0
 
-    move.l 4(a0),d6 ; drawing_playfield->current_bitplane_draw_record
-    move.l 8(a0),$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
-    move.l 12(a0),a0 ; drawing_playfield->bitplane_draw_records
+    addq.l #4,a0
+    move.l (a0)+,d6 ; drawing_playfield->current_bitplane_draw_record
+    move.l (a0)+,$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
+    move.l (a0)+,a0 ; drawing_playfield->bitplane_draw_records
 
     moveq.l #-1,d0
     move.l d0,$ffff8a28.w
     move.w d0,$ffff8a2c.w
     move.w #8,$ffff8a2e.w
-    move.b #$c0,d7
+    moveq.l #-64,d7 ; control word - aka $c0
 
     lea.l _multiply_160,a1 ; a1 is multiply_160
 
