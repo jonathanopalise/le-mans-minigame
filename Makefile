@@ -48,6 +48,7 @@ OBJECT_FILES =\
 	src/mixer_vbl.o\
 	src/play_sound.o\
    	src/stars_fast.o\
+    src/hardware_playfield_fast.o\
     src/music.o\
 
 ASSETS_GIF = assets/round-tree.gif
@@ -63,7 +64,7 @@ src/lemans.o: src/lemans.c $(OBJECT_FILES)
 src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/road_movement.h src/mountains_render.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/random.h src/title_screen_graphics.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
-src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h src/lookups.h src/player_car.h src/time_of_day_process.h src/stars.h
+src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h src/lookups.h src/player_car.h src/time_of_day_process.h src/stars.h src/hardware_playfield_fast.h
 	$(CC) $(CFLAGS) -c src/hardware_playfield.c -o src/hardware_playfield.o
 
 src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
@@ -206,6 +207,9 @@ src/play_sound.o: src/play_sound.s
 
 src/stars_fast.o: src/stars_fast.s
 	$(VASM) $(VASM_OPTS) src/stars_fast.s -Felf -o src/stars_fast.o
+
+src/hardware_playfield_fast.o: src/hardware_playfield_fast.s
+	$(VASM) $(VASM_OPTS) src/hardware_playfield_fast.s -Felf -o src/hardware_playfield_fast.o
 
 src/music.o: src/music.s src/music.h src/jracer.snd
 	$(VASM) $(VASM_OPTS) src/music.s -Felf -o src/music.o

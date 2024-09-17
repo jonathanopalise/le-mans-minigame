@@ -17,6 +17,7 @@
 #include "player_car.h"
 #include "time_of_day_process.h"
 #include "stars.h"
+#include "hardware_playfield_fast.h"
 
 static int16_t visible_index;
 volatile static int16_t ready_index;
@@ -131,8 +132,9 @@ void hardware_playfield_copy_and_erase_previous_bitplane_draw_record(struct Bitp
 
 void hardware_playfield_erase_sprites()
 {
-    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
+#ifdef FOO
+    //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
     struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
 
     int16_t lines_to_draw;
@@ -164,6 +166,7 @@ void hardware_playfield_erase_sprites()
         if (current_bitplane_draw_record->ypos < four_bitplane_threshold) {
             end_ypos = current_bitplane_draw_record->ypos + current_bitplane_draw_record->y_count;
             if (end_ypos > four_bitplane_threshold) {
+                // split erase
                 four_bitplane_line_count = four_bitplane_threshold - current_bitplane_draw_record->ypos;
                 two_bitplane_line_count = end_ypos - four_bitplane_threshold;
             } else {
@@ -204,6 +207,7 @@ void hardware_playfield_erase_sprites()
         }
 
         if (two_bitplane_line_count) {
+            *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0;
             destination_address += 4;
 
             *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = destination_address;
@@ -219,6 +223,12 @@ void hardware_playfield_erase_sprites()
 
         current_bitplane_draw_record++;
     }
+#endif
+    hardware_playfield_erase_sprites_fast(
+        drawing_playfield->current_bitplane_draw_record,
+        drawing_playfield->buffer,
+        drawing_playfield->bitplane_draw_records
+    );
 
     drawing_playfield->current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
     drawing_playfield->sprites_drawn = 0;
