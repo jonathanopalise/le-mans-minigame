@@ -11,15 +11,12 @@ _hardware_playfield_erase_sprites_fast:
     ; pass in drawing_playfield->bitplane_draw_records and assign to a0
 
     move.l 4(a0),d6 ; drawing_playfield->current_bitplane_draw_record
-    move.l 8(a0),a2 ; drawing_playfield->buffer
+    move.l 8(a0),$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
     move.l 12(a0),a0 ; drawing_playfield->bitplane_draw_records
 
-    move.l a2,$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
-
-    move.w #$ffff,$ffff8a28.w
-    move.w #$ffff,$ffff8a2a.w
-    move.w #$ffff,$ffff8a2c.w
-
+    moveq.l #-1,d0
+    move.l d0,$ffff8a28.w
+    move.w d0,$ffff8a2c.w
     move.w #8,$ffff8a2e.w
     move.b #$c0,d7
 
@@ -29,7 +26,7 @@ _hardware_playfield_erase_sprites_fast:
     lea $ffff8a38.w,a5 ; blitter ycount
     lea $ffff8a3c.w,a6 ; blitter_control
 
-    move.w #90,d0 ; four_bitplane_threshold
+    moveq.l #90,d0 ; four_bitplane_threshold
     tst.w _time_of_day_is_night
     beq.s _erase_sprite
 
