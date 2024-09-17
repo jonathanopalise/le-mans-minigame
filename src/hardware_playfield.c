@@ -202,14 +202,6 @@ void hardware_playfield_erase_sprites()
             destination_address += multiply_160[four_bitplane_line_count];
         }
 
-
-        /*} else {
-            lines_to_draw = current_bitplane_draw_record->y_count;
-            destination_address += 4;
-
-            *((volatile uint16_t *)BLITTER_HOP_OP) = 0x0;
-        }*/
-
         if (two_bitplane_line_count) {
             destination_address += 4;
 
@@ -234,14 +226,14 @@ void hardware_playfield_erase_sprites()
 
 static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
 {
-    int8_t desired_digit;
     struct StatusDefinition *status_definition;
+    uint8_t *desired_digit = desired_score_digits;
+    uint8_t *current_digit = current_score_digits;
 
-    for (int16_t index = SCORE_DIGIT_COUNT - 1; index >=0; index--) {
-        desired_digit = desired_score_digits[index];
-        if (desired_digit != current_score_digits[index]) {
-            current_score_digits[index] = desired_digit;
-            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + desired_digit];
+    for (int16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
+        if (*desired_digit != *current_digit) {
+            *current_digit = *desired_digit;
+            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + *desired_digit];
             draw_status(
                 status_definition->words, // confirmed correct
                 &hardware_playfield->buffer[160 * 19 + (current_score_drawing_position->blocks_across * 8)],
@@ -251,7 +243,9 @@ static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition
             );
 
         }
-        current_score_drawing_position--;
+        current_score_drawing_position++;
+        desired_digit++;
+        current_digit++;
     }
 }
 
@@ -369,14 +363,14 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
 
     // TODO: i think we need to get rid of hardware_playfield->hud_digits.high_score_digits if possible
     hardware_playfield_update_scoring_digits(
-        &high_score_drawing_positions[7],
+        high_score_drawing_positions,
         hud_digits.high_score_digits,
         hardware_playfield->hud_digits.high_score_digits,
         hardware_playfield
     );
 
     hardware_playfield_update_scoring_digits(
-        &score_drawing_positions[7],
+        score_drawing_positions,
         hud_digits.score_digits,
         hardware_playfield->hud_digits.score_digits,
         hardware_playfield
@@ -467,7 +461,7 @@ void hardware_playfield_update_digits()
     // TODO: we should be able to shortcut the logic in here
     // can we have a score value held against the playfield?
     hardware_playfield_update_scoring_digits(
-        &score_drawing_positions[7],
+        &score_drawing_positions,
         hud_digits.score_digits,
         drawing_playfield->hud_digits.score_digits,
         drawing_playfield
