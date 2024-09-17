@@ -106,15 +106,16 @@ _erase_calcs_complete:
     move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
-    subq.l #6,a3
-
-    add.w d3,d3       ; change ycount into multiply_160 lookup offset
-    add.w (a1,d3),a3  ; destination += multiply_160[four_bitplane_line_count]
 
 _four_bitplane_end:
 
     tst.w d2 ; two_bitplane_line_count - anything to do?
     beq.s _erase_sprite
+
+    subq.l #6,a3
+
+    add.w d3,d3       ; change ycount into multiply_160 lookup offset
+    add.w (a1,d3),a3  ; destination += multiply_160[four_bitplane_line_count]
 
 _two_bitplane_start:
 
