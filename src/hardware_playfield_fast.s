@@ -14,18 +14,18 @@ _hardware_playfield_erase_sprites_fast:
     move.l 8(a0),a2 ; drawing_playfield->buffer
     move.l 12(a0),a0 ; drawing_playfield->bitplane_draw_records
 
-    ;move.l a2,$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
+    move.l a2,$ffff8a32.w ; set top word of drawing_playfield->buffer into blitter destination
 
-    move.w #0,$ffff8a3a.w
     move.w #$ffff,$ffff8a28.w
     move.w #$ffff,$ffff8a2a.w
     move.w #$ffff,$ffff8a2c.w
+
     move.w #8,$ffff8a2e.w
     move.b #$c0,d7
 
     lea.l _multiply_160,a1 ; a1 is multiply_160
 
-    lea $ffff8a32.w,a4 ; blitter destination (note: points to 2nd word of register)
+    lea $ffff8a34.w,a4 ; blitter destination (note: points to 2nd word of register)
     lea $ffff8a38.w,a5 ; blitter ycount
     lea $ffff8a3c.w,a6 ; blitter_control
 
@@ -89,24 +89,24 @@ _erase_calcs_complete:
     ; four bitplane erase
     move.w #$f,$ffff8a3a.w ; hop/op
 
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
     addq.l #2,a3
 
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
     addq.l #2,a3
 
     move.w #$0,$ffff8a3a.w ; hop/op
 
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
     addq.l #2,a3
 
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d3,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
     subq.l #6,a3
@@ -124,12 +124,12 @@ _four_bitplane_end:
     move.w #0,$ffff8a3a.w ; hop/op
 
     addq.l #4,a3
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d4,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
 
     addq.l #2,a3
-    move.l a3,(a4)    ; blitter destination
+    move.w a3,(a4)    ; blitter destination
     move.w d4,(a5)    ; ycount
     move.b d7,(a6)  ; blitter control
 
