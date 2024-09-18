@@ -273,6 +273,10 @@ label_7a374:
     cmp.w original_height_in_lines,d3
     bne.s compiled_not_usable
 
+    ;tst.w disable_compiled_sprites
+    ;bne.s compiled_not_usable
+    ; and then from this point onwards, we profile until the appropriate ret
+
     move.l usp,a2 ; get address of table
 
 ;boo:

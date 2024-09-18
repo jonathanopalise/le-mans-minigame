@@ -54,6 +54,7 @@ static void global_init()
     nf_print("hello from lemans!");
 #endif
 
+    init_stars();
     lookups_init();
     relocate_sprites();
     mixer_init();

@@ -117,6 +117,45 @@ $lines = array_merge(
     $lines,
     [
         '};',
+        '',
+        'uint16_t star_xpos_dest_offsets[] = {',
+    ]
+);
+
+for ($index = 0; $index < 320; $index++) {
+    $line = '0x'.dechex(($index >> 1) & 0xf8);
+
+    if ($index != 319) {
+        $line .= ',';
+    }
+
+    $lines[] = $line;
+}
+
+$lines = array_merge(
+    $lines,
+    [
+        '};',
+        '',
+        'uint16_t star_xpos_source_offsets[] = {',
+    ]
+);
+
+for ($index = 0; $index < 320; $index++) {
+    $line = '0x'.dechex(($index & 15) << 3);
+
+    if ($index != 319) {
+        $line .= ',';
+    }
+
+    $lines[] = $line;
+}
+
+
+$lines = array_merge(
+    $lines,
+    [
+        '};',
     ]
 );
 

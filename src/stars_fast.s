@@ -2,9 +2,9 @@
 
 _draw_stars_fast:
     ; a0 = current_star_position
-    ; a1 = line_background_colours
+    ; a1 = star_xpos_dest_offsets
     ; a2 = star_plot_values
-    ; a3 = multiply_160
+    ; a3 = star_xpos_source_offsets
     ; a4 = current_star_block_offset
     ; usp = drawing_playfield->buffer
 
@@ -19,17 +19,16 @@ _draw_stars_fast:
     move.l 8(a0),a5
     move.l a5,usp
 
-    lea _line_background_colours,a1
+    lea _star_xpos_dest_offsets,a1
     lea _star_plot_values,a2
-    lea _multiply_160,a3
+    lea _star_xpos_source_offsets,a3
     lea _star_positions,a0
 
     move.l _mountains_shift,d4
     swap d4 ; normalised_mountains_shift
 
-    moveq.l #15,d5
-    move.w #$f8,d6
     moveq.l #49,d7
+    moveq.l #0,d1
 
 _one_star:
 
@@ -41,31 +40,19 @@ _one_star:
 
 _still_on_screen:
 
-    move.l d0,d3       ; save shifted star xpos for later
+    add.w d0,d0 ; turn xpos into a lookup table offset
 
-    move.w (a0)+,d1    ; current_star_position->ypos
+    move.w (a0)+,d1      ; add offset for start of destination line (ypos * 160)
+    add.w (a1,d0),d1     ; add offset from star_xpos_dest_offsets, d1 is now offset within framebuffer
+    move.w d1,(a4)+      ; write block offset
+    move.l usp,a5
+    add.l d1,a5
 
-    add.w d1,d1        ; adjust d1 to be index into multiply_160/line_background_colours table
-    move.w (a1,d1),d2  ; line_background_colours[ypos]
-    and.w d5,d0        ; (shifted_star_xpos & 15)
-    add.w d0,d0        ; (shifted_star_xpos & 15) << 2
-    add.w d0,d0
-    add.w d2,d0        ; (background_colour << 6) + ((shifted_star_xpos & 15) << 2)
-    add.w d0,d0        ; uint16_t offset into star_plot_values
+    move.l a2,a6
+    add.w (a0)+,a6      ; get offset for start of source data based on background colour
+    add.w (a3,d0),a6       ; add offset from star_xpos_source_offsets
 
-    move.l a2,a6       ; star plot values
-    add.w d0,a6        ; star_plot_values with offset
-
-    ; ypos is in d1, xpos is in d3
-
-    move.w (a3,d1),d1  ; multiply d1 by 160
-    lsr.w #1,d3        ; shifted_star_xpos >> 1
-    and.w d6,d3        ; shifted_star_xpos & 0xf8
-    add.w d1,d3        ; multiply_160[ypos] + ((shifted_star_xpos >> 1) & 0xf8) 
-    move.w d3,(a4)+    ; *current_star_block_offset = block_offset
-
-    move.l usp,a5      ; get drawing buffer address
-    add.w d3,a5        ; add block offset
+    lea 2(a0),a0 ; skip final property
 
     move.l (a6)+,(a5)+
     move.l (a6)+,(a5)+
