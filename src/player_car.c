@@ -24,7 +24,7 @@ int32_t old_player_car_track_position;
 int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
 int16_t player_car_speed;
-int32_t player_car_steering;
+int16_t player_car_steering;
 uint16_t player_car_state;
 uint16_t player_car_crash_countdown;
 uint16_t player_car_invincible_countdown;
@@ -136,8 +136,8 @@ void player_car_handle_inputs()
         if (race_ticks > 200) {
             if (joy_up && !hud_is_time_up()) {
                 player_car_speed += 3;
-                if (player_car_speed > 1200) {
-                    player_car_speed = 1200;
+                if (player_car_speed > 1199) {
+                    player_car_speed = 1199;
                 }
             } else if (joy_down) {
                 player_car_speed -= 14;
@@ -199,7 +199,9 @@ void player_car_handle_inputs()
                 if (active_opponent_cars < 4) {
                     active_opponent_cars++;
                 }
-                opponent_lane_change_probability+=1;
+                if (opponent_lane_change_probability < 255) {
+                    opponent_lane_change_probability+=1;
+                }
             }
         }
     }

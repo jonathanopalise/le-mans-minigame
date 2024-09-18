@@ -15,7 +15,7 @@ extern int32_t camera_track_position;
 extern int32_t player_car_track_position;
 extern int32_t player_car_logical_xpos;
 extern int16_t player_car_speed;
-extern int32_t player_car_steering;
+extern int16_t player_car_steering;
 extern uint16_t player_car_state;
 extern uint16_t player_car_invincible_countdown;
 extern int32_t player_car_altitude;

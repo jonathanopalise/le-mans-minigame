@@ -180,6 +180,7 @@ void opponent_cars_update()
     int32_t distance_max_advance;
     uint16_t target_lane;
     uint16_t target_lane_2;
+    uint32_t random_probability;
 
     struct OpponentCar *nearest_opponent_car;
     int32_t nearest_opponent_car_distance;
@@ -257,6 +258,7 @@ void opponent_cars_update()
 
     current_opponent_car = opponent_cars;
 
+    random_probability = random();
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         if ((index + 1) > active_opponent_cars) {
             continue;
@@ -288,7 +290,7 @@ void opponent_cars_update()
         // if none, we can carry on our merry way
         take_evasive_action = 0;
 
-        if ((random() & 2047) < opponent_lane_change_probability) {
+        if ((random_probability & 255) < opponent_lane_change_probability) {
             // attempt to change lane to annoy player
             take_evasive_action = 1;
         } else {
@@ -307,6 +309,7 @@ void opponent_cars_update()
                 current_other_opponent_car++;
             }
         }
+        random_probability >>= 8;
 
         // lane ahead is blocked
         // if I can move left or right, do so

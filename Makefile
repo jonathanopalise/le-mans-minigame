@@ -73,7 +73,7 @@ src/draw_sprite.o: src/draw_sprite.s src/draw_sprite.h
 src/draw_status.o: src/draw_status.s src/draw_status.h
 	$(VASM) $(VASM_OPTS) src/draw_status.s -Felf -o src/draw_status.o
 
-src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h src/play_sound.h
+src/road_movement.o: src/road_movement.c src/road_movement.h src/road_geometry.h src/player_car.h src/movement_update_inner.h src/trackside_items.h src/trackside_items_process.h src/play_sound.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/road_movement.c -o src/road_movement.o
 
 src/movement_update_inner.o: src/movement_update_inner.s src/movement_update_inner.h

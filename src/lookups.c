@@ -264,6 +264,7 @@ uint16_t multiply_160[] = {
     40800
 };
 
+uint16_t corner_shifts[1200];
 
 void lookups_init()
 {
@@ -275,6 +276,10 @@ void lookups_init()
 
     for (index = 0; index < 100; index++) {
         road_scanline_pointers[index] = &road_scanlines[index]; 
-    } 
+    }
+
+    for (index = 0; index < 1200; index++) {
+        corner_shifts[index] = ((index * index) / 375);
+    }
 }
 
