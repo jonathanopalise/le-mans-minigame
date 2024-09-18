@@ -806,6 +806,11 @@ class Sprite
             $cumulativeFinalMaskWord >>= 1;
         }
     }
+
+    public function getLongestRightEnd()
+    {
+        return 16 - $this->getEmptyPixelsOnRight();
+    }
 }
 
 class PlanarData

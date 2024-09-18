@@ -98,20 +98,25 @@ void hardware_playfield_handle_vbl()
 
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
 {
+    int16_t normalised_xpos = xpos - sprite_definition->origin_x;
     int16_t normalised_ypos = ypos - sprite_definition->origin_y;
-
+    struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->current_bitplane_draw_record;
+    uint16_t skew;
+    
     //struct HardwarePlayfield *playfield = hardware_playfield_get_drawing_playfield();
 
     // need a return value from draw_sprite if nothing gets draw
     // so that we don't advance current_bitplane_draw_record
+
+    // TODO: simplify this interface so we're not pushing so much on the stack!
     uint16_t sprite_drawn = draw_sprite(
-        xpos - sprite_definition->origin_x,
+        normalised_xpos,
         normalised_ypos,
         sprite_definition->words,
         sprite_definition->source_data_width,
         sprite_definition->source_data_height,
         drawing_playfield->buffer,
-        drawing_playfield->current_bitplane_draw_record,
+        current_bitplane_draw_record,
         &(sprite_definition->compiled_sprite_0)
     );
 
@@ -119,6 +124,22 @@ void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, 
         if (normalised_ypos < drawing_playfield->tallest_sprite_ypos) {
             drawing_playfield->tallest_sprite_ypos = normalised_ypos;
         }
+
+        // longest end: 14, skew: 0 = no overflow
+        // longest end: 15, skew: 1 = overflow (we can't wind back the additional word)
+
+        if (sprite_drawn == 2) {
+            skew = normalised_xpos & 0xe;
+            // this needs to be changed to something like highest_tolerable_skew
+            // we can get rid of some of the arithmetic
+            if (skew) {
+                if ((sprite_definition->longest_right_end + skew) <= 16) {
+                    current_bitplane_draw_record->x_count--;
+                    current_bitplane_draw_record->destination_y_increment += 8;
+                }
+            }
+        }
+
         drawing_playfield->current_bitplane_draw_record++;
     }
     //drawing_playfield->sprites_drawn++;
@@ -231,7 +252,7 @@ void hardware_playfield_erase_sprites()
     );
 
     drawing_playfield->current_bitplane_draw_record = drawing_playfield->bitplane_draw_records;
-    drawing_playfield->sprites_drawn = 0;
+    //drawing_playfield->sprites_drawn = 0;
     drawing_playfield->tallest_sprite_ypos = 200;
 }
 

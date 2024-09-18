@@ -57,6 +57,7 @@ foreach ($definitions as $definition) {
         'origin_y' => $croppedIndexedBitmap->getOriginY(),
         'source_data_width' => $maskedSprite->getWidth(),
         'source_data_height' => $maskedSprite->getHeight(),
+        'longest_right_end' => $maskedSprite->getLongestRightEnd(),
         'words' => $planarData->getWords(),
     ];
 

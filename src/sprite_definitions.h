@@ -8,6 +8,7 @@ struct SpriteDefinition {
     uint16_t origin_y;
     uint16_t source_data_width;
     uint16_t source_data_height;
+    uint16_t longest_right_end;
     uint16_t *words;
     uint8_t *compiled_sprite_0;
     uint8_t *compiled_sprite_1;

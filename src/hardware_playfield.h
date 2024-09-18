@@ -19,7 +19,6 @@ struct HardwarePlayfield {
     uint8_t *buffer;
     struct BitplaneDrawRecord bitplane_draw_records[SPRITE_COUNT];
     struct BitplaneDrawRecord *current_bitplane_draw_record;
-    uint16_t sprites_drawn;
     uint16_t star_block_offsets[STAR_COUNT];
     uint16_t stars_drawn;
     struct HudDigits hud_digits;

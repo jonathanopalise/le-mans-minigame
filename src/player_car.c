@@ -190,7 +190,7 @@ void player_car_handle_inputs()
     for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
             play_sound(3);
-            hud_increase_time(30);
+            hud_increase_time(27);
             if (passed_start_line) {
                 time_extend_countdown = 128;
             }

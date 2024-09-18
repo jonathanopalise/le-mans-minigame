@@ -320,7 +320,9 @@ _draw_compiled_sprite_entry:
 
     jsr (a2)
 
-    bra alldone
+    moveq.l #2,d0              ; return value: compiled sprite was drawn
+    movem.l (sp)+,d2-d7/a2-a6
+    rts
 
     ; end of compiled sprites intercept
 
@@ -471,8 +473,7 @@ blitterstart:
     move.w d3,(a2)
     move.b d6,(a6)
 
-alldone:
-    moveq.l #1,d0              ; return value: something was drawn
+    moveq.l #1,d0              ; return value: standard sprite was drawn
     movem.l (sp)+,d2-d7/a2-a6
     rts
 

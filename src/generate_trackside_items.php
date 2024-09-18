@@ -648,8 +648,8 @@ $definitions = [
         ],
         'xpos' => -3,
         'track_position' => 2940000,
-        'count' => 20,
-        'gap' => 7000,
+        'count' => 14,
+        'gap' => 10000,
     ],
     [
         'types' => [
@@ -657,8 +657,8 @@ $definitions = [
         ],
         'xpos' => 3,
         'track_position' => 2940000,
-        'count' => 20,
-        'gap' => 7000,
+        'count' => 14,
+        'gap' => 10000,
     ],
     [
         'types' => [

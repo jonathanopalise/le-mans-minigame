@@ -24,6 +24,7 @@ struct SpriteDefinition sprite_definitions[] = {
         <?php echo($sprite['origin_y']); ?>,
         <?php echo($sprite['source_data_width']); ?>,
         <?php echo($sprite['source_data_height']); ?>,
+        <?php echo($sprite['longest_right_end']); ?>,
 
         <?php echo(exportArrayContent($sprite['words'], 'uint16_t')); ?>,
         <?php echo(exportArrayContent($sprite['skew_0'], 'uint8_t')); ?>,
