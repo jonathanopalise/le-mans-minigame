@@ -55,11 +55,13 @@ void road_corners_update() {
         } else {
             player_car_current_track_segment_start_position = player_car_current_track_segment_end_position;
         }
-        player_car_current_track_segment_end_position = player_car_current_track_segment_start_position + (player_car_current_track_segment->change_frequency * player_car_current_track_segment->change_count);
+        player_car_current_track_segment_end_position = player_car_current_track_segment_start_position + (player_car_current_track_segment->change_count << player_car_current_track_segment->change_frequency);
         player_car_current_track_segment_changes_applied = 0;
     }
 
-    current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) / player_car_current_track_segment->change_frequency;
+    current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) >> player_car_current_track_segment->change_frequency;
+
+    //current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) / player_car_current_track_segment->change_frequency;
     segment_changes_to_apply = (current_segment_changes_passed - player_car_current_track_segment_changes_applied);
     player_car_current_track_segment_changes_applied = current_segment_changes_passed;
 
@@ -85,6 +87,7 @@ void road_corners_update() {
     }
 
     current_road_curvature -= total_change_to_apply;
+    // TODO: mulsi and divsi
     player_xpos_shift = current_road_curvature * ((player_car_speed * player_car_speed) / 375);
     player_car_logical_xpos += player_xpos_shift;
 
@@ -94,6 +97,7 @@ void road_corners_update() {
         play_sound(7);
     }
 
+    // mulsi and divsi
     mountains_shift += current_road_curvature * player_car_speed;
     if (mountains_shift < 0) {
         mountains_shift += MAX_MOUNTAINS_SHIFT;

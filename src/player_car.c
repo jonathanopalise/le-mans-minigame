@@ -44,7 +44,7 @@ void player_car_initialise()
     player_car_invincible_countdown = 0;
     player_car_current_track_segment = track_segments;
     player_car_current_track_segment_start_position = 0;
-    player_car_current_track_segment_end_position = (player_car_current_track_segment->change_frequency * player_car_current_track_segment->change_count);
+    player_car_current_track_segment_end_position = (player_car_current_track_segment->change_count << player_car_current_track_segment->change_frequency);
     player_car_current_track_segment_changes_applied = 0;
     camera_track_position = 0;
     total_distance_travelled = 0;
