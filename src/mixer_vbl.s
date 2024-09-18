@@ -30,7 +30,7 @@ _mixer_vbl:
 	move.l		tableSoundEvents,a0															; first entry in table contains base address of engine sound effect
 	lea.l		(a0,d0.w),a0																; offset current engine effect position into engine sound effect base address
 
-    move.w      _player_car_speed+2,d0
+    move.w      _player_car_speed,d0
 	lsl.w		#4,d0																		; multiply revs by 4 to get scaler table offset
 	lea.l		table12517HzScaler,a1														; scaler table base address
 	move.l		(a1,d0.w),d1																; fetch value from scaler table offset

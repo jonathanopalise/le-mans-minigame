@@ -61,7 +61,6 @@ void road_corners_update() {
 
     current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) >> player_car_current_track_segment->change_frequency;
 
-    //current_segment_changes_passed = (camera_track_position - player_car_current_track_segment_start_position) / player_car_current_track_segment->change_frequency;
     segment_changes_to_apply = (current_segment_changes_passed - player_car_current_track_segment_changes_applied);
     player_car_current_track_segment_changes_applied = current_segment_changes_passed;
 

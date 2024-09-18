@@ -23,7 +23,7 @@ int32_t total_distance_travelled;
 int32_t old_player_car_track_position;
 int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
-int32_t player_car_speed;
+int16_t player_car_speed;
 int32_t player_car_steering;
 uint16_t player_car_state;
 uint16_t player_car_crash_countdown;

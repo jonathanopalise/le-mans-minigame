@@ -416,22 +416,11 @@ void opponent_cars_process()
     int32_t camera_relative_track_position;
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
-        // TODO: the 65535 check may eventually be over-defensive
         camera_relative_track_position = current_opponent_car->player_relative_track_position + PLAYER_CAR_DISTANCE;
-        //camera_relative_track_position = PLAYER_CAR_DISTANCE;
         if (current_opponent_car->active && camera_relative_track_position > 0 && camera_relative_track_position < 45000) {
             scanline_index = distance_to_scanline_lookup[camera_relative_track_position];
             if (scanline_index != -1) {
                 road_scanline = road_scanline_pointers[scanline_index];
-                //sprite_index = current_opponent_car->base_sprite_index + road_scanline->sprite_index_adjust;
-
-                /*sprite_index = current_opponent_car->base_sprite_index - (scanline_index / 6);
-                if (sprite_index < (current_opponent_car->base_sprite_index - 7)) {
-                    sprite_index = current_opponent_car->base_sprite_index - 7;
-                }*/
-
-                //sprite_index = (RED_CAR_BASE_INDEX - 7) + road_scanline->sprite_index_adjust;
-
                 sprite_index = (current_opponent_car->base_sprite_index - 7) + road_scanline->sprite_index_adjust;
  
                 opponent_car_xpos = lane_to_xpos_mappings[current_opponent_car->lane];
@@ -450,7 +439,6 @@ void opponent_cars_process()
                 }
 
                 screen_xpos = logical_xpos >> 16;
-
                 sprite_aspect = (screen_xpos << 1) - current_road_curvature;
 
                 if (sprite_aspect > 50) {
@@ -463,7 +451,6 @@ void opponent_cars_process()
 
                 display_list_add_sprite(
                     sprite_definition_pointers[sprite_index],
-                    //&sprite_definitions[sprite_index],
                     screen_xpos,
                     (119 + scanline_index)
                 );
