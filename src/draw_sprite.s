@@ -414,22 +414,26 @@ blitterstart:
 
     lea $ffff8a38.w,a2
     lea $ffff8a24.w,a4
+    move.l a0,(a4)
+    addq.l #2,a4
     lea $ffff8a32.w,a5 ; destination address
+    move.l a1,(a5)
+    addq.l #2,a5
     lea $ffff8a3c.w,a6
 
     move.b #$c0,d6                      ; blitter start instruction
 
     rept 3
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
     addq.l #2,a1                        ; move to next bitplane
     endr
 
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
@@ -438,32 +442,32 @@ blitterstart:
 
     addq.l #2,a0                        ; move source to next bitplane
 
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
 
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
 
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
     addq.l #2,a1                        ; move destination to next bitplane
     addq.l #2,a0                        ; move source to next bitplane
 
-    move.l a0,(a4)             ; set source address
-    move.l a1,(a5)             ; set destination
+    move.w a0,(a4)             ; set source address
+    move.w a1,(a5)             ; set destination
     move.w d3,(a2)
     move.b d6,(a6)
 
