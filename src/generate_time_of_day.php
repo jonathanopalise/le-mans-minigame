@@ -30,7 +30,7 @@ const GREEN = 1;
 const BLUE = 2;
 
 const AM_0 = [
-    SKY_TOP => [0,0,0],
+    SKY_TOP => [96,0,128],
     SKY_BOTTOM => [0,0,0],
 ];
 
