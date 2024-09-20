@@ -41,6 +41,7 @@
 #define GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION 5
 
 uint16_t game_state;
+uint16_t next_game_state;
 uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
 uint16_t transition_offset;
@@ -98,6 +99,7 @@ static void title_screen_loop()
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
         game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
+        next_game_state = GAME_STATE_IN_GAME_INIT;
         transition_offset = 0;
     } else {
         while (waiting_for_vbl) {}
@@ -120,7 +122,7 @@ static void title_screen_exit_transition_loop()
     while (waiting_for_vbl) {}
 
     if (transition_offset == 260) {
-        game_state = GAME_STATE_IN_GAME_INIT;
+        game_state = next_game_state;
     }
 }
 
@@ -260,7 +262,24 @@ static void in_game_loop()
 
     if (frames_since_game_over > 180) {
         music_stop();
-        game_state = GAME_STATE_TITLE_SCREEN_INIT;
+
+    uint32_t visible_buffer_address = hardware_playfields[0].buffer;
+
+    uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
+    uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
+    uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
+
+    *((volatile uint8_t *)0xffff8201) = address_high_byte;
+    *((volatile uint8_t *)0xffff8203) = address_mid_byte;
+    *((volatile uint8_t *)0xffff820d) = address_low_byte;
+
+    *((volatile uint8_t *)0xffff8205) = address_high_byte;
+    *((volatile uint8_t *)0xffff8207) = address_mid_byte;
+    *((volatile uint8_t *)0xffff8209) = address_low_byte;
+
+        transition_offset = 0;
+        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
+        next_game_state = GAME_STATE_TITLE_SCREEN_INIT;
     } else {
         hardware_playfield_frame_complete();
     }

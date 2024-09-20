@@ -81,24 +81,18 @@ in_game_vbl:
     lea.l _sky_gradient,a0
 
     move.w #$ee1,$ffff8242.w ; status panel colour
-    ;move.w #$070,$ffff8244.w ;TEST
 
     lea.l $ffff8246.w,a1
-    ;move.w #$321,$ffff8242.w ; mountain colour 1
-    ;move.w #$200,$ffff8244.w ; mountain colour 2
-    ;move.l (a0)+,(a1)+ ; mountain colours 1 & 2 - 8242 and 8244
     move.l (a0)+,(a1)+ ; sky gradient start 8246, 8248
     move.l (a0)+,(a1)+ ; 8a2a, 824c
     move.l (a0)+,(a1)+ ; 824e, 8250
     move.l (a0)+,(a1)+ ; 8252, 8254
     move.l (a0)+,(a1)+ ; 8256, 8258
     move.l (a0)+,(a1)+ ; 825a, 825c
-    ;move.w (a0)+,(a1)+ ; 825e sky gradient end
     move.w (a0)+,$ffff8244.w
 
     move.w (a0),$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
-    ;jsr _vbl_handler
     movem.l (sp)+,d0-d1/a0-a1
     rte
 
