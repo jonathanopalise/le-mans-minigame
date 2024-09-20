@@ -338,8 +338,17 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
 }
 
 $outputWords = [];
+$fadeOutputWords = [];
+$initialKey = 80;
+
 foreach ($timeOfDayColours as $key => $timeOfDayColour) {
     // sky gradient
+
+    if ($key == $initialKey) {
+        for ($index = 0; $index < 16; $index++) {
+            $fadeOutputWords[] = [];
+        }
+    }
 
     foreach ($timeOfDayColour['skyGradientColours'] as $rgbArray) {
         $red = $rgbArray[RED];
@@ -347,6 +356,16 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $blue = $rgbArray[BLUE];
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
+
+        if ($key == $initialKey) {
+            for ($index = 0; $index < 16; $index++) {
+                $fadeOutputWords[$index][] = generateStePaletteWord(
+                    intval(($red * $index) / 16),
+                    intval(($green * $index) / 16),
+                    intval(($blue * $index) / 16),
+                );
+            }
+        }
     }
 
     // stars
@@ -376,6 +395,16 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
 
     $outputWords[] = generateStePaletteWord($starsRed, $starsGreen, $starsBlue);
 
+    if ($key == $initialKey) {
+        for ($index = 0; $index < 16; $index++) {
+            $fadeOutputWords[$index][] = generateStePaletteWord(
+                intval(($red * $index) / 16),
+                intval(($green * $index) / 16),
+                intval(($blue * $index) / 16),
+            );
+        }
+    }
+
     // mountain colours
     foreach ($timeOfDayColour['adjustedMountainColours'] as $rgbArray) {
         $red = $rgbArray[RED];
@@ -383,6 +412,16 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $blue = $rgbArray[BLUE];
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
+
+        if ($key == $initialKey) {
+            for ($index = 0; $index < 16; $index++) {
+                $fadeOutputWords[$index][] = generateStePaletteWord(
+                    intval(($red * $index) / 16),
+                    intval(($green * $index) / 16),
+                    intval(($blue * $index) / 16),
+                );
+            }
+        }
     }
 
     foreach ($timeOfDayColour['adjustedSceneryColours'] as $rgbArray) {
@@ -391,6 +430,16 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $blue = $rgbArray[BLUE];
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
+
+        if ($key == $initialKey) {
+            for ($index = 0; $index < 16; $index++) {
+                $fadeOutputWords[$index][] = generateStePaletteWord(
+                    intval(($red * $index) / 16),
+                    intval(($green * $index) / 16),
+                    intval(($blue * $index) / 16),
+                );
+            }
+        }
     }
 
     foreach ($timeOfDayColour['adjustedGroundColours'] as $rgbArray) {
@@ -399,8 +448,27 @@ foreach ($timeOfDayColours as $key => $timeOfDayColour) {
         $blue = $rgbArray[BLUE];
 
         $outputWords[] = generateStePaletteWord($red, $green, $blue);
+
+        if ($key == $initialKey) {
+            for ($index = 0; $index < 16; $index++) {
+                $fadeOutputWords[$index][] = generateStePaletteWord(
+                    intval(($red * $index) / 16),
+                    intval(($green * $index) / 16),
+                    intval(($blue * $index) / 16),
+                );
+            }
+        }
     }
 }
+
+$flattenedFadeOutputWords = [];
+foreach ($fadeOutputWords as $fadeOutputWordCollection) {
+    foreach ($fadeOutputWordCollection as $fadeOutputWord) {
+        $flattenedFadeOutputWords[] = $fadeOutputWord;
+    }
+}
+
+$outputWords = array_merge($outputWords, $flattenedFadeOutputWords);
 
 $lines = [
     '#include "../time_of_day.h"',
@@ -434,5 +502,5 @@ if ($result === false) {
     exit(1);
 }
 
-echo("Wrote generated time of day data to " . $outputFilename . "\n");
+echo("Wrote generated time of day data to " . $outputFilename . ", entries = ".count($outputWords)."\n");
 

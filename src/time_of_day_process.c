@@ -1,6 +1,7 @@
 #include "time_of_day.h"
 #include "initialise.h"
 #include "time_of_day_process.h"
+#include "player_car.h"
 
 uint32_t quarter_hour_countdown = 60*1;
 uint32_t time_of_day_offset = 0;
@@ -57,17 +58,30 @@ void time_of_day_init()
 
 void time_of_day_update()
 {
-    quarter_hour_countdown--;
-    if (quarter_hour_countdown == 0) {
+    if (race_ticks <= 64) {
+        // 16 gradients
+        // updated every 8 frames
 
-        quarter_hour_countdown = 60 * 3;
-        time_of_day_offset += 30;
-        if (time_of_day_offset == 30*96) {
-            time_of_day_offset = 0;
+        if (race_ticks == 64) {
+            time_of_day_offset = 30*80;
+        } else {
+            time_of_day_offset = (30*96) + (30 * (race_ticks >> 2));
+            time_of_day_set_colours();
         }
-
-        time_of_day_is_night = time_of_day_offset >= 30*22 && time_of_day_offset <= 30*34;
-
         time_of_day_set_colours();
+    } else {
+        quarter_hour_countdown--;
+        if (quarter_hour_countdown == 0) {
+
+            quarter_hour_countdown = 60 * 3;
+            time_of_day_offset += 30;
+            if (time_of_day_offset == 30*96) {
+                time_of_day_offset = 0;
+            }
+
+            time_of_day_is_night = time_of_day_offset >= 30*22 && time_of_day_offset <= 30*34;
+
+            time_of_day_set_colours();
+        }
     }
 }
