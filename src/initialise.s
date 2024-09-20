@@ -44,12 +44,14 @@ dummy:
 	rte
 
 vbl:
-    cmp.w #4,_game_state ; are we in game?
+    cmp.w #4,_game_state ; in game
     beq.s in_game_vbl
-    cmp.w #2,_game_state ; are we on the title screen?
+    cmp.w #2,_game_state ; title screen
     beq.s title_screen_vbl
-    cmp.w #5,_game_state ; are we on the title screen?
+    cmp.w #5,_game_state ; title screen exit transition
     beq.s title_screen_vbl
+    cmp.w #6,_game_state ; game over exit transition
+    beq.s game_over_exit_transition_vbl
     rte
 
 title_screen_vbl:
@@ -57,15 +59,35 @@ title_screen_vbl:
     move.w #0,_waiting_for_vbl
     rte
 
+game_over_exit_transition_vbl:
+
+    move.w	#$2700,sr			; Stop all interrupts
+    movem.l d0-d1/a0-a1,-(sp)
+
+    move.w #0,_waiting_for_vbl
+    jsr _music_tick
+    jsr _trigger_in_game_colours
+
+    movem.l (sp)+,d0-d1/a0-a1
+    rte
+
 in_game_vbl:
+
+    move.w	#$2700,sr			; Stop all interrupts
 
     movem.l d0-d1/a0-a1,-(sp)
 
     jsr _mixer_vbl
     jsr _music_tick
     jsr _hardware_playfield_handle_vbl
+    jsr _trigger_in_game_colours
+    
+    movem.l (sp)+,d0-d1/a0-a1
+    rte
 
-    move.w	#$2700,sr			; Stop all interrupts
+    ; timer 1 - top of mountains
+
+_trigger_in_game_colours:
     move.l	#timer_1,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
@@ -93,10 +115,8 @@ in_game_vbl:
 
     move.w (a0),$ffff825e.w  ; index 15 (lamppost illumination and stars)
 
-    movem.l (sp)+,d0-d1/a0-a1
-    rte
 
-    ; timer 1 - top of mountains
+    rts
 
 timer_1:
     movem.l a0-a1,-(sp)

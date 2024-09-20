@@ -39,9 +39,9 @@
 #define GAME_STATE_IN_GAME_INIT 3
 #define GAME_STATE_IN_GAME_LOOP 4
 #define GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION 5
+#define GAME_STATE_GAME_OVER_EXIT_TRANSITION 6
 
 uint16_t game_state;
-uint16_t next_game_state;
 uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
 uint16_t transition_offset;
@@ -79,7 +79,9 @@ static void title_screen_init()
     uint32_t visible_buffer_address = hardware_playfields[0].buffer;
     memcpy((void *)visible_buffer_address, title_screen_graphics, 32000);
 
-    uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
+    hardware_playfield_set_visible_address(visible_buffer_address);
+
+    /*uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
     uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
     uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
 
@@ -89,7 +91,7 @@ static void title_screen_init()
 
     *((volatile uint8_t *)0xffff8205) = address_high_byte;
     *((volatile uint8_t *)0xffff8207) = address_mid_byte;
-    *((volatile uint8_t *)0xffff8209) = address_low_byte;
+    *((volatile uint8_t *)0xffff8209) = address_low_byte;*/
 
     game_state = GAME_STATE_TITLE_SCREEN_LOOP;
 }
@@ -99,14 +101,13 @@ static void title_screen_loop()
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
         game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
-        next_game_state = GAME_STATE_IN_GAME_INIT;
         transition_offset = 0;
     } else {
         while (waiting_for_vbl) {}
     }
 }
 
-static void title_screen_exit_transition_loop()
+static void exit_transition_loop(uint16_t next_game_state)
 {
     uint16_t count = 8;
     if (transition_offset == 256) {
@@ -124,6 +125,16 @@ static void title_screen_exit_transition_loop()
     if (transition_offset == 260) {
         game_state = next_game_state;
     }
+}
+
+static void title_screen_exit_transition_loop()
+{
+    exit_transition_loop(GAME_STATE_IN_GAME_INIT);
+}
+
+static void game_over_exit_transition_loop()
+{
+    exit_transition_loop(GAME_STATE_TITLE_SCREEN_INIT);
 }
 
 static void in_game_init()
@@ -263,23 +274,23 @@ static void in_game_loop()
     if (frames_since_game_over > 180) {
         music_stop();
 
-    uint32_t visible_buffer_address = hardware_playfields[0].buffer;
+        uint32_t visible_buffer_address = hardware_playfields[0].buffer;
+        hardware_playfield_set_visible_address(visible_buffer_address);
 
-    uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
-    uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
-    uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
+        /*uint8_t address_high_byte = (uint8_t)((visible_buffer_address >> 16) & 0xff);
+        uint8_t address_mid_byte = (uint8_t)((visible_buffer_address >> 8) & 0xff);
+        uint8_t address_low_byte = (uint8_t)(visible_buffer_address & 0xff);
 
-    *((volatile uint8_t *)0xffff8201) = address_high_byte;
-    *((volatile uint8_t *)0xffff8203) = address_mid_byte;
-    *((volatile uint8_t *)0xffff820d) = address_low_byte;
+        *((volatile uint8_t *)0xffff8201) = address_high_byte;
+        *((volatile uint8_t *)0xffff8203) = address_mid_byte;
+        *((volatile uint8_t *)0xffff820d) = address_low_byte;
 
-    *((volatile uint8_t *)0xffff8205) = address_high_byte;
-    *((volatile uint8_t *)0xffff8207) = address_mid_byte;
-    *((volatile uint8_t *)0xffff8209) = address_low_byte;
+        *((volatile uint8_t *)0xffff8205) = address_high_byte;
+        *((volatile uint8_t *)0xffff8207) = address_mid_byte;
+        *((volatile uint8_t *)0xffff8209) = address_low_byte;*/
 
         transition_offset = 0;
-        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
-        next_game_state = GAME_STATE_TITLE_SCREEN_INIT;
+        game_state = GAME_STATE_GAME_OVER_EXIT_TRANSITION;
     } else {
         hardware_playfield_frame_complete();
     }
@@ -308,6 +319,9 @@ void game_loop()
                 break;
             case GAME_STATE_IN_GAME_LOOP:
                 in_game_loop();
+                break;
+            case GAME_STATE_GAME_OVER_EXIT_TRANSITION:
+                game_over_exit_transition_loop();
                 break;
         }
     }

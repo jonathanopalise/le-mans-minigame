@@ -31,6 +31,7 @@ extern struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 extern uint16_t hardware_playfield_shaking;
 extern struct HardwarePlayfield *drawing_playfield;
 
+void hardware_playfield_set_visible_address(uint32_t visible_buffer_address);
 void hardware_playfield_handle_vbl();
 void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos);
 void hardware_playfield_copy_and_erase_previous_bitplane_draw_record(struct BitplaneDrawRecord *destination_bitplane_draw_record);
