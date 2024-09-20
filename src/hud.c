@@ -95,12 +95,15 @@ uint16_t hud_is_time_up()
     return seconds_remaining == 0 && frames_in_current_second_remaining == 0;
 }
 
-void hud_update_score_digits()
+uint16_t hud_update_score_digits()
 {
+    uint16_t hud_redraw_required = 0;
+
     if (seconds_remaining != old_seconds_remaining) {
         hud_digits.time_digits[0] = seconds_remaining / 10;
         hud_digits.time_digits[1] = seconds_remaining % 10;
         old_seconds_remaining = seconds_remaining;
+        hud_redraw_required = 1;
     }
 
     wip_score_digits[current_wip_score_digit] = wip_score % 10;
@@ -114,9 +117,12 @@ void hud_update_score_digits()
 
         current_wip_score_digit = 7;
         wip_score = score;
+        hud_redraw_required = 1;
     } else {
         wip_score /= 10;
     }
+
+    return hud_redraw_required;
 }
 
 

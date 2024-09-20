@@ -13,6 +13,6 @@ void hud_reduce_time();
 void hud_increase_time(uint32_t seconds_to_add);
 void hud_set_score(uint32_t new_score);
 uint16_t hud_is_time_up();
-void hud_update_score_digits();
+uint16_t hud_update_score_digits();
 
 #endif

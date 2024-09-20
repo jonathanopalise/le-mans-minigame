@@ -130,7 +130,9 @@ static void in_game_loop()
 
     time_of_day_update();
     hud_reduce_time();
-    hud_update_score_digits();
+    if (hud_update_score_digits()) {
+        hardware_playfield_hud_redraw_required();
+    }
     player_car_handle_inputs();
     opponent_cars_update();
     trackside_items_update_nearest();
@@ -221,7 +223,10 @@ static void in_game_loop()
         }
     }
 
-    hardware_playfield_update_digits();
+    if (drawing_playfield->hud_redraw_required) {
+        hardware_playfield_update_digits();
+        drawing_playfield->hud_redraw_required = 0;
+    }
     speedometer_draw();
 
     if (frames_since_game_over > 180) {

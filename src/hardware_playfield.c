@@ -256,14 +256,16 @@ void hardware_playfield_erase_sprites()
     drawing_playfield->tallest_sprite_ypos = 200;
 }
 
-static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
+static uint16_t hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
 {
     struct StatusDefinition *status_definition;
     uint8_t *desired_digit = desired_score_digits;
     uint8_t *current_digit = current_score_digits;
+    uint16_t changed_digits = 0;
 
     for (int16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
         if (*desired_digit != *current_digit) {
+            changed_digits++;
             *current_digit = *desired_digit;
             status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + *desired_digit];
             draw_status(
@@ -279,6 +281,8 @@ static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition
         desired_digit++;
         current_digit++;
     }
+
+    return changed_digits;
 }
 
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
@@ -307,6 +311,7 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
     //hardware_playfield->sprites_drawn = 0;
     hardware_playfield->stars_drawn = 0;
     hardware_playfield->mountains_scroll_pixels = -1;
+    hardware_playfield->hud_redraw_required = 1;
 
     uint16_t word1,word2,word3,word4;
     uint16_t *current_dest = hardware_playfield->buffer;
@@ -509,4 +514,12 @@ void hardware_playfield_frame_complete()
     drawing_playfield = &hardware_playfields[drawing_index];
 }
 
-
+void hardware_playfield_hud_redraw_required()
+{
+    struct HardwarePlayfield *current_hardware_playfield = hardware_playfields;
+    current_hardware_playfield->hud_redraw_required = 1;    
+    current_hardware_playfield++;
+    current_hardware_playfield->hud_redraw_required = 1;    
+    current_hardware_playfield++;
+    current_hardware_playfield->hud_redraw_required = 1;    
+}

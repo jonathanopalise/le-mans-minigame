@@ -24,6 +24,7 @@ struct HardwarePlayfield {
     struct HudDigits hud_digits;
     uint16_t tallest_sprite_ypos;
     int16_t mountains_scroll_pixels;
+    uint16_t hud_redraw_required;
 };
 
 extern struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
@@ -38,5 +39,6 @@ void hardware_playfield_global_init();
 void hardware_playfield_init();
 void hardware_playfield_update_digits();
 void hardware_playfield_frame_complete();
+void hardware_playfield_hud_redraw_required();
 
 #endif
