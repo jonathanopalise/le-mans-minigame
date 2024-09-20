@@ -48,6 +48,8 @@ vbl:
     beq.s in_game_vbl
     cmp.w #2,_game_state ; are we on the title screen?
     beq.s title_screen_vbl
+    cmp.w #5,_game_state ; are we on the title screen?
+    beq.s title_screen_vbl
     rte
 
 title_screen_vbl:

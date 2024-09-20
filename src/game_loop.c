@@ -25,6 +25,7 @@
 #include "natfeats.h"
 #include "random.h"
 #include "speedometer.h"
+#include "screen_transition.h"
 
 #define GAME_OVER_DEFINITION_OFFSET 202
 #define GET_READY_DEFINITION_OFFSET 203
@@ -37,10 +38,12 @@
 #define GAME_STATE_TITLE_SCREEN_LOOP 2
 #define GAME_STATE_IN_GAME_INIT 3
 #define GAME_STATE_IN_GAME_LOOP 4
+#define GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION 5
 
 uint16_t game_state;
 uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
+uint16_t transition_offset;
 
 uint16_t title_screen_palette[] = {0x0,0x5,0x888,0xd00,0x133,0xa3b,0x333,0x1b6,0x55d,0xec7,0xdde,0xfda,0xff0,0xeff,0x0,0x0};
 
@@ -94,14 +97,37 @@ static void title_screen_loop()
 {
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
-        game_state = GAME_STATE_IN_GAME_INIT;
+        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
+        transition_offset = 0;
     } else {
         while (waiting_for_vbl) {}
     }
 }
 
+static void title_screen_exit_transition_loop()
+{
+    uint16_t count = 8;
+    if (transition_offset == 256) {
+        count = 4;
+    }
+
+    for (uint16_t index = 0; index < count; index++) {
+        screen_transition_erase_block(hardware_playfields[0].buffer, transition_offset);
+        transition_offset++;
+    }
+
+    waiting_for_vbl = 1;
+    while (waiting_for_vbl) {}
+
+    if (transition_offset == 260) {
+        game_state = GAME_STATE_IN_GAME_INIT;
+    }
+}
+
 static void in_game_init()
 {
+    memset(0xffff8240, 0, 16*2);
+
     music_init();
     hud_game_init();
     hardware_playfield_init();
@@ -114,11 +140,14 @@ static void in_game_init()
     road_render_init();
     init_random();
 
-    *((volatile uint16_t *)0xffff8240) = 0x0;
-    game_state = GAME_STATE_IN_GAME_LOOP;
+    //*((volatile uint16_t *)0xffff8240) = 0x0;
     race_ticks = 0;
     time_extend_countdown = 0;
     passed_start_line = 0;
+
+    time_of_day_update();
+
+    game_state = GAME_STATE_IN_GAME_LOOP;
 }
 
 static void in_game_loop()
@@ -251,6 +280,9 @@ void game_loop()
                 break;
             case GAME_STATE_TITLE_SCREEN_LOOP:
                 title_screen_loop();
+                break;
+            case GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION:
+                title_screen_exit_transition_loop();
                 break;
             case GAME_STATE_IN_GAME_INIT:
                 in_game_init();
