@@ -201,7 +201,7 @@ _title_screen_vbl:
     move.w	#$2700,sr			; Stop all interrupts
 
     movem.l a0-a1,-(sp)
-    move.w #9,_title_screen_lines_remaining
+    move.w #24,_title_screen_lines_remaining
 
     lea $ffff8a20.w,a0
     move.w #0,(a0)+                      ; source x increment
@@ -231,7 +231,7 @@ _title_screen_vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
 
-    add.l #32,_title_screen_palette_source
+    add.l #64,_title_screen_palette_source
 
     ; now set halftone for next palette change
     move.l _title_screen_palette_source,a0
@@ -271,9 +271,9 @@ _title_screen_line_vbl:
 
     movem.l a0-a1,-(sp)
 
-    ;sub.w #1,_title_screen_lines_remaining
-    ;tst.w _title_screen_lines_remaining
-    ;beq.s _no_more_lines
+    sub.w #1,_title_screen_lines_remaining
+    tst.w _title_screen_lines_remaining
+    beq.s _no_more_lines
 
     move.l	#_title_screen_line_vbl,$120.w	; Install our own Timer B
     clr.b	$fffffa1b.w		; Timer B control (stop)

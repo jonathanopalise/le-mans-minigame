@@ -10,7 +10,7 @@ function generateSteNibble($value)
 include('library.php');
 $outputWords = [];
 
-for ($slice = 0; $slice <= 7 ; $slice++) {
+for ($slice = 0; $slice <= 24; $slice++) {
     $indexedBitmap = IndexedBitmap::loadGif('assets/slice-'.$slice.'.gif');
 
 
@@ -38,7 +38,7 @@ while (count($outputWords) < 16000) {
 }
 
 $outputPaletteWords = [];
-for ($slice = 0; $slice <= 7 ; $slice++) {
+for ($slice = 0; $slice <= 24 ; $slice++) {
     $image = imagecreatefromgif('assets/slice-'. $slice . '.gif');
 
     $imagePaletteWords = [];
