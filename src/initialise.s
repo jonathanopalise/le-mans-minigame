@@ -201,27 +201,29 @@ _title_screen_vbl:
     move.w	#$2700,sr			; Stop all interrupts
 
     movem.l a0-a1,-(sp)
-    move.w #50,_title_screen_lines_remaining
+    move.w #3,_title_screen_lines_remaining
 
     lea $ffff8a20.w,a0
-    move.w #2,(a0)+                      ; source x increment
-    move.w #0,(a0)+                      ; source y increment
-    move.l #_title_screen_graphics,(a0)+  ; source address
+    move.w #0,(a0)+                      ; source x increment
+    move.w #2,(a0)+                      ; source y increment
+    move.l #_new_title_screen_graphics+32000,(a0)+  ; source address
     move.w #$ffff,(a0)+                  ; endmask1
     move.w #$ffff,(a0)+                  ; endmask2
     move.w #$ffff,(a0)+                  ; endmask3
-    move.w #2,(a0)+                      ; destination x increment
-    move.w #-28,(a0)+                    ; destination y increment
+    move.w #0,(a0)+                      ; destination x increment
+    move.w #2,(a0)+                    ; destination y increment
     move.l #$ffff8242,(a0)+              ; destination address
-    move.w #15,(a0)+                     ; x count
+    move.w #1,(a0)+                     ; x count
     add.w #2,a0                          ; skip y count
-    move.w #$0203,(a0)+                  ; hop/op
+    move.w #$0103,(a0)+                  ; hop/op
+
+    move.l #_new_title_screen_graphics+32000,_title_screen_palette_source
 
     move.l	#_title_screen_line_vbl,$120.w	    ; Install our own Timer B
     clr.b	$fffffa1b.w		    ; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#1,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
+    move.b	#8,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
@@ -234,8 +236,11 @@ _title_screen_line_vbl:
 
     move.w	#$2700,sr			;Stop all interrupts
 
-    move.w #1,$ffff8a38.w
+    move.w #16,$ffff8a38.w
     move.b #$c0,$ffff8a3c.w
+
+    ;move.l _title_screen_palette_source,$ffff8a24.w
+    move.l #$ffff8242,$ffff8a32.w ; set destination to palette registers
 
     ; do colour changes here
 
@@ -249,19 +254,33 @@ _title_screen_line_vbl:
     clr.b	$fffffa1b.w		; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#1,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    move.b	#8,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
-    move.b	#9,$fffffa21.w	    ; extra dummy value - see https://www.atari-forum.com/viewtopic.php?t=21847&start=25
+
+    add.l #32,_title_screen_palette_source
+    move.l _title_screen_palette_source,a0
+    lea.l $ffff8a00.w,a1
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.w (a0)+,(a1)+
 
     ;move.w _title_screen_lines_remaining,(a0)
+_no_more_lines:
 
     movem.l (sp)+,a0-a1
 
 	move.w	#$2300,sr			;Interrupts back on
-
-_no_more_lines:
     rte
+
+
+_title_screen_palette_source:
+    dc.l 0
 
 _title_screen_lines_remaining:
     dc.w 0

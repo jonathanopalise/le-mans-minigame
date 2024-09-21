@@ -22,6 +22,7 @@
 #include "stars.h"
 #include "stars_fast.h"
 #include "title_screen_graphics.h"
+#include "new_title_screen_graphics.h"
 #include "natfeats.h"
 #include "random.h"
 #include "speedometer.h"
@@ -139,7 +140,7 @@ static void exit_transition_loop(uint16_t next_game_state)
 
 static void title_screen_entry_transition_loop()
 {
-    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, title_screen_graphics);
+    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, new_title_screen_graphics);
 }
 
 static void title_screen_exit_transition_loop()
