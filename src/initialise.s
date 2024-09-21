@@ -219,7 +219,21 @@ _title_screen_vbl:
 
     move.l #_new_title_screen_graphics+32000,_title_screen_palette_source
 
-    ; repeated below
+    ; set palette for initial 8 lines
+    move.l _title_screen_palette_source,a0
+    lea.l $ffff8240.w,a1 
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+    move.l (a0)+,(a1)+
+
+    add.l #32,_title_screen_palette_source
+
+    ; now set halftone for next palette change
     move.l _title_screen_palette_source,a0
     lea.l $ffff8a00.w,a1
     move.l (a0)+,(a1)+
@@ -230,14 +244,13 @@ _title_screen_vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
-    add.l #32,_title_screen_palette_source
     ; end of repeated
 
     move.l	#_title_screen_line_vbl,$120.w	    ; Install our own Timer B
     clr.b	$fffffa1b.w		    ; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#1,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
+    move.b	#8,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
@@ -253,8 +266,6 @@ _title_screen_line_vbl:
     move.l #$ffff8240,$ffff8a32.w ; set destination to palette registers
     move.w #16,$ffff8a38.w
     move.b #$c0,$ffff8a3c.w
-
-    ;move.l _title_screen_palette_source,$ffff8a24.w
 
     ; do colour changes here
 
