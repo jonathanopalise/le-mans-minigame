@@ -16,16 +16,21 @@ uint16_t transition_offsets[260] = {
     7736, 12800, 12920, 10328, 96, 8, 5144, 7776, 7792, 15408, 12928, 30832, 104, 23072, 80, 15504, 17920, 30784, 28280, 2608, 
 };
 
+static uint16_t screen_transition_calculate_lines(uint16_t transition_offset)
+{
+    if (transition_offset >= (12 * 16 * 160)) {
+        return 8;
+    }
+
+    return 16;
+}
+
 void screen_transition_erase_block(uint8_t *buffer, uint16_t offset)
 {
     uint16_t transition_offset = transition_offsets[offset];
     uint32_t *dest = (uint32_t *)(&buffer[transition_offset]);
     uint16_t y;
-    uint16_t lines = 16;
-
-    if (transition_offset >= (12 * 16 * 160)) {
-        lines = 8;
-    }
+    uint16_t lines = screen_transition_calculate_lines(transition_offset);
 
     for (y = 0; y < lines; y++) {
         *dest = 0;
@@ -34,3 +39,24 @@ void screen_transition_erase_block(uint8_t *buffer, uint16_t offset)
         dest += (40 - 1);
     }
 }
+
+void screen_transition_copy_block(uint8_t *source_buffer, uint8_t *dest_buffer, uint16_t offset)
+{
+    uint16_t transition_offset = transition_offsets[offset];
+    uint32_t *source = (uint32_t *)(&source_buffer[transition_offset]);
+    uint32_t *dest = (uint32_t *)(&dest_buffer[transition_offset]);
+    uint16_t y;
+
+    uint16_t lines = screen_transition_calculate_lines(transition_offset);
+
+    for (y = 0; y < lines; y++) {
+        *dest = *source;
+        dest++;
+        source++;
+        *dest = *source;
+        dest += (40 - 1);
+        source += (40 - 1);
+    }
+}
+
+

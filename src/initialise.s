@@ -52,6 +52,8 @@ vbl:
     beq.s title_screen_vbl
     cmp.w #6,_game_state ; game over exit transition
     beq.s game_over_exit_transition_vbl
+    cmp.w #7,_game_state ; title screen entry transition
+    beq.s title_screen_vbl
     rte
 
 title_screen_vbl:
