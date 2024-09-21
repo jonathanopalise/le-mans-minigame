@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBUG -DELF_CONFIG_STACK=1024 -g -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
+CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBU -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
@@ -56,7 +56,7 @@ ASSETS_GIF = assets/round-tree.gif
 
 bin/lemans.prg: $(OBJECT_FILES)
 	$(CC)  -o src/lemans.elf libcxx/vsnprint.o libcxx/brownboot.o libcxx/zerolibc.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerocrtfini.o $(OBJECT_FILES)  -O3 -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -flto -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
-	brownout -i src/lemans.elf -o bin/lemans.prg -x
+	brownout -i src/lemans.elf -o bin/lemans.prg
 	chmod +x bin/lemans.prg
 
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
