@@ -62,7 +62,11 @@ for ($slice = 0; $slice <= 7 ; $slice++) {
         $imagePaletteWords[] = 0;
     }
 
-    var_dump($imagePaletteWords);
+    echo("slice ".$slice.": ".$slice."\n");
+    foreach ($imagePaletteWords as $word) {
+        echo(dechex($word)." ");
+    }
+    echo("\n");
 
     $outputWords = array_merge($outputWords, $imagePaletteWords);
 }
