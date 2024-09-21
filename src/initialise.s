@@ -237,7 +237,7 @@ _title_screen_vbl:
     clr.b	$fffffa1b.w		    ; Timer B control (stop)
     bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
     bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#8,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
+    move.b	#1,$fffffa21.w	    ; Timer B data (number of scanlines to next interrupt)
     bclr	#3,$fffffa17.w		; Automatic end of interrupt
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
@@ -250,11 +250,11 @@ _title_screen_line_vbl:
 
     move.w	#$2700,sr			;Stop all interrupts
 
+    move.l #$ffff8240,$ffff8a32.w ; set destination to palette registers
     move.w #16,$ffff8a38.w
     move.b #$c0,$ffff8a3c.w
 
     ;move.l _title_screen_palette_source,$ffff8a24.w
-    move.l #$ffff8240,$ffff8a32.w ; set destination to palette registers
 
     ; do colour changes here
 
