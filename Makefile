@@ -55,10 +55,25 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
+release/lemans.st: bin/lemans.prg src/boot_sector.bin
+	rm release/lemans.st || true
+	cp bin/lemans.prg diskcontent/AUTO/ || true
+	zip -r release/lemans.zip diskcontent/
+	zip2st release/lemans.zip release/lemans.st
+	rm release/lemans.zip || true
+	$(PHP) src/apply_boot_sector.php src/boot_sector.bin $@
+	@echo "*************************************************************"
+	@echo "Build complete. See release/lemans.st for the disk image."
+	@echo "*************************************************************"
+
 bin/lemans.prg: $(OBJECT_FILES)
 	$(CC)  -o src/lemans.elf libcxx/vsnprint.o libcxx/brownboot.o libcxx/zerolibc.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerocrtfini.o $(OBJECT_FILES)  -O3 -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -flto -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
 	brownout -i src/lemans.elf -o bin/lemans.prg
+	upx bin/lemans.prg
 	chmod +x bin/lemans.prg
+
+src/boot_sector.bin: src/boot_sector.s
+	$(VASM) $< -Fbin -o $@
 
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
