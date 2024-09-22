@@ -91,11 +91,12 @@ static void title_screen_loop()
 {
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
-        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
         transition_offset = 0;
-    } else {
-        while (waiting_for_vbl) {}
+        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
     }
+
+    waiting_for_vbl = 1;
+    while (waiting_for_vbl) {}
 }
 
 static void entry_transition_loop(uint16_t next_game_state, uint8_t *source_buffer)

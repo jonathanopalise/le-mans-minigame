@@ -49,15 +49,14 @@ vbl:
     cmp.w #2,_game_state ; title screen
     beq _title_screen_vbl
     cmp.w #5,_game_state ; title screen exit transition
-    beq.s vanilla_vbl
+    beq _title_screen_vbl
     cmp.w #6,_game_state ; game over exit transition
     beq.s game_over_exit_transition_vbl
     cmp.w #7,_game_state ; title screen entry transition
-    beq.s vanilla_vbl
+    beq _title_screen_vbl
     rte
 
-
-vanilla_vbl:
+_vanilla_vbl:
 
     move.w #0,_waiting_for_vbl
     rte
@@ -117,8 +116,6 @@ _trigger_in_game_colours:
     move.w (a0)+,$ffff8244.w
 
     move.w (a0),$ffff825e.w  ; index 15 (lamppost illumination and stars)
-
-
     rts
 
 timer_1:
@@ -198,6 +195,7 @@ wait_timer_2:
     rte
 
 _title_screen_vbl:
+    move.w #0,_waiting_for_vbl
     move.w	#$2700,sr			; Stop all interrupts
 
     movem.l a0-a1,-(sp)
@@ -295,14 +293,16 @@ _title_screen_line_vbl:
     move.l (a0)+,(a1)+
     add.l #32,_title_screen_palette_source
 
-    ;move.w _title_screen_lines_remaining,(a0)
-_no_more_lines:
-
     movem.l (sp)+,a0-a1
 
 	move.w	#$2300,sr			;Interrupts back on
     rte
 
+_no_more_lines:
+    clr.b     $fffffa1b.w
+    movem.l (sp)+,a0-a1
+	move.w	#$2300,sr			;Interrupts back on
+    rte
 
 _title_screen_palette_source:
     dc.l 0
