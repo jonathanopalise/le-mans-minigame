@@ -11,7 +11,7 @@ include('library.php');
 $outputWords = [];
 
 for ($slice = 0; $slice <= 24; $slice++) {
-    $indexedBitmap = IndexedBitmap::loadGif('assets/slice-'.$slice.'.gif');
+    $indexedBitmap = IndexedBitmap::loadGif('assets/credits-slice-'.$slice.'.gif');
 
 
     for ($lineIndex = 0; $lineIndex < $indexedBitmap->getHeight(); $lineIndex++) {
@@ -39,7 +39,7 @@ while (count($outputWords) < 16000) {
 
 $outputPaletteWords = [];
 for ($slice = 0; $slice <= 24 ; $slice++) {
-    $image = imagecreatefromgif('assets/slice-'. $slice . '.gif');
+    $image = imagecreatefromgif('assets/credits-slice-'. $slice . '.gif');
 
     $imagePaletteWords = [];
     $colourCount = imagecolorstotal($image);
