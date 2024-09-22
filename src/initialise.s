@@ -44,6 +44,8 @@ dummy:
 	rte
 
 vbl:
+    move.w #0,_waiting_for_vbl
+
     cmp.w #4,_game_state ; in game
     beq.s in_game_vbl
     cmp.w #2,_game_state ; title screen
@@ -58,7 +60,6 @@ vbl:
 
 _vanilla_vbl:
 
-    move.w #0,_waiting_for_vbl
     rte
 
 game_over_exit_transition_vbl:
@@ -66,7 +67,6 @@ game_over_exit_transition_vbl:
     move.w	#$2700,sr			; Stop all interrupts
     movem.l d0-d1/a0-a1,-(sp)
 
-    move.w #0,_waiting_for_vbl
     jsr _music_tick
     jsr _trigger_in_game_colours
 
@@ -195,11 +195,10 @@ wait_timer_2:
     rte
 
 _title_screen_vbl:
-    move.w #0,_waiting_for_vbl
     move.w	#$2700,sr			; Stop all interrupts
 
     movem.l a0-a1,-(sp)
-    move.w #12,_title_screen_lines_remaining
+    move.w #24,_title_screen_lines_remaining
 
     lea $ffff8a20.w,a0
     move.w #0,(a0)+                      ; source x increment
@@ -229,10 +228,7 @@ _title_screen_vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
 
-    add.l #64,_title_screen_palette_source
-
     ; now set halftone for next palette change
-    move.l _title_screen_palette_source,a0
     lea.l $ffff8a00.w,a1
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
@@ -243,6 +239,8 @@ _title_screen_vbl:
     move.l (a0)+,(a1)+
     move.l (a0)+,(a1)+
     ; end of repeated
+
+    add.l #64,_title_screen_palette_source
 
     move.l	#_title_screen_line_vbl,$120.w	    ; Install our own Timer B
     clr.b	$fffffa1b.w		    ; Timer B control (stop)
@@ -272,14 +270,6 @@ _title_screen_line_vbl:
     sub.w #1,_title_screen_lines_remaining
     tst.w _title_screen_lines_remaining
     beq.s _no_more_lines
-
-    ;move.l	#_title_screen_line_vbl,$120.w	; Install our own Timer B
-    ;clr.b	$fffffa1b.w		; Timer B control (stop)
-    ;bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
-    ;bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    ;move.b	#8,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
-    ;bclr	#3,$fffffa17.w		; Automatic end of interrupt
-    ;move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
     move.l _title_screen_palette_source,a0
     lea.l $ffff8a00.w,a1

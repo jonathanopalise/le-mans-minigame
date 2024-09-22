@@ -156,26 +156,29 @@ static void game_over_exit_transition_loop()
 
 static void in_game_init()
 {
-    memset(0xffff8240, 0, 16*2);
+    waiting_for_vbl = 1;
+    while (waiting_for_vbl) {}
+    memset(0xffff8240, 0, 32);
 
+
+    time_of_day_init();
+    time_of_day_update();
     music_init();
     hud_game_init();
+
     hardware_playfield_init();
+
     road_corners_init();
     player_car_initialise();
     opponent_cars_init();
     display_list_init();
     trackside_items_process_init();
-    time_of_day_init();
     road_render_init();
     init_random();
 
-    //*((volatile uint16_t *)0xffff8240) = 0x0;
     race_ticks = 0;
     time_extend_countdown = 0;
     passed_start_line = 0;
-
-    time_of_day_update();
 
     game_state = GAME_STATE_IN_GAME_LOOP;
 }

@@ -52,8 +52,6 @@ void time_of_day_init()
     quarter_hour_countdown = 60;
     //time_of_day_offset = 30*80;
     time_of_day_is_night = 0;
-
-    //time_of_day_set_colours();
 }
 
 void time_of_day_update()
