@@ -199,7 +199,7 @@ _title_screen_vbl:
     move.w	#$2700,sr			; Stop all interrupts
 
     movem.l a0-a1,-(sp)
-    move.w #24,_title_screen_lines_remaining
+    move.w #12,_title_screen_lines_remaining
 
     lea $ffff8a20.w,a0
     move.w #0,(a0)+                      ; source x increment
@@ -273,13 +273,13 @@ _title_screen_line_vbl:
     tst.w _title_screen_lines_remaining
     beq.s _no_more_lines
 
-    move.l	#_title_screen_line_vbl,$120.w	; Install our own Timer B
-    clr.b	$fffffa1b.w		; Timer B control (stop)
-    bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
-    bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
-    move.b	#8,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
-    bclr	#3,$fffffa17.w		; Automatic end of interrupt
-    move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
+    ;move.l	#_title_screen_line_vbl,$120.w	; Install our own Timer B
+    ;clr.b	$fffffa1b.w		; Timer B control (stop)
+    ;bset	#0,$fffffa07.w		; Interrupt enable A (Timer B)
+    ;bset	#0,$fffffa13.w		; Interrupt mask A (Timer B)
+    ;move.b	#8,$fffffa21.w	; Timer B data (number of scanlines to next interrupt)
+    ;bclr	#3,$fffffa17.w		; Automatic end of interrupt
+    ;move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
     move.l _title_screen_palette_source,a0
     lea.l $ffff8a00.w,a1
