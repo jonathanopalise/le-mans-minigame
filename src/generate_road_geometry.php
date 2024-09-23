@@ -17,9 +17,6 @@ function generateSpriteIndexAdjust($scanlineIndex)
 {
     $roadWidth = intval(11 + ((382 - 11) / 80 * $scanlineIndex));
 
-    // largest should come in at width = 320
-    $spriteIndex = 0; // smallest by default
-
     // halfway between 48 and 64 is 56
     // halfway between 36 and 48 is 42
     // halfway between 27 and 36 is 31
@@ -27,7 +24,7 @@ function generateSpriteIndexAdjust($scanlineIndex)
     // halfway between 15 and 20 is 17
     // halfway between 11 and 15 is 13
 
-    $spriteIndex = 7;
+    $spriteIndex = 8;
     if ($roadWidth >= 56*5) {
         $spriteIndex = 0;
     } elseif ($roadWidth >= 42*5) {
@@ -42,6 +39,8 @@ function generateSpriteIndexAdjust($scanlineIndex)
         $spriteIndex = 5;
     } elseif ($roadWidth >= 9*5) {
         $spriteIndex = 6;
+    } elseif ($roadWidth >= 6*5) {
+        $spriteIndex = 7;
     }
 
     return $spriteIndex;
