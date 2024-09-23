@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "game_loop.h"
 #include "hardware_playfield.h"
 #include "initialise.h"
@@ -52,6 +53,7 @@ uint16_t title_screen_palette[] = {0x0,0x5,0x888,0xd00,0x133,0xa3b,0x333,0x1b6,0
 
 static void global_init()
 {
+
 #ifdef __NATFEATS_DEBUG
     if (!nf_init()) {
         while (1==1) {}
@@ -67,12 +69,22 @@ static void global_init()
     initialise();
     hud_init();
     hardware_playfield_global_init();
+    memset(hardware_playfields[0].buffer, 0, 32000);
 
     game_state = GAME_STATE_TITLE_SCREEN_INIT;
 }
 
 static void title_screen_init()
 {
+    FILE *f;
+
+    f = fopen("a:\\title.bin", "rb");
+    if (f == 0) {
+        while (1==1) {}
+    }
+    fread(hardware_playfields[1].buffer, 32800, 1, f);
+    fclose(f);
+
     memcpy((void *)0xffff8240, title_screen_palette, 32);
 
     waiting_for_vbl = 1;
@@ -141,7 +153,7 @@ static void exit_transition_loop(uint16_t next_game_state)
 
 static void title_screen_entry_transition_loop()
 {
-    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, new_title_screen_graphics);
+    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[1].buffer);
 }
 
 static void title_screen_exit_transition_loop()

@@ -55,7 +55,7 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
-release/lemans.st: bin/lemans.prg src/boot_sector.bin
+release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin
 	rm release/lemans.st || true
 	cp bin/lemans.prg diskcontent/AUTO/ || true
 	zip -r release/lemans.zip diskcontent/
@@ -71,6 +71,9 @@ bin/lemans.prg: $(OBJECT_FILES)
 	brownout -i src/lemans.elf -o bin/lemans.prg
 	upx bin/lemans.prg
 	chmod +x bin/lemans.prg
+
+diskcontent/title.bin: src/generate_new_title_screen_graphics.php src/library.php
+	$(PHP) src/generate_new_title_screen_graphics.php
 
 src/boot_sector.bin: src/boot_sector.s
 	$(VASM) $< -Fbin -o $@

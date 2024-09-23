@@ -62,45 +62,28 @@ for ($slice = 0; $slice <= 24 ; $slice++) {
         $imagePaletteWords[] = 0;
     }
 
-    echo("slice ".$slice.": ".$slice."\n");
+    /*echo("slice ".$slice.": ".$slice."\n");
     foreach ($imagePaletteWords as $word) {
         echo(dechex($word)." ");
     }
-    echo("\n");
+    echo("\n");*/
 
     $outputWords = array_merge($outputWords, $imagePaletteWords);
 }
 
-$lines = [
-    '#include "../new_title_screen_graphics.h"',
-    '#include <inttypes.h>',
-    '',
-    'uint16_t new_title_screen_graphics[] = {',
-];
 
-foreach ($outputWords as $key => $outputWord) {
-    $line = (string)$outputWord;
-
-    if ($key !== array_key_last($outputWords)) {
-        $line .= ',';
-    }
-
-    $lines[] = $line;
+$outputBin = '';
+foreach ($outputWords as $outputWord) {
+    $outputBin .= chr($outputWord >> 8);
+    $outputBin .= chr($outputWord & 255);
 }
 
-$lines = array_merge(
-    $lines,
-    [
-        '};',
-    ]
-);
+echo("title screen binary length is ".strlen($outputBin). "\n");
 
-$output = implode("\n", $lines);
-
-$result = file_put_contents('src/generated/new_title_screen_graphics.c', $output);
+$result = file_put_contents('diskcontent/title.bin', $outputBin);
 if ($result === false) {
     echo("Unable to write generated new title screen graphics data");
     exit(1);
 }
 
-echo("Wrote generated new title screen graphics data to src/generated/new_title_screen_graphics.c\n"); 
+echo("Wrote generated new title screen graphics data to diskcontent/title.bin\n"); 
