@@ -260,23 +260,23 @@ void player_car_crash()
 uint16_t player_car_get_sprite_definition()
 {
     if (player_car_state == PLAYER_CAR_STATE_FLIP_CRASH) {
-        return 180 + player_car_flip_image_tracker / 4;
+        return 202 + player_car_flip_image_tracker / 4;
     }
 
-    uint16_t player_car_sprite_definition_offset = 8;
+    uint16_t player_car_sprite_definition_offset = 9;
     if (player_car_speed > 0) {
         if (player_car_steering <= -375 && current_road_curvature > 160) {
-            player_car_sprite_definition_offset += 16;
+            player_car_sprite_definition_offset += 18;
         } else if (player_car_steering <= -250) {
-            player_car_sprite_definition_offset += 27;
+            player_car_sprite_definition_offset += 30;
         } else if (player_car_steering <= -125) {
-            player_car_sprite_definition_offset += 26;
+            player_car_sprite_definition_offset += 29;
         } else if (player_car_steering >= 375 && current_road_curvature < -160) {
-            player_car_sprite_definition_offset += 8;
+            player_car_sprite_definition_offset += 9;
         } else if (player_car_steering >= 250) {
-            player_car_sprite_definition_offset += 25;
+            player_car_sprite_definition_offset += 28;
         } else if (player_car_steering >= 125) {
-            player_car_sprite_definition_offset += 24;
+            player_car_sprite_definition_offset += 27;
         }
     }
 

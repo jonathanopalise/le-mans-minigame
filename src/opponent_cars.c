@@ -12,9 +12,11 @@
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
 
-#define RED_CAR_BASE_INDEX 15
-#define YELLOW_CAR_BASE_INDEX (RED_CAR_BASE_INDEX + 28)
-#define BLUE_CAR_BASE_INDEX (YELLOW_CAR_BASE_INDEX + 24)
+// TODO: these will need to be adjusted when we start using variation 9
+
+#define RED_CAR_BASE_INDEX 16
+#define YELLOW_CAR_BASE_INDEX 47
+#define BLUE_CAR_BASE_INDEX 74
 
 uint16_t lane_to_xpos_mappings[4] = {-2, -1, 1, 2};
 
@@ -91,13 +93,13 @@ void opponent_cars_init()
 
     // TODO: following code should be moved to global startup
 
-    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[YELLOW_CAR_BASE_INDEX - 7], 24);
-    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[BLUE_CAR_BASE_INDEX - 7], 24);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[YELLOW_CAR_BASE_INDEX - 7], 27);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[RED_CAR_BASE_INDEX - 7], &sprite_definitions[BLUE_CAR_BASE_INDEX - 7], 27);
 
     // doesn't really belong here as scenery related
-    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW], 8);
-    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_RIGHT_ARROW_YELLOW], 8);
-    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW_YELLOW], 8);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW], 9);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_RIGHT_ARROW_YELLOW], 9);
+    rewrite_compiled_sprite_pointers(&sprite_definitions[SCENERY_TYPE_RIGHT_ARROW], &sprite_definitions[SCENERY_TYPE_LEFT_ARROW_YELLOW], 9);
 }
 
 static void opponent_horizon_respawn(struct OpponentCar *current_opponent_car)
@@ -445,9 +447,9 @@ void opponent_cars_process()
                 sprite_aspect = (screen_xpos << 1) - current_road_curvature;
 
                 if (sprite_aspect > 50) {
-                    sprite_index += 8;
+                    sprite_index += 9;
                 } else if (sprite_aspect < -50) {
-                    sprite_index += 16;
+                    sprite_index += 18;
                 }
 
                 screen_xpos += 160;
