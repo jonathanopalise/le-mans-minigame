@@ -4,6 +4,7 @@
     public _scenery_colours
     public _ground_colours
     public _vertical_shift
+    public _vbl_title_screen_palette_source
 
 _initialise:
 
@@ -203,7 +204,7 @@ _title_screen_vbl:
     lea $ffff8a20.w,a0
     move.w #0,(a0)+                      ; source x increment
     move.w #2,(a0)+                      ; source y increment
-    move.l #_new_title_screen_graphics+32000,(a0)+  ; source address
+    move.l _vbl_title_screen_palette_source,(a0)+  ; source address
     move.w #$ffff,(a0)+                  ; endmask1
     move.w #$ffff,(a0)+                  ; endmask2
     move.w #$ffff,(a0)+                  ; endmask3
@@ -214,7 +215,7 @@ _title_screen_vbl:
     add.w #2,a0                          ; skip y count
     move.w #$0103,(a0)+                  ; hop/op
 
-    move.l #_new_title_screen_graphics+32000,_title_screen_palette_source
+    move.l _vbl_title_screen_palette_source,_title_screen_palette_source
 
     ; set palette for initial 8 lines
     move.l _title_screen_palette_source,a0
@@ -295,6 +296,9 @@ _no_more_lines:
     rte
 
 _title_screen_palette_source:
+    dc.l 0
+
+_vbl_title_screen_palette_source:
     dc.l 0
 
 _title_screen_lines_remaining:

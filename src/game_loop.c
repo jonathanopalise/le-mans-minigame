@@ -22,8 +22,6 @@
 #include "lookups.h"
 #include "stars.h"
 #include "stars_fast.h"
-#include "title_screen_graphics.h"
-#include "new_title_screen_graphics.h"
 #include "natfeats.h"
 #include "random.h"
 #include "speedometer.h"
@@ -48,8 +46,6 @@ uint16_t game_state;
 uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
 uint16_t transition_offset;
-
-uint16_t title_screen_palette[] = {0x0,0x5,0x888,0xd00,0x133,0xa3b,0x333,0x1b6,0x55d,0xec7,0xdde,0xfda,0xff0,0xeff,0x0,0x0};
 
 static void global_init()
 {
@@ -82,10 +78,11 @@ static void title_screen_init()
     if (f == 0) {
         while (1==1) {}
     }
-    fread(hardware_playfields[1].buffer, 32800, 1, f);
+    fread(hardware_playfields[2].buffer, 32800, 1, f);
     fclose(f);
 
-    memcpy((void *)0xffff8240, title_screen_palette, 32);
+    vbl_title_screen_palette_source = hardware_playfields[2].buffer+32000;
+    //memcpy((void *)0xffff8240, title_screen_palette, 32);
 
     waiting_for_vbl = 1;
     game_state = GAME_STATE_TITLE_SCREEN_LOOP;
@@ -153,7 +150,7 @@ static void exit_transition_loop(uint16_t next_game_state)
 
 static void title_screen_entry_transition_loop()
 {
-    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[1].buffer);
+    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[2].buffer);
 }
 
 static void title_screen_exit_transition_loop()

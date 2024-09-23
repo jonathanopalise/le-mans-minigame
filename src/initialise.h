@@ -10,5 +10,6 @@ extern uint16_t vertical_shift;
 extern uint16_t sky_gradient;
 extern uint16_t scenery_colours;
 extern uint16_t ground_colours;
+extern volatile uint32_t vbl_title_screen_palette_source;
 
 #endif
