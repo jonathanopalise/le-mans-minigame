@@ -49,6 +49,8 @@ vbl:
 
     cmp.w #4,_game_state ; in game
     beq.s in_game_vbl
+    cmp.w #8,_game_state ; in game
+    beq.s in_game_vbl
     cmp.w #2,_game_state ; title screen
     beq _title_screen_vbl
     cmp.w #5,_game_state ; title screen exit transition

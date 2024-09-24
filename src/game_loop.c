@@ -41,14 +41,22 @@
 #define GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION 5
 #define GAME_STATE_GAME_OVER_EXIT_TRANSITION 6
 #define GAME_STATE_TITLE_SCREEN_ENTRY_TRANSITION 7
+#define GAME_STATE_IN_DEMO_LOOP 8
 
 uint16_t game_state;
 uint16_t joy_fire;
 volatile uint16_t waiting_for_vbl;
 uint16_t transition_offset;
+uint16_t player_car_sprite_definition_offset;
+uint16_t player_car_visible;
 
 static void global_init()
 {
+    FILE *f;
+    music_data_address = 1048576;
+    f = fopen("a:\\jracer.snd", "rb");
+    fread(music_data_address, 262144, 1, f);
+    fclose(f);
 
 #ifdef __NATFEATS_DEBUG
     if (!nf_init()) {
@@ -68,6 +76,7 @@ static void global_init()
     memset(hardware_playfields[0].buffer, 0, 32000);
 
     game_state = GAME_STATE_TITLE_SCREEN_INIT;
+
 }
 
 static void title_screen_init()
@@ -75,9 +84,6 @@ static void title_screen_init()
     FILE *f;
 
     f = fopen("a:\\title.bin", "rb");
-    if (f == 0) {
-        while (1==1) {}
-    }
     fread(hardware_playfields[2].buffer, 32800, 1, f);
     fclose(f);
 
@@ -94,6 +100,7 @@ static void title_screen_init()
 
     transition_offset = 0;
     game_state = GAME_STATE_TITLE_SCREEN_ENTRY_TRANSITION;
+    race_ticks = 0;
 }
 
 static void title_screen_loop()
@@ -106,6 +113,10 @@ static void title_screen_loop()
 
     waiting_for_vbl = 1;
     while (waiting_for_vbl) {}
+
+    race_ticks++;
+    if (race_ticks > 50*10) {
+    }
 }
 
 static void entry_transition_loop(uint16_t next_game_state, uint8_t *source_buffer)
@@ -169,7 +180,6 @@ static void in_game_init()
     while (waiting_for_vbl) {}
     memset(0xffff8240, 0, 32);
 
-
     time_of_day_init();
     time_of_day_update();
     music_init();
@@ -192,18 +202,9 @@ static void in_game_init()
     game_state = GAME_STATE_IN_GAME_LOOP;
 }
 
-static void in_game_loop()
+static void in_game_loop_core()
 {
-    static uint16_t player_car_sprite_definition_offset;
-    static uint16_t player_car_visible;
-
-    //music_tick();
-
     time_of_day_update();
-    hud_reduce_time();
-    if (hud_update_score_digits()) {
-        hardware_playfield_hud_redraw_required();
-    }
     player_car_handle_inputs();
     opponent_cars_update();
     trackside_items_update_nearest();
@@ -260,6 +261,34 @@ static void in_game_loop()
             194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
         );
     }
+}
+
+static void in_demo_loop()
+{
+    in_game_loop_core();
+
+    if (race_ticks > 30*50) {
+        uint32_t visible_buffer_address = hardware_playfields[0].buffer;
+        hardware_playfield_set_visible_address(visible_buffer_address);
+
+        music_stop();
+        transition_offset = 0;
+        game_state = GAME_STATE_GAME_OVER_EXIT_TRANSITION;
+    } else {
+        hardware_playfield_frame_complete();
+    }
+}
+
+static void in_game_loop()
+{
+    //music_tick();
+
+    hud_reduce_time();
+    if (hud_update_score_digits()) {
+        hardware_playfield_hud_redraw_required();
+    }
+
+    in_game_loop_core();
 
     if (frames_since_game_over) {
         {
@@ -342,6 +371,9 @@ void game_loop()
                 break;
             case GAME_STATE_GAME_OVER_EXIT_TRANSITION:
                 game_over_exit_transition_loop();
+                break;
+            case GAME_STATE_IN_DEMO_LOOP:
+                in_demo_loop();
                 break;
         }
     }
