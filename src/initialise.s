@@ -53,11 +53,13 @@ vbl:
     beq.s in_game_vbl
     cmp.w #2,_game_state ; title screen
     beq _title_screen_vbl
-    cmp.w #5,_game_state ; title screen exit transition
+    cmp.w #5,_game_state ; title screen exit to game transition
     beq _title_screen_vbl
     cmp.w #6,_game_state ; game over exit transition
     beq.s game_over_exit_transition_vbl
     cmp.w #7,_game_state ; title screen entry transition
+    beq _title_screen_vbl
+    cmp.w #10,_game_state ; title screen exit to demo transition
     beq _title_screen_vbl
     rte
 

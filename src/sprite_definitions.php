@@ -2016,5 +2016,15 @@ $definitions = [
         'width' => 89,
         'height' => 10,
     ],
+
+    // demo 260
+    [
+        'label' => 'demo',
+        'left' => 117,
+        'top' => 2369,
+        'width' => 36,
+        'height' => 9,
+        'permittedSkews' => [14]
+    ],
 ];
 

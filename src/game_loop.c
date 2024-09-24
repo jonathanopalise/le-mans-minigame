@@ -32,16 +32,19 @@
 #define GO_DEFINITION_OFFSET 228
 #define TIME_EXTEND_DEFINITION_OFFSET 240
 #define SHADOW_DEFINITION_OFFSET 259
+#define DEMO_DEFINITION_OFFSET 260
 
 #define GAME_STATE_GLOBAL_INIT 0
 #define GAME_STATE_TITLE_SCREEN_INIT 1
 #define GAME_STATE_TITLE_SCREEN_LOOP 2
 #define GAME_STATE_IN_GAME_INIT 3
 #define GAME_STATE_IN_GAME_LOOP 4
-#define GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION 5
+#define GAME_STATE_TITLE_SCREEN_EXIT_TO_GAME_TRANSITION 5
 #define GAME_STATE_GAME_OVER_EXIT_TRANSITION 6
 #define GAME_STATE_TITLE_SCREEN_ENTRY_TRANSITION 7
 #define GAME_STATE_IN_DEMO_LOOP 8
+#define GAME_STATE_IN_DEMO_INIT 9
+#define GAME_STATE_TITLE_SCREEN_EXIT_TO_DEMO_TRANSITION 10
 
 uint16_t game_state;
 uint16_t joy_fire;
@@ -108,7 +111,7 @@ static void title_screen_loop()
     joy_fire = joy_data >> 7 & 1;
     if (joy_fire == 1) {
         transition_offset = 0;
-        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION;
+        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TO_GAME_TRANSITION;
     }
 
     waiting_for_vbl = 1;
@@ -116,6 +119,8 @@ static void title_screen_loop()
 
     race_ticks++;
     if (race_ticks > 50*10) {
+        transition_offset = 0;
+        game_state = GAME_STATE_TITLE_SCREEN_EXIT_TO_DEMO_TRANSITION;
     }
 }
 
@@ -164,9 +169,14 @@ static void title_screen_entry_transition_loop()
     entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[2].buffer);
 }
 
-static void title_screen_exit_transition_loop()
+static void title_screen_exit_to_game_transition_loop()
 {
     exit_transition_loop(GAME_STATE_IN_GAME_INIT);
+}
+
+static void title_screen_exit_to_demo_transition_loop()
+{
+    exit_transition_loop(GAME_STATE_IN_DEMO_INIT);
 }
 
 static void game_over_exit_transition_loop()
@@ -200,6 +210,34 @@ static void in_game_init()
     passed_start_line = 0;
 
     game_state = GAME_STATE_IN_GAME_LOOP;
+}
+
+static void in_demo_init()
+{
+    waiting_for_vbl = 1;
+    while (waiting_for_vbl) {}
+    memset(0xffff8240, 0, 32);
+
+    time_of_day_init();
+    time_of_day_update();
+    music_init();
+    hud_game_init();
+
+    hardware_playfield_init();
+
+    road_corners_init();
+    player_car_initialise();
+    opponent_cars_init();
+    display_list_init();
+    trackside_items_process_init();
+    road_render_init();
+    init_random();
+
+    race_ticks = 0;
+    time_extend_countdown = 0;
+    passed_start_line = 0;
+
+    game_state = GAME_STATE_IN_DEMO_LOOP;
 }
 
 static void in_game_loop_core()
@@ -267,7 +305,7 @@ static void in_demo_loop()
 {
     in_game_loop_core();
 
-    if (race_ticks > 30*50) {
+    if (race_ticks > 23*50) {
         uint32_t visible_buffer_address = hardware_playfields[0].buffer;
         hardware_playfield_set_visible_address(visible_buffer_address);
 
@@ -275,14 +313,18 @@ static void in_demo_loop()
         transition_offset = 0;
         game_state = GAME_STATE_GAME_OVER_EXIT_TRANSITION;
     } else {
+        hardware_playfield_draw_sprite(
+            &sprite_definitions[DEMO_DEFINITION_OFFSET],
+            160,
+            106
+        );
+
         hardware_playfield_frame_complete();
     }
 }
 
 static void in_game_loop()
 {
-    //music_tick();
-
     hud_reduce_time();
     if (hud_update_score_digits()) {
         hardware_playfield_hud_redraw_required();
@@ -360,23 +402,32 @@ void game_loop()
             case GAME_STATE_TITLE_SCREEN_LOOP:
                 title_screen_loop();
                 break;
-            case GAME_STATE_TITLE_SCREEN_EXIT_TRANSITION:
-                title_screen_exit_transition_loop();
+            case GAME_STATE_TITLE_SCREEN_EXIT_TO_GAME_TRANSITION:
+                title_screen_exit_to_game_transition_loop();
+                break;
+            case GAME_STATE_TITLE_SCREEN_EXIT_TO_DEMO_TRANSITION:
+                title_screen_exit_to_demo_transition_loop();
                 break;
             case GAME_STATE_IN_GAME_INIT:
                 in_game_init();
                 break;
+            case GAME_STATE_IN_DEMO_INIT:
+                in_demo_init();
+                break;
             case GAME_STATE_IN_GAME_LOOP:
                 in_game_loop();
                 break;
-            case GAME_STATE_GAME_OVER_EXIT_TRANSITION:
-                game_over_exit_transition_loop();
-                break;
             case GAME_STATE_IN_DEMO_LOOP:
                 in_demo_loop();
+                break;
+            case GAME_STATE_GAME_OVER_EXIT_TRANSITION:
+                game_over_exit_transition_loop();
                 break;
         }
     }
 }
 
-
+uint16_t is_demo()
+{
+    return game_state == GAME_STATE_IN_DEMO_LOOP;
+}

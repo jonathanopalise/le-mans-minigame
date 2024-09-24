@@ -113,7 +113,7 @@ src/road_render.o: src/road_render.c src/road_render.h src/road_graphics.h src/r
 src/road_render_fast.o: src/road_render_fast.s src/road_render_fast.h src/road_graphics.h src/road_geometry.h src/hardware_playfield.h src/blitter.h
 	$(VASM) $(VASM_OPTS) src/road_render_fast.s -Felf -o src/road_render_fast.o
 
-src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h src/play_sound.h
+src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/initialise.h src/hardware_playfield.h src/checkpoints.h src/hud.h src/play_sound.h src/game_loop.h
 	$(CC) $(CFLAGS) -c src/player_car.c -o src/player_car.o
 
 src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h src/lookups.h src/trackside_items.h
