@@ -2,13 +2,13 @@
     public _road_render_fast_checkpoint
 
     macro endline
-    lea 538(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
+    lea 540(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
     add.w #160,d4     ; move destination address to next line - I want to change this to a .w
     dbra d7,_line
     endm
 
     macro endline_checkpoint
-    lea 538(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
+    lea 540(a5),a5    ; next road scanline, NOTE: 24 depends on size of struct
     add.w #160,d4     ; move destination address to next line - I want to change this to a .w
     dbra d7,_line_checkpoint
     endm

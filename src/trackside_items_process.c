@@ -47,7 +47,12 @@ void trackside_items_process()
         trackside_item_scanline_index = distance_to_scanline_lookup[current_trackside_item_camera_relative_position];
         if (trackside_item_scanline_index != -1) {
             road_scanline = road_scanline_pointers[trackside_item_scanline_index];
-            sprite_index = current_trackside_item->type + road_scanline->sprite_index_adjust;
+
+            if (current_trackside_item->type == SCENERY_TYPE_LAMPPOST) {
+                sprite_index = current_trackside_item->type + road_scanline->lamppost_sprite_index_adjust;
+            } else {
+                sprite_index = current_trackside_item->type + road_scanline->sprite_index_adjust;
+            }
 
             if (current_trackside_item->xpos > 0) {
                 screen_xpos = (((road_scanline->current_logical_xpos + road_scanline->object_xpos_add_values[current_trackside_item->xpos]) >> 16));

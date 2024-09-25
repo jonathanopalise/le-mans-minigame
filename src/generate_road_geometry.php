@@ -39,12 +39,82 @@ function generateSpriteIndexAdjust($scanlineIndex)
         $spriteIndex = 5;
     } elseif ($roadWidth >= 9*5) {
         $spriteIndex = 6;
-    } elseif ($roadWidth >= 6*5) {
+    } elseif ($roadWidth >= 5*5) {
         $spriteIndex = 7;
     }
 
     return $spriteIndex;
 }
+
+function generateLamppostSpriteIndexAdjust($scanlineIndex)
+{
+    $roadWidth = intval(11 + ((382 - 11) / 80 * $scanlineIndex));
+
+    // halfway between 48 and 64 is 56
+    // halfway between 36 and 48 is 42
+    // halfway between 27 and 36 is 31
+    // halfway between 20 and 27 is 23
+    // halfway between 15 and 20 is 17
+    // halfway between 11 and 15 is 13
+
+    $spriteIndex = 16;
+    if ($roadWidth >= 56*5) {
+        $spriteIndex = 0;
+
+    } elseif ($roadWidth >= 48*5) {
+        $spriteIndex = 1;
+
+
+    } elseif ($roadWidth >= 42*5) {
+        $spriteIndex = 2;
+
+    } elseif ($roadWidth >= 36*5) {
+        $spriteIndex = 3;
+
+
+    } elseif ($roadWidth >= 31*5) {
+        $spriteIndex = 4;
+
+
+    } elseif ($roadWidth >= 27*5) {
+        $spriteIndex = 5;
+
+
+    } elseif ($roadWidth >= 23*5) {
+        $spriteIndex = 6;
+
+    } elseif ($roadWidth >= 20*5) {
+        $spriteIndex = 7;
+
+
+    } elseif ($roadWidth >= 17*5) {
+        $spriteIndex = 8;
+
+    } elseif ($roadWidth >= 15*5) {
+        $spriteIndex = 9;
+
+    } elseif ($roadWidth >= 13*5) {
+        $spriteIndex = 10;
+
+    } elseif ($roadWidth >= 11*5) {
+        $spriteIndex = 11;
+
+    } elseif ($roadWidth >= 9*5) {
+        $spriteIndex = 12;
+
+    } elseif ($roadWidth >= 7*5) {
+        $spriteIndex = 13;
+
+    } elseif ($roadWidth >= 5*5) {
+        $spriteIndex = 14;
+
+    } elseif ($roadWidth >= 4*5) {
+        $spriteIndex = 15;
+    }
+
+    return $spriteIndex;
+}
+
 
 if ($argc < 2) {
     echo("Usage: php generate_road_geometry.php [outputFile]\n");
@@ -86,6 +156,7 @@ $requiredObjectXPositions = [0,40,120,225,250,275];
 
 for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++) {
     $spriteIndexAdjust = generateSpriteIndexAdjust($scanlineIndex);
+    $lamppostSpriteIndexAdjust = generateLamppostSpriteIndexAdjust($scanlineIndex);
     /*$spriteIndexAdjust = 7 - round($scanlineIndex / 5.5);
     if ($spriteIndexAdjust < 0) {
         $spriteIndexAdjust = 0;
@@ -111,6 +182,7 @@ for ($scanlineIndex = 0; $scanlineIndex < TOTAL_SCANLINE_COUNT; $scanlineIndex++
 
     $scanlines[] = [
         'spriteIndexAdjust' => $spriteIndexAdjust,
+        'lamppostSpriteIndexAdjust' => $lamppostSpriteIndexAdjust,
         'distanceAlongRoad' => $distanceAlongRoad,
         'unnormalisedSkewAddValues' => $unnormalisedSkewAddValues,
         'objectXposValues' => $objectXposValues,
@@ -180,6 +252,11 @@ foreach ($scanlines as $key => $scanline) {
     $lines[] = sprintf(
         '       .sprite_index_adjust = %d,',
         $scanline['spriteIndexAdjust']
+    );
+
+    $lines[] = sprintf(
+        '       .lamppost_sprite_index_adjust = %d,',
+        $scanline['lamppostSpriteIndexAdjust']
     );
 
     $lines[] = sprintf(

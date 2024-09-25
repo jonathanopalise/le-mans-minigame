@@ -13,6 +13,9 @@ struct RoadScanline {
     // value to add to sprite index for this scanline
     uint16_t sprite_index_adjust;
 
+    // value to add to sprite index for this scanline (for lampposts only)
+    uint16_t lamppost_sprite_index_adjust;
+
     // pre-multipled values for modifying the unnormalised_skew value
     // when the camera shifts to the left or right
     // e.g. to shift the camera 128 units to the right:
