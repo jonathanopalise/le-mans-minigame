@@ -1039,6 +1039,126 @@ $definitions = [
         'label' => 'lamppost-2',
         'left' => 23,
         'top' => 956,
+        'width' => 14,
+        'height' => 87,
+    ],
+    [
+        'label' => 'lamppost-3',
+        'left' => 41,
+        'top' => 956,
+        'width' => 12,
+        'height' => 75,
+    ],
+    [
+        'label' => 'lamppost-4',
+        'left' => 57,
+        'top' => 956,
+        'width' => 10,
+        'height' => 65,
+    ],
+    [
+        'label' => 'lamppost-5',
+        'left' => 71,
+        'top' => 956,
+        'width' => 9,
+        'height' => 56,
+    ],
+    [
+        'label' => 'lamppost-6',
+        'left' => 84,
+        'top' => 956,
+        'width' => 8,
+        'height' => 49,
+    ],
+    [
+        'label' => 'lamppost-7',
+        'left' => 96,
+        'top' => 956,
+        'width' => 7,
+        'height' => 42,
+    ],
+    [
+        'label' => 'lamppost-8',
+        'left' => 107,
+        'top' => 956,
+        'width' => 6,
+        'height' => 37,
+    ],
+    [
+        'label' => 'lamppost-9',
+        'left' => 117,
+        'top' => 956,
+        'width' => 5,
+        'height' => 31,
+    ],
+    [
+        'label' => 'lamppost-10',
+        'left' => 126,
+        'top' => 956,
+        'width' => 4,
+        'height' => 27,
+    ],
+    [
+        'label' => 'lamppost-11',
+        'left' => 134,
+        'top' => 956,
+        'width' => 4,
+        'height' => 23,
+    ],
+    [
+        'label' => 'lamppost-12',
+        'left' => 142,
+        'top' => 956,
+        'width' => 3,
+        'height' => 20,
+    ],
+    [
+        'label' => 'lamppost-13',
+        'left' => 149,
+        'top' => 956,
+        'width' => 3,
+        'height' => 17,
+    ],
+    [
+        'label' => 'lamppost-14',
+        'left' => 156,
+        'top' => 956,
+        'width' => 2,
+        'height' => 15,
+    ],
+    [
+        'label' => 'lamppost-15',
+        'left' => 162,
+        'top' => 956,
+        'width' => 2,
+        'height' => 13,
+    ],
+    [
+        'label' => 'lamppost-16',
+        'left' => 168,
+        'top' => 956,
+        'width' => 2,
+        'height' => 11,
+    ],
+    [
+        'label' => 'lamppost-17',
+        'left' => 174,
+        'top' => 956,
+        'width' => 2,
+        'height' => 9,
+    ],
+
+    /*[
+        'label' => 'lamppost-1',
+        'left' => 3,
+        'top' => 956,
+        'width' => 16,
+        'height' => 100,
+    ],
+    [
+        'label' => 'lamppost-2',
+        'left' => 23,
+        'top' => 956,
         'width' => 12,
         'height' => 75,
     ],
@@ -1053,8 +1173,8 @@ $definitions = [
         'label' => 'lamppost-4',
         'left' => 52,
         'top' => 956,
-        'width' => 6,
-        'height' => 38,
+        'width' => 7,
+        'height' => 42,
     ],
     [
         'label' => 'lamppost-5',
@@ -1068,14 +1188,14 @@ $definitions = [
         'left' => 71,
         'top' => 956,
         'width' => 4,
-        'height' => 26,
+        'height' => 23,
     ],
     [
         'label' => 'lamppost-7',
         'left' => 79,
         'top' => 956,
         'width' => 3,
-        'height' => 19,
+        'height' => 17,
     ],
     [
         'label' => 'lamppost-8',
@@ -1089,10 +1209,10 @@ $definitions = [
         'left' => 92,
         'top' => 956,
         'width' => 2,
-        'height' => 9,
-    ],
+        'height' => 10,
+    ],*/
 
-    // left arrow offset 148 UPDATED
+    // left arrow offset 156 UPDATED
 
     [
         'label' => 'left-arrow-1',
@@ -1167,7 +1287,7 @@ $definitions = [
         'permittedSkews' => [],
     ],
 
-    // right arrow offset 157 UPDATED
+    // right arrow offset 165 UPDATED
 
     [
         'label' => 'right-arrow-1',
@@ -1233,7 +1353,7 @@ $definitions = [
         'height' => 4,
     ],
 
-    // konami offset 166 UPDATED
+    // konami offset 174 UPDATED
 
     [
         'label' => 'konami-1',
@@ -1299,7 +1419,7 @@ $definitions = [
         'height' => 5,
     ],
 
-    // bp offset 175 UPDATED
+    // bp offset 183 UPDATED
 
     [
         'label' => 'bp-1',
@@ -1365,7 +1485,7 @@ $definitions = [
         'height' => 5,
     ],
 
-    // tall tree offset 184 UPDATED
+    // tall tree offset 192 UPDATED
 
     [
         'label' => 'tall-tree-1',
@@ -1431,7 +1551,7 @@ $definitions = [
         'height' => 9,
     ],
 
-    // short tree offset 193 UPDATED
+    // short tree offset 201 UPDATED
 
     [
         'label' => 'short-tree-1',
@@ -1497,7 +1617,7 @@ $definitions = [
         'height' => 6,
     ],
 
-    // red car flip 202
+    // red car flip 210
 
     [
         'label' => 'red-car-flip-1',
@@ -1548,7 +1668,7 @@ $definitions = [
         'permittedSkews' => [8],
     ],
 
-    // checkpoint gantry 208
+    // checkpoint gantry 216
 
     [
         'label' => 'checkpoint-gantry-1',
@@ -1614,7 +1734,7 @@ $definitions = [
         'height' => 10,
     ],
 
-    // checkpoint top 217
+    // checkpoint top 225
     [
         'label' => 'checkpoint-top-1',
         'left' => 3,
@@ -1698,7 +1818,7 @@ $definitions = [
         'originy' => 12,
     ],
 
-    // game over (226)
+    // game over (234)
 
     [
         'label' => 'game-over',
@@ -1709,7 +1829,7 @@ $definitions = [
         'permittedSkews' => [12],
     ],
 
-    // get ready (227)
+    // get ready (235)
 
     [
         'label' => 'get-ready',
@@ -1721,7 +1841,7 @@ $definitions = [
         'permittedSkews' => [2],
     ],
 
-    // go! (228)
+    // go! (236)
 
     [
         'label' => 'go',
@@ -1732,7 +1852,7 @@ $definitions = [
         'permittedSkews' => [10],
     ],
 
-    // speedo (229)
+    // speedo (237)
 
     [
         'label' => 'speedo',
@@ -1745,7 +1865,7 @@ $definitions = [
         'permittedSkews' => [1],
     ],
 
-    // speedo digits (230-)
+    // speedo digits (238-)
 
     [
         'label' => 'speedo-0',
@@ -1848,7 +1968,7 @@ $definitions = [
         'permittedSkews' => [0, 5, 11],
     ],
 
-    // time extend (240)
+    // time extend (248)
     [
         'label' => 'time-extend',
         'left' => 3,
@@ -1858,7 +1978,7 @@ $definitions = [
         'permittedSkews' => [14],
     ],
 
-    // left arrow (yellow) offset 241 UPDATED
+    // left arrow (yellow) offset 249 UPDATED
 
     [
         'label' => 'left-arrow-yellow-1',
@@ -1933,7 +2053,7 @@ $definitions = [
         'permittedSkews' => [],
     ],
 
-    // right arrow (yellow) offset 250 UPDATED
+    // right arrow (yellow) offset 258 UPDATED
 
     [
         'label' => 'right-arrow-yellow-1',
@@ -2008,7 +2128,7 @@ $definitions = [
         'permittedSkews' => [],
     ],
 
-    // player car shadow 259
+    // player car shadow 267
     [
         'label' => 'car-shadow',
         'left' => 3,
@@ -2017,7 +2137,7 @@ $definitions = [
         'height' => 10,
     ],
 
-    // demo 260
+    // demo 268
     [
         'label' => 'demo',
         'left' => 117,

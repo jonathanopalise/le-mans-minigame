@@ -5,8 +5,8 @@
 #include "lookups.h"
 #include "draw_sprite.h"
 
-#define SPEEDO_DEFINITION_OFFSET 229
-#define SPEEDO_DIGITS_OFFSET_BASE 230
+#define SPEEDO_DEFINITION_OFFSET 237
+#define SPEEDO_DIGITS_OFFSET_BASE 238
 
 uint8_t digit_lookup[] = {
     0,0,0,0,

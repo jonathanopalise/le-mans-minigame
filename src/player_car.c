@@ -274,7 +274,7 @@ void player_car_crash()
 uint16_t player_car_get_sprite_definition()
 {
     if (player_car_state == PLAYER_CAR_STATE_FLIP_CRASH) {
-        return 202 + player_car_flip_image_tracker / 4;
+        return 210 + player_car_flip_image_tracker / 4;
     }
 
     uint16_t player_car_sprite_definition_offset = 9;
