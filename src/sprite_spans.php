@@ -709,8 +709,8 @@ class CompiledSpriteBuilder {
                                     $loopState,
                                     $instructionStream,
                                     $loopIndex,
-                                    $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement : null,
-                                    $destinationYIncrement != $oldDestinationYIncrement ? $destinationYIncrement: null
+                                    $sourceYIncrement !== $oldSourceYIncrement ? $sourceYIncrement : null,
+                                    $destinationYIncrement !== $oldDestinationYIncrement ? $destinationYIncrement: null
                                 );
                                 $oldSourceYIncrement = $sourceYIncrement;
                                 $oldDestinationYIncrement = $destinationYIncrement;
@@ -743,8 +743,8 @@ class CompiledSpriteBuilder {
                                 $loopState,
                                 $instructionStream,
                                 $loopIndex,
-                                $sourceYIncrement != $oldSourceYIncrement ? $sourceYIncrement: null,
-                                $destinationYIncrement != $oldDestinationYIncrement ? $destinationYIncrement: null
+                                $sourceYIncrement !== $oldSourceYIncrement ? $sourceYIncrement: null,
+                                $destinationYIncrement !== $oldDestinationYIncrement ? $destinationYIncrement: null
                             );
                             $oldDestinationYIncrement = $destinationYIncrement;
                             $oldSourceYIncrement = $sourceYIncrement;
