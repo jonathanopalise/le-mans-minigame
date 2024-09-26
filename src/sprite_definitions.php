@@ -1863,6 +1863,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [1],
+        'includeMaskWords' => false,
     ],
 
     // speedo digits (238-)

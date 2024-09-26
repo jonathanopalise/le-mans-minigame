@@ -49,8 +49,14 @@ foreach ($definitions as $definition) {
         $originY
     )->getCopyRoundedTo16PixelDivisibleWidth();
 
+    if (isset($definition['includeMaskWords'])) {
+        $includeMaskWords = $definition['includeMaskWords'];
+    } else {
+        $includeMaskWords = true;
+    }
+
     $maskedSprite = SpriteConvertor::createMaskedSprite($croppedIndexedBitmap);
-    $planarData = $maskedSprite->exportToPlanarData();
+    $planarDataWords = $maskedSprite->exportToWords(true, $includeMaskWords);
 
     $exportedSprite = [
         'origin_x' => $croppedIndexedBitmap->getOriginX(),
@@ -58,48 +64,28 @@ foreach ($definitions as $definition) {
         'source_data_width' => $maskedSprite->getWidth(),
         'source_data_height' => $maskedSprite->getHeight(),
         'longest_right_end' => $maskedSprite->getLongestRightEnd(),
-        'words' => $planarData->getWords(),
+        'words' => $planarDataWords,
     ];
 
     for ($skew = 0; $skew < 16; $skew++) {
-        /*printf(
-            "masked sprite width: %d\n",
-            $maskedSprite->getWidth()
-        );*/
         $skewedMaskedSprite = $maskedSprite->getShiftedCopy($skew);
-        /*printf(
-            "skewed masked sprite width: %d\n",
-            $skewedMaskedSprite->getWidth()
-        );*/
-        //$skewedMaskedSprite = $maskedSprite;
-        $planarData = $maskedSprite->exportToPlanarData();
-        $skewedPlanarData = $skewedMaskedSprite->exportToPlanarData();
 
-        /*$planarDataWords = $planarData->getWords();
-        $skewedPlanarDataWords = $skewedPlanarData->getWords();
-        if ($planarDataWords != $skewedPlanarDataWords) {
-            var_dump(array_slice($planarDataWords, 0, 10));
-            var_dump(array_slice($skewedPlanarDataWords, 0, 10));
-            echo("FAIL");
-            exit(1);
-        }*/
-
+        // this becomes the input for the compiled sprite
+        $maskWords = $skewedMaskedSprite->exportToWords(false, true);
         // convert word data to byte data
-        $skewedCharData= '';
-        $words = $skewedPlanarData->getWords();
-
-        foreach ($words as $word) {
-            $skewedCharData .= chr($word >> 8);
-            $skewedCharData .= chr($word & 255);
+        $skewedMaskCharData= '';
+        foreach ($maskWords as $word) {
+            $skewedMaskCharData .= chr($word >> 8);
+            $skewedMaskCharData .= chr($word & 255);
         }
 
-        //echo("-------------------\n");
+        echo("skewed mask char data length is: ".strlen($skewedMaskCharData)."\n");
+
+        //echo("bitplane data length ".strlen($skewedBitplaneCharData)."\n");
+        //echo("mask data length ".strlen($skewedMaskCharData)."\n");
+
         $widthInPixels = $skewedMaskedSprite->getWidth();
-        //var_dump($widthInPixels);
         $widthIn16PixelBlocks = $skewedMaskedSprite->getWidth() / 16;
-        //var_dump($widthIn16PixelBlocks);
-        //printf("skew is %d\n", $skew);
-        //printf("width in 16 pixel blocks: %d\n", $widthIn16PixelBlocks);
 
         if (str_contains($definition['label'], 'yellow-car') || str_contains($definition['label'], 'blue-car')) {
             $instructions = [];
@@ -113,7 +99,8 @@ foreach ($definitions as $definition) {
             if (in_array($skew, $permittedSkews)) {
                 //echo("** attempting ".$definition['label']." skew ".$skew."\n");
                 $builder = new CompiledSpriteBuilder(
-                    $skewedCharData,
+                    $skewedMaskCharData,
+                    $includeMaskWords ? 10 : 8,
                     $widthIn16PixelBlocks,
                     $skewedMaskedSprite->getHeight(),
                     $skew

@@ -766,28 +766,25 @@ class Sprite
     {
     }
 
-    public function exportToPlanarData()
+    public function exportToWords(bool $includeBitplaneWords, bool $includeMaskWords)
     {
         $words = [];
         $widthInWords = $this->spriteLines[0]->getWidthInWords();
 
         foreach ($this->spriteLines as $spriteLine) {
             for ($wordIndex = 0; $wordIndex < $widthInWords; $wordIndex++) {
-                if ($this->masked) {
+                if ($includeMaskWords && $this->masked) {
                     $words[] = $spriteLine->getMaskWordAt($wordIndex);
                 }
-                for ($bitplaneIndex = 0; $bitplaneIndex < 4; $bitplaneIndex++) {
-                    $words[] = $spriteLine->getBitplaneWordAt($bitplaneIndex, $wordIndex);
+                if ($includeBitplaneWords) {
+                    for ($bitplaneIndex = 0; $bitplaneIndex < 4; $bitplaneIndex++) {
+                        $words[] = $spriteLine->getBitplaneWordAt($bitplaneIndex, $wordIndex);
+                    }
                 }
             }
         }
 
-        return new PlanarData(
-            $this->getWidth(),
-            count($this->spriteLines),
-            $this->masked,
-            $words
-        );
+        return $words;
     }
 
     public function getEmptyPixelsOnRight()

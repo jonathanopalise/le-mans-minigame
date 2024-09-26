@@ -305,7 +305,7 @@ _draw_compiled_sprite_entry:
     add.w d0,d0
     move.l (a2,d0),a2
 
-    move.w #10,$ffff8a20.w    ; set source x increment
+    ;move.w #10,$ffff8a20.w    ; set source x increment NEEDS TO BE PUT INTO COMPILED SPRITE AS EITHER 8 or 10
     move.w #8,$ffff8a2e.w     ; set dest x increment
     move.w #$0203,$ffff8a3a.w ; set hop/op
     ;move.w #$0,$ffff8a3a.w   ; set hop/op

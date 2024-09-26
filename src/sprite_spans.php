@@ -288,15 +288,13 @@ class SixteenPixelBlock {
     private int $sourceOffset;
     private int $destinationOffset;
     private int $maskWord;
-    private array $bitplaneWords;
 
-    public function __construct(int $originalSourceOffset, int $sourceOffset, int $destinationOffset, int $maskWord, array $bitplaneWords)
+    public function __construct(int $originalSourceOffset, int $sourceOffset, int $destinationOffset, int $maskWord)
     {
         $this->originalSourceOffset = $originalSourceOffset;
         $this->sourceOffset = $sourceOffset;
         $this->destinationOffset = $destinationOffset;
         $this->maskWord = $maskWord;
-        $this->bitplaneWords = $bitplaneWords;
     }
 
     public function getOriginalSourceOffset(): int
@@ -322,11 +320,6 @@ class SixteenPixelBlock {
     public function getInvertedMaskWord(): int
     {
         return ~($this->maskWord) & 0xffff;
-    }
-
-    public function getBitplaneWords(): array
-    {
-        return $this->bitplaneWords;
     }
 }
 
@@ -379,6 +372,7 @@ class CompiledSpriteBuilder {
     const BLITTER_COPY_THRESHOLD = 6;
 
 	private string $data;
+    private string $separateMaskData;
 	private SixteenPixelBlockCollection $sixteenPixelBlockCollection;
     private array $uniqueLongValues = [];
 	private int $widthInSixteenPixelBlocks;
@@ -386,43 +380,42 @@ class CompiledSpriteBuilder {
     private int $skewed;
     private int $drawOffsetSourceAdjust;
     private int $drawOffsetDestinationAdjust;
+    private int $sourceAddPerSixteenPixels;
 
-	public function __construct(string $data, int $widthInSixteenPixelBlocks, int $heightInLines, int $skewed)
+	public function __construct(string $data, int $sourceAddPerSixteenPixels, int $widthInSixteenPixelBlocks, int $heightInLines, int $skewed)
 	{
 		$this->data = $data; // this will need to be an array of bytes!
+        $this->sourceAddPerSixteenPixels = $sourceAddPerSixteenPixels;
 		$this->widthInSixteenPixelBlocks = $widthInSixteenPixelBlocks;
 		$this->heightInLines = $heightInLines;
         $this->skewed = $skewed;
         $this->sixteenPixelBlockCollection = new SixteenPixelBlockCollection();
 
+        $maskSourceOffset = 0;
         $originalSourceOffset = 0;
         $sourceOffset = 0;
+        $maskSourceOffset = 0;
         $destinationOffset = 0;
         $bytesToSkipAfterEachLine = self::FRAMEBUFFER_BYTES_PER_LINE - $widthInSixteenPixelBlocks * self::BYTES_PER_16_PIXELS;
 
 		for ($y = 0; $y < $this->heightInLines; $y++) {
             for ($x = 0; $x < $this->widthInSixteenPixelBlocks; $x++) {
-                $maskWord = $this->getWordAtSourceOffset($sourceOffset);
-                $bitplaneWords = [
-                    $this->getWordAtSourceOffset($sourceOffset + 2),
-                    $this->getWordAtSourceOffset($sourceOffset + 4),
-                    $this->getWordAtSourceOffset($sourceOffset + 6),
-                    $this->getWordAtSourceOffset($sourceOffset + 8),
-                ];
+                $maskWord = $this->getWordAtSourceOffset($maskSourceOffset);
+                $maskSourceOffset += 2;
 
                 $this->sixteenPixelBlockCollection->addBlock(
-                    new SixteenPixelBlock($originalSourceOffset, $sourceOffset, $destinationOffset, $maskWord, $bitplaneWords)
+                    new SixteenPixelBlock($originalSourceOffset, $sourceOffset, $destinationOffset, $maskWord)
                 );
 
                 if ($skewed) {
                     if ($x < $this->widthInSixteenPixelBlocks - 1) {
-                        $originalSourceOffset += 10;
+                        $originalSourceOffset += $this->sourceAddPerSixteenPixels;
                     }
                 } else {
-                    $originalSourceOffset += 10;
+                    $originalSourceOffset += $this->sourceAddPerSixteenPixels;
                 }
 
-                $sourceOffset += 10;
+                $sourceOffset += $this->sourceAddPerSixteenPixels;
                 $destinationOffset += 8;
             }
             $destinationOffset += $bytesToSkipAfterEachLine;
@@ -546,6 +539,8 @@ class CompiledSpriteBuilder {
 
         $instructionStream = new InstructionStream();
 
+        $instructionStream->add('move.w #'.$this->sourceAddPerSixteenPixels.',$ffff8a20.w');
+
         $instructionStream->add('lea $ffff8a28.w,a2        ; cache endmask1');
 
         // mSkewFXSR      equ  $80
@@ -630,9 +625,14 @@ class CompiledSpriteBuilder {
 
                         $oldEndmasks = $endmasks;
 
-                        $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset() + 2;
+                        // is this +2 to bypass the mask word?
+                        $sourceOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getOriginalSourceOffset();
+                        if ($this->sourceAddPerSixteenPixels == 10) {
+                            $sourceOffset += 2;
+                        }
+
                         if ($useFxsr) {
-                            $sourceOffset -= 10;
+                            $sourceOffset -= $this->sourceAddPerSixteenPixels;
                         }
                         $destinationOffset = $blockCollection->getBlockByOffset($span->getStartOffset())->getDestinationOffset();
 
@@ -1433,24 +1433,24 @@ class CompiledSpriteBuilder {
     private function calculateSourceYIncrement(array $loopState, int $length): int
     {
         if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            $sourceYIncrement = ($loopState['subsequentSourceAdvance'] + 10) - ($length * 10);
+            $sourceYIncrement = ($loopState['subsequentSourceAdvance'] + $this->sourceAddPerSixteenPixels) - ($length * $this->sourceAddPerSixteenPixels);
 
             if ($loopState['useFxsr']) {
-                $sourceYIncrement -= 10;
+                $sourceYIncrement -= $this->sourceAddPerSixteenPixels;
             }
 
             if ($loopState['useNfsr']) {
-                $sourceYIncrement += 10;
+                $sourceYIncrement += $this->sourceAddPerSixteenPixels;
             }
 
         } else {
-            $sourceYIncrement = -((10 * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
+            $sourceYIncrement = -(($this->sourceAddPerSixteenPixels * ($length - 1)) - 2); // source y increment = (source x increment * (x count - 1)) -2
             if ($loopState['useFxsr']) {
-                $sourceYIncrement -= 10;
+                $sourceYIncrement -= $this->sourceAddPerSixteenPixels;
             }
 
             if ($loopState['useNfsr']) {
-                $sourceYIncrement += 10;
+                $sourceYIncrement += $this->sourceAddPerSixteenPixels;
             }
 
         }
