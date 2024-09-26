@@ -4,6 +4,8 @@
 #include "sprite_definitions.h"
 #include "lookups.h"
 #include "draw_sprite.h"
+#include "speedo_fast.h"
+#include <string.h>
 
 #define SPEEDO_DEFINITION_OFFSET 237
 #define SPEEDO_DIGITS_OFFSET_BASE 238
@@ -247,17 +249,6 @@ uint8_t digit_lookup[] = {
     2,3,5,0,
     2,3,6,0,
     2,3,7,0,
-    2,2,7,0,
-    2,2,8,0,
-    2,2,9,0,
-    2,3,0,0,
-    2,3,1,0,
-    2,3,2,0,
-    2,3,3,0,
-    2,3,4,0,
-    2,3,5,0,
-    2,3,6,0,
-    2,3,7,0,
     2,3,8,0,
     2,3,9,0,
     2,4,0,0,
@@ -280,6 +271,17 @@ uint8_t digit_lookup[] = {
     2,5,7,0,
     2,5,8,0,
     2,5,9,0,
+    2,6,0,0,
+    2,6,1,0,
+    2,6,2,0,
+    2,6,3,0,
+    2,6,4,0,
+    2,6,5,0,
+    2,6,6,0,
+    2,6,7,0,
+    2,6,8,0,
+    2,6,9,0,
+    2,7,0,0,
     2,7,1,0,
     2,7,2,0,
     2,7,3,0,
@@ -312,51 +314,140 @@ uint8_t digit_lookup[] = {
     3,0,0,0
 };
 
+struct Speedometer {
+    uint16_t *words;
+    int8_t digits[3];
+};
+
+static uint16_t speedometer_2_words[(8*3*26)/2]; // 10 bytes per 10 pixels
+static struct Speedometer speedometer_1;
+static struct Speedometer speedometer_2;
+static struct Speedometer *visible_speedometer;
+static struct Speedometer *hidden_speedometer;
+static uint16_t wip_speed;
+static uint16_t wip_digit_index;
+
+static void speedometer_init_speedometer(struct Speedometer *speedometer, uint8_t *words)
+{
+    speedometer->words = words;
+    speedometer->digits[0] = -1; 
+    speedometer->digits[1] = -1; 
+    speedometer->digits[2] = -1; 
+}
+
+void speedometer_init()
+{
+    speedometer_init_speedometer(&speedometer_1, sprite_definitions[SPEEDO_DEFINITION_OFFSET].words);
+    speedometer_init_speedometer(&speedometer_2, speedometer_2_words);
+    memcpy(speedometer_2.words, speedometer_1.words, 8*3*26);
+    visible_speedometer = &speedometer_1;
+    hidden_speedometer = &speedometer_2;
+    wip_digit_index = 0;
+    wip_speed = 0;
+}
+
+void speedometer_update()
+{
+    uint8_t desired_digit = digit_lookup[(wip_speed << 2) + wip_digit_index];
+    uint8_t existing_digit = hidden_speedometer->digits[wip_digit_index];
+    struct SpriteDefinition *sprite_definition;
+
+    if (desired_digit != existing_digit) {
+        sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + desired_digit];
+
+        switch (wip_digit_index) {
+            case 0:
+                draw_compiled_sprite(
+                    sprite_definition->words,
+                    hidden_speedometer->words + (12*10),
+                    &(sprite_definition->compiled_sprite_0),
+                    4
+                );
+                break;
+            case 1:
+                draw_compiled_sprite(
+                    sprite_definition->words,
+                    hidden_speedometer->words + (12*10),
+                    &(sprite_definition->compiled_sprite_0),
+                    15
+                );
+                break;
+            case 2:
+                draw_compiled_sprite(
+                    sprite_definition->words,
+                    visible_speedometer->words + (12*10) + 4,
+                    &(sprite_definition->compiled_sprite_0),
+                    10
+                );
+                break;
+        }
+
+        hidden_speedometer->digits[wip_digit_index] = desired_digit;
+    }
+
+    wip_digit_index++;
+    if (wip_digit_index == 3) {
+        struct Speedometer *temp_speedometer;
+        temp_speedometer = visible_speedometer;
+        visible_speedometer = hidden_speedometer;
+        hidden_speedometer = temp_speedometer;
+        wip_speed = player_car_speed >> 2;
+        wip_digit_index = 0;
+    }
+}
+
 void speedometer_draw()
 {
     struct SpriteDefinition *sprite_definition;
-    uint32_t player_car_display_speed = player_car_speed >> 2;
+    //uint32_t player_car_display_speed = player_car_speed >> 2;
 
     // xpos = 273
     sprite_definition = sprite_definition_pointers[SPEEDO_DEFINITION_OFFSET];
     draw_compiled_sprite(
-        sprite_definition->words,
+        visible_speedometer->words,
         &drawing_playfield->buffer[160 * 164 + (8 * 17)],
         &(sprite_definition->compiled_sprite_0),
         1
-    ); 
+    );
 
-    uint8_t *current_digit = &digit_lookup[player_car_display_speed << 2];
+    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + 1];
+    draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 0);
+    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + 2];
+    draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 1);*/
+
+    //draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 0);
+
+    //uint8_t *current_digit = &digit_lookup[player_car_display_speed << 2];
 
     // xpos = 277
-    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
     draw_compiled_sprite(
         sprite_definition->words,
         &drawing_playfield->buffer[160 * 174 + (8 * 17)],
         &(sprite_definition->compiled_sprite_0),
         5
-    );
+    );*/
 
-    current_digit++;
+    //current_digit++;
 
     // xpos = 288
-    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
     draw_compiled_sprite(
         sprite_definition->words,
         &drawing_playfield->buffer[160 * 174 + (8 * 18)],
         &(sprite_definition->compiled_sprite_0),
         0
-    );
+    );*/
 
-    current_digit++;
+    //current_digit++;
 
     // xpos = 299
-    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
+    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
     draw_compiled_sprite(
         sprite_definition->words,
         &drawing_playfield->buffer[160 * 174 + (8 * 18)],
         &(sprite_definition->compiled_sprite_0),
         11
-    );
+    );*/
 }
 

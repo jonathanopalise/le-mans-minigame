@@ -48,6 +48,7 @@ OBJECT_FILES =\
 	src/mixer_vbl.o\
 	src/play_sound.o\
    	src/stars_fast.o\
+    src/speedo_fast.o\
     src/hardware_playfield_fast.o\
     src/music.o\
 
@@ -146,7 +147,7 @@ src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geo
 src/stars.o: src/stars.c src/stars.h src/lookups.h src/road_movement.h src/hardware_playfield.h src/star_lookups.h src/lookups.h
 	$(CC) $(CFLAGS) -c src/stars.c -o src/stars.o
 
-src/speedometer.o: src/speedometer.c src/speedometer.h src/player_car.h src/hardware_playfield.h src/sprite_definitions.h src/lookups.h src/draw_sprite.h
+src/speedometer.o: src/speedometer.c src/speedometer.h src/player_car.h src/hardware_playfield.h src/sprite_definitions.h src/lookups.h src/draw_sprite.h src/speedo_fast.h
 	$(CC) $(CFLAGS) -c src/speedometer.c -o src/speedometer.o
 
 src/screen_transition.o: src/screen_transition.c src/screen_transition.h
@@ -223,6 +224,9 @@ src/play_sound.o: src/play_sound.s
 
 src/stars_fast.o: src/stars_fast.s
 	$(VASM) $(VASM_OPTS) src/stars_fast.s -Felf -o src/stars_fast.o
+
+src/speedo_fast.o: src/speedo_fast.s
+	$(VASM) $(VASM_OPTS) src/speedo_fast.s -Felf -o src/speedo_fast.o
 
 src/hardware_playfield_fast.o: src/hardware_playfield_fast.s
 	$(VASM) $(VASM_OPTS) src/hardware_playfield_fast.s -Felf -o src/hardware_playfield_fast.o

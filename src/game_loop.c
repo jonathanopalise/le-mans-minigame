@@ -190,6 +190,7 @@ static void in_game_init()
     while (waiting_for_vbl) {}
     memset(0xffff8240, 0, 32);
 
+    speedometer_init();
     time_of_day_init();
     time_of_day_update();
     music_init();
@@ -325,6 +326,8 @@ static void in_demo_loop()
 
 static void in_game_loop()
 {
+    speedometer_update();
+
     hud_reduce_time();
     if (hud_update_score_digits()) {
         hardware_playfield_hud_redraw_required();
