@@ -55,6 +55,12 @@ foreach ($definitions as $definition) {
         $includeMaskWords = true;
     }
 
+    if (isset($definition['bytesPerDestLine'])) {
+        $bytesPerDestLine = $definition['bytesPerDestLine'];
+    } else {
+        $bytesPerDestLine = 160;
+    }
+
     $maskedSprite = SpriteConvertor::createMaskedSprite($croppedIndexedBitmap);
     $planarDataWords = $maskedSprite->exportToWords(true, $includeMaskWords);
 
@@ -103,7 +109,8 @@ foreach ($definitions as $definition) {
                     $includeMaskWords ? 10 : 8,
                     $widthIn16PixelBlocks,
                     $skewedMaskedSprite->getHeight(),
-                    $skew
+                    $skew,
+                    $bytesPerDestLine
                 );
                 $instructions = $builder->runFirstPass();
             } else {

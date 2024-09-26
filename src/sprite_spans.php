@@ -367,7 +367,6 @@ class InstructionStream
 
 class CompiledSpriteBuilder {
 
-    const FRAMEBUFFER_BYTES_PER_LINE = 160;
     const BYTES_PER_16_PIXELS = 8;
     const BLITTER_COPY_THRESHOLD = 6;
 
@@ -378,17 +377,19 @@ class CompiledSpriteBuilder {
 	private int $widthInSixteenPixelBlocks;
 	private int $heightInLines;
     private int $skewed;
+    private int $bytesPerDestLine;
     private int $drawOffsetSourceAdjust;
     private int $drawOffsetDestinationAdjust;
     private int $sourceAddPerSixteenPixels;
 
-	public function __construct(string $data, int $sourceAddPerSixteenPixels, int $widthInSixteenPixelBlocks, int $heightInLines, int $skewed)
+	public function __construct(string $data, int $sourceAddPerSixteenPixels, int $widthInSixteenPixelBlocks, int $heightInLines, int $skewed, int $bytesPerDestLine)
 	{
 		$this->data = $data; // this will need to be an array of bytes!
         $this->sourceAddPerSixteenPixels = $sourceAddPerSixteenPixels;
 		$this->widthInSixteenPixelBlocks = $widthInSixteenPixelBlocks;
 		$this->heightInLines = $heightInLines;
         $this->skewed = $skewed;
+        $this->bytesPerDestLine = $bytesPerDestLine;
         $this->sixteenPixelBlockCollection = new SixteenPixelBlockCollection();
 
         $maskSourceOffset = 0;
@@ -396,7 +397,7 @@ class CompiledSpriteBuilder {
         $sourceOffset = 0;
         $maskSourceOffset = 0;
         $destinationOffset = 0;
-        $bytesToSkipAfterEachLine = self::FRAMEBUFFER_BYTES_PER_LINE - $widthInSixteenPixelBlocks * self::BYTES_PER_16_PIXELS;
+        $bytesToSkipAfterEachLine = $this->bytesPerDestLine - $widthInSixteenPixelBlocks * self::BYTES_PER_16_PIXELS;
 
 		for ($y = 0; $y < $this->heightInLines; $y++) {
             for ($x = 0; $x < $this->widthInSixteenPixelBlocks; $x++) {
@@ -1462,7 +1463,7 @@ class CompiledSpriteBuilder {
     {
         // TODO: needs to act differently when number of lines > 6
         if ($loopState['copyInstructionIterations'] > self::BLITTER_COPY_THRESHOLD) {
-            return 168 - ($length * 8);
+            return ($this->bytesPerDestLine + 8) - ($length * 8);
         } else {
             return -((8 * ($length - 1)) - 2);
         }

@@ -1891,6 +1891,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-1',
@@ -1902,6 +1903,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-2',
@@ -1913,6 +1915,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-3',
@@ -1924,6 +1927,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-4',
@@ -1935,6 +1939,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-5',
@@ -1946,6 +1951,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-6',
@@ -1957,6 +1963,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-7',
@@ -1968,6 +1975,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-8',
@@ -1979,6 +1987,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
     [
         'label' => 'speedo-9',
@@ -1990,6 +1999,7 @@ $definitions = [
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
         'includeMaskWords' => false,
+        'bytesPerDestLine' => 32,
     ],
 
     // time extend (248)
