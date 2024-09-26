@@ -274,6 +274,7 @@ $definitions = [
         'width' => 49,
         'height' => 32,
         'permittedSkews' => [8],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-left-intermediate-left-2',
@@ -282,6 +283,7 @@ $definitions = [
         'width' => 55,
         'height' => 32,
         'permittedSkews' => [4],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-right-intermediate-right-1',
@@ -290,6 +292,7 @@ $definitions = [
         'width' => 49,
         'height' => 32,
         'permittedSkews' => [8],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-right-intermediate-right-2',
@@ -298,6 +301,7 @@ $definitions = [
         'width' => 55,
         'height' => 32,
         'permittedSkews' => [4],
+        'includeMaskWords' => false,
     ],
 
     // yellow car centre offset 40
@@ -1626,6 +1630,7 @@ $definitions = [
         'width' => 105,
         'height' => 41,
         'permittedSkews' => [12],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-flip-2',
@@ -1634,6 +1639,7 @@ $definitions = [
         'width' => 108,
         'height' => 37,
         'permittedSkews' => [10],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-flip-3',
@@ -1642,6 +1648,7 @@ $definitions = [
         'width' => 111,
         'height' => 51,
         'permittedSkews' => [8],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-flip-4',
@@ -1650,6 +1657,7 @@ $definitions = [
         'width' => 108,
         'height' => 37,
         'permittedSkews' => [10],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-flip-5',
@@ -1658,6 +1666,7 @@ $definitions = [
         'width' => 105,
         'height' => 39,
         'permittedSkews' => [12],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-flip-6',
@@ -1666,6 +1675,7 @@ $definitions = [
         'width' => 112,
         'height' => 59,
         'permittedSkews' => [8],
+        'includeMaskWords' => false,
     ],
 
     // checkpoint gantry 216
@@ -1827,6 +1837,7 @@ $definitions = [
         'width' => 72,
         'height' => 37,
         'permittedSkews' => [12],
+        'includeMaskWords' => false,
     ],
 
     // get ready (235)
@@ -1839,6 +1850,7 @@ $definitions = [
         'height' => 37,
         'height' => 37,
         'permittedSkews' => [2],
+        'includeMaskWords' => false,
     ],
 
     // go! (236)
@@ -1850,6 +1862,7 @@ $definitions = [
         'width' => 45,
         'height' => 18,
         'permittedSkews' => [10],
+        'includeMaskWords' => false,
     ],
 
     // speedo (237)
@@ -1877,6 +1890,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-1',
@@ -1887,6 +1901,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-2',
@@ -1897,6 +1912,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-3',
@@ -1907,6 +1923,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-4',
@@ -1917,6 +1934,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-5',
@@ -1927,6 +1945,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-6',
@@ -1937,6 +1956,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-7',
@@ -1947,6 +1967,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-8',
@@ -1957,6 +1978,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'speedo-9',
@@ -1967,6 +1989,7 @@ $definitions = [
         'originx' => 0,
         'originy' => 0,
         'permittedSkews' => [0, 5, 11],
+        'includeMaskWords' => false,
     ],
 
     // time extend (248)
@@ -1977,6 +2000,7 @@ $definitions = [
         'width' => 99,
         'height' => 9,
         'permittedSkews' => [14],
+        'includeMaskWords' => false,
     ],
 
     // left arrow (yellow) offset 249 UPDATED
@@ -2136,6 +2160,7 @@ $definitions = [
         'top' => 2386,
         'width' => 89,
         'height' => 10,
+        'includeMaskWords' => false,
     ],
 
     // demo 268
@@ -2145,7 +2170,8 @@ $definitions = [
         'top' => 2369,
         'width' => 36,
         'height' => 9,
-        'permittedSkews' => [14]
+        'permittedSkews' => [14],
+        'includeMaskWords' => false,
     ],
 ];
 
