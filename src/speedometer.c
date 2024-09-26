@@ -4,7 +4,6 @@
 #include "sprite_definitions.h"
 #include "lookups.h"
 #include "draw_sprite.h"
-#include "speedo_fast.h"
 #include <string.h>
 
 #define SPEEDO_DEFINITION_OFFSET 237

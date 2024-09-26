@@ -2171,6 +2171,7 @@ $definitions = [
         'width' => 89,
         'height' => 10,
         'includeMaskWords' => false,
+        'permittedSkews' => [4],
     ],
 
     // demo 268
