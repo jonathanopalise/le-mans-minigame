@@ -3,7 +3,6 @@
 
 #include <inttypes.h>
 #include "sprite_common.h"
-#include "hardware.h"
 #include "sprite_definitions.h"
 #include "draw_sprite.h"
 #include "bitplane_draw_record.h"
