@@ -26,6 +26,7 @@ _draw_stars_fast:
 
     move.l _mountains_shift,d4
     swap d4 ; normalised_mountains_shift
+    add.l d4,d4
 
     moveq.l #49,d7
     moveq.l #0,d1
@@ -36,11 +37,9 @@ _one_star:
     sub.w d4,d0    ; -normalised_mountains_shift
     bge.s _still_on_screen
 
-    add.w #320,d0  ; move star back on screen
+    add.w #640,d0  ; move star back on screen
 
 _still_on_screen:
-
-    add.w d0,d0 ; turn xpos into a lookup table offset
 
     move.w (a0)+,d1      ; add offset for start of destination line (ypos * 160)
     add.w (a1,d0),d1     ; add offset from star_xpos_dest_offsets, d1 is now offset within framebuffer

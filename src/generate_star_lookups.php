@@ -54,11 +54,15 @@ for ($backgroundColour = 0; $backgroundColour < 16; $backgroundColour++) {
     $backgroundWord3 = ($backgroundColour >> 2 & 1) ? 0xffff: 0;
     $backgroundWord4 = ($backgroundColour >> 3 & 1) ? 0xffff: 0;
 
+    // each background colour (0-16) has 8 bytes of erase values
+    // so offset into table would be 8 * background_colour
     $eraseValues[] = $backgroundWord1;
     $eraseValues[] = $backgroundWord2;
     $eraseValues[] = $backgroundWord3;
     $eraseValues[] = $backgroundWord4;
 
+    // each background colour (0-16) has 16 positions, each with 8 bytes of plot values
+    // so offset into table would be (128 * background_colour) + (position * 8)
     for ($starOffset = 0; $starOffset < 16; $starOffset++) {
         $word1 = ($backgroundWord1 & $andValues[$starOffset]) | $orValues[$starOffset];
         $word2 = ($backgroundWord2 & $andValues[$starOffset]) | $orValues[$starOffset];
