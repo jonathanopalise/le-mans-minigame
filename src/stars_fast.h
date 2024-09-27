@@ -8,4 +8,9 @@ void draw_stars_fast(
     uint8_t *buffer
 );
 
+void erase_stars_fast(
+    uint16_t *star_block_offsets,
+    uint8_t *buffer
+);
+
 #endif

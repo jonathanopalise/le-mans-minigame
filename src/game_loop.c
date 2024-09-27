@@ -258,7 +258,7 @@ static void in_game_loop_core()
     }
 
     if (drawing_playfield->stars_drawn) {
-        erase_stars();
+        erase_stars_fast(drawing_playfield->star_block_offsets, drawing_playfield->buffer);
         drawing_playfield->stars_drawn = 0;
     }
 
