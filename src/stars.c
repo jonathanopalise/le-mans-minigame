@@ -8,8 +8,9 @@ struct StarPosition {
     uint16_t original_xpos;
     uint16_t ypos;
     uint16_t background_colour_offset;
-    uint16_t erase_offset;
 };
+
+uint16_t star_erase_offsets[STAR_COUNT];
 
 uint16_t line_background_colours[100] = {
     2*64, 2*64, 2*64, 14*64, 2*64, // 15
@@ -103,10 +104,12 @@ void init_stars()
 {
     struct StarPosition *current_star_position = star_positions;
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
+        star_erase_offsets[index] = line_background_colours_2[current_star_position->ypos] << 2;
+
         current_star_position->original_xpos = current_star_position->original_xpos * 2;
-        current_star_position->erase_offset = line_background_colours_2[current_star_position->ypos] << 2;
         current_star_position->background_colour_offset = 128 * line_background_colours_2[current_star_position->ypos];
         current_star_position->ypos *= 160; //= current_star_position->ypos * 160;
+
         current_star_position++;
     }
 }
@@ -155,17 +158,17 @@ void erase_stars()
     uint32_t *plot_dest;
 
     uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
-    struct StarPosition *current_star_position = star_positions;
+    uint16_t *current_star_erase_offset = star_erase_offsets;
     uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
 
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        plot_source = (uint32_t *)(&star_erase_values[current_star_position->erase_offset]);
+        plot_source = (uint32_t *)(&star_erase_values[*current_star_erase_offset]);
         plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + *current_star_block_offset);
 
         *plot_dest++ = *plot_source++;
         *plot_dest++ = *plot_source++;
 
-        current_star_position++;
+        current_star_erase_offset++;
         current_star_block_offset++;
     }
 }

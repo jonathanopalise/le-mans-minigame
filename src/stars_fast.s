@@ -51,8 +51,6 @@ _still_on_screen:
     add.w (a0)+,a6      ; get offset for start of source data based on background colour
     add.w (a3,d0),a6       ; add offset from star_xpos_source_offsets
 
-    lea 2(a0),a0 ; skip final property
-
     move.l (a6)+,(a5)+
     move.l (a6)+,(a5)+
 
