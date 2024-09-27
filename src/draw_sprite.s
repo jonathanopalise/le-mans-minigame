@@ -26,9 +26,6 @@ _draw_compiled_sprite:
     ; d0 needs to be skew
     ; a2 needs to be address of compiled sprite table
 
-;foo:
-;    bra.s foo
-
     move.l 8(a0),a1  ; destination
     move.l 12(a0),a2 ; address of compiled sprite table
     move.w 18(a0),d0 ; skew
@@ -233,9 +230,6 @@ label_7a374:
     add.w     d2,d2            ; ...
     ;adda.w    d2,a2            ; ... d2 = (d2 * 8 [see 7a38c]) + d5 (d5 must the start of a line within logbase, so a multiple of 160)
                                                                               ; we set d5 to 0 and everything renders at the top line of the screen
-    ;adda.l    a1,a2        ; add buffer location into a2?
-    ;movea.l   a2,a1            ; transfer destination address into a1
-
     add.w     d2,a1    ; a1.l is final destination address for BitplaneDrawRecord
     tst.w     d4
     beq       nothingtodraw
@@ -279,9 +273,6 @@ label_7a374:
 
     move.l usp,a2 ; get address of table
 
-;boo:
-;    bra.s boo
-
     move.l a3,d0               ; get desired xpos of scenery object
     and.w #$e,d0               ; convert to skew value for blitter
 
@@ -305,10 +296,8 @@ _draw_compiled_sprite_entry:
     add.w d0,d0
     move.l (a2,d0),a2
 
-    ;move.w #10,$ffff8a20.w    ; set source x increment NEEDS TO BE PUT INTO COMPILED SPRITE AS EITHER 8 or 10
     move.w #8,$ffff8a2e.w     ; set dest x increment
     move.w #$0203,$ffff8a3a.w ; set hop/op
-    ;move.w #$0,$ffff8a3a.w   ; set hop/op
     moveq.l #4,d0             ; ycount
     move.l source_data_address,a0
     lea $ffff8a24.w,a3        ; cache source address register

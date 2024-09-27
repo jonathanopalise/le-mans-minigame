@@ -5,10 +5,6 @@ require_once 'sprite_spans.php';
 
 include 'sprite_definitions.php';
 
-function convertStringToByteArray()
-{
-}
-
 if ($argc < 3) {
     echo("Usage: php generate_sprite_definitions.php [inputFile] [outputFile]\n");
     exit(1);
@@ -85,11 +81,6 @@ foreach ($definitions as $definition) {
             $skewedMaskCharData .= chr($word & 255);
         }
 
-        echo("skewed mask char data length is: ".strlen($skewedMaskCharData)."\n");
-
-        //echo("bitplane data length ".strlen($skewedBitplaneCharData)."\n");
-        //echo("mask data length ".strlen($skewedMaskCharData)."\n");
-
         $widthInPixels = $skewedMaskedSprite->getWidth();
         $widthIn16PixelBlocks = $skewedMaskedSprite->getWidth() / 16;
 
@@ -103,7 +94,6 @@ foreach ($definitions as $definition) {
             }
 
             if (in_array($skew, $permittedSkews)) {
-                //echo("** attempting ".$definition['label']." skew ".$skew."\n");
                 $builder = new CompiledSpriteBuilder(
                     $skewedMaskCharData,
                     $includeMaskWords ? 10 : 8,
@@ -158,7 +148,6 @@ foreach ($definitions as $definition) {
             $binaryCode = file_get_contents($outputFilename);
             $exportedSprite['skew_' . $skew] = unpack('C*', $binaryCode); 
         } else {
-            //echo("failed to export ".$definition['label']." skew ".$skew."\n");
             $exportedSprite['skew_' . $skew] = null;
         }
     }

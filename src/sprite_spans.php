@@ -1,6 +1,5 @@
 <?php
 
-
 class Span
 {
     private SixteenPixelBlockCollection $blockCollection;
@@ -579,17 +578,6 @@ class CompiledSpriteBuilder {
         foreach ($uniqueSpanLengths as $length) {
             $instructionStream->add('');
 
-            //$destinationYIncrement = -((8 * ($length - 1)) - 2); // dest y increment = (Dest x increment * (x count - 1)) -2
-
-            // TODO: this may need to change on a per span basis!
-            /*$instructionStream->add(
-                sprintf(
-                    'move.w #%d,$ffff8a30.w ; dest y increment (per length group)',
-                    $destinationYIncrement
-                )
-            );*/
-
-            // this is fine
             $instructionStream->add(
                 sprintf(
                     'move.w #%d,$ffff8a36.w ; x count (per length group)',
@@ -659,24 +647,7 @@ class CompiledSpriteBuilder {
                             'changedEndmasks' => $changedEndmasks,
                         ];
 
-                        //$instructionStream->add('');
-                        //$instructionStream->add('; ** span source offset = '.$sourceOffset);
-                        //$instructionStream->add('; ** span destination offset = '.$destinationOffset);
-
-                        //$instructionStream->add('; span index '.$key);
                         if ($key == array_key_first($spans)) {
-                            //$instructionStream->add('; first iteration');
-                            //$instructionStream->add('; new loop started at beginning of fxsr group list');
-                            //$instructionStream->add('; - sourceOffset = '.$sourceOffset);
-                            //$instructionStream->add('; - destinationOffset = '.$destinationOffset);
-                            //$instructionStream->add('; - loopStartSourceOffset = '.$loopState['loopStartSourceOffset']);
-                            //$instructionStream->add('; - loopStartDestinationOffset = '.$loopState['loopStartDestinationOffset']);
-                            //$instructionStream->add('; drawOffsetSourceAdjust = '.$this->drawOffsetSourceAdjust);
-                            //$instructionStream->add('; drawOffsetDestinationAdjust = '.$this->drawOffsetDestinationAdjust);
-
-                            //$instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; advance source at beginning of loop ('.$loopState['loopStartSourceAdvance'].' - '.$this->drawOffsetSourceAdjust.')');
-                            //$instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; advance destination at beginning of loop ('.$loopState['loopStartDestinationAdvance'].' - '.$this->drawOffsetDestinationAdjust.')');
-
                             $instructionStream->add('');
                             $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; calc source address');
                             $instructionStream->add('lea '.(($destinationOffset - $loopState['loopStartDestinationOffset']) - $this->drawOffsetDestinationAdjust).'(a1),a1 ; calc destination address');
@@ -686,24 +657,8 @@ class CompiledSpriteBuilder {
                             if ($loopState['copyInstructionIterations'] == 1) {
                                 $loopState['subsequentSourceAdvance'] = $sourceAdvance;
                                 $loopState['subsequentDestinationAdvance'] = $destinationAdvance;
-                                /*$instructionStream->add('');
-                                $instructionStream->add('; first iteration');
-                                $instructionStream->add('; - set loopstate subsequent source advance to '.$sourceAdvance);
-                                $instructionStream->add('; - set loopstate subsequent destination advance to '.$destinationAdvance);*/
                             }
                             if ($sourceAdvance != $loopState['subsequentSourceAdvance'] || $destinationAdvance != $loopState['subsequentDestinationAdvance'] || count($changedEndmasks)) {
-                                /*$instructionStream->add('');
-                                $instructionStream->add('; loop terminated at '.$loopState['copyInstructionIterations'].' iterations, writing instructions because:');
-                                if ($loopState['subsequentSourceAdvance'] != $sourceAdvance) {
-                                    $instructionStream->add('; - sourceAdvance changed from '.$loopState['subsequentSourceAdvance'].' to '.$sourceAdvance);
-                                }
-                                if ($loopState['subsequentDestinationAdvance'] != $destinationAdvance) {
-                                    $instructionStream->add('; - destinationAdvance changed from '.$loopState['subsequentDestinationAdvance'].' to '.$destinationAdvance);
-                                }
-                                if (count($changedEndmasks)) {
-                                    $instructionStream->add('; - endmasks changed');
-                                }*/
-
                                 $sourceYIncrement = $this->calculateSourceYIncrement($loopState, $length);
                                 $destinationYIncrement = $this->calculateDestinationYIncrement($loopState, $length);
                                 $loopIndex = $this->addConfirmCopyInstructions(
@@ -715,15 +670,6 @@ class CompiledSpriteBuilder {
                                 );
                                 $oldSourceYIncrement = $sourceYIncrement;
                                 $oldDestinationYIncrement = $destinationYIncrement;
-
-                                //$instructionStream->add('');
-                                //$instructionStream->add('; new loop started elsewhere in spans');
-                                //$instructionStream->add('; - sourceOffset = '.$sourceOffset);
-                                //$instructionStream->add('; - destinationOffset = '.$destinationOffset);
-                                //$instructionStream->add('; - loopStartSourceOffset = '.$loopState['loopStartSourceOffset']);
-                                //$instructionStream->add('; - loopStartDestinationOffset = '.$loopState['loopStartSourceOffset']);
-                                //$instructionStream->add('; drawOffsetSourceAdjust = '.$this->drawOffsetSourceAdjust);
-                                //$instructionStream->add('; drawOffsetDestinationAdjust = '.$this->drawOffsetDestinationAdjust);
 
                                 $instructionStream->add('');
                                 $instructionStream->add('lea '.(($sourceOffset - $loopState['loopStartSourceOffset']) - $this->drawOffsetSourceAdjust).'(a0),a0 ; calc source address');
@@ -807,7 +753,6 @@ class CompiledSpriteBuilder {
 
         // remove redundant lea instructions
         // should probably do this elsewhere
-        // might relate to breakage of the lampposts!
 
         foreach ($instructionArray as $key => $instruction) {
             if (str_starts_with($instruction, 'lea 0(a0),a0')) {
@@ -846,7 +791,6 @@ class CompiledSpriteBuilder {
                     $instructionStartingAtNumber = substr($instruction, 4);
                     $offsetValue = intval(substr($instructionStartingAtNumber, 0, strpos($instructionStartingAtNumber, '(')));
                     if (!isset($commonOffsets[$offsetValue])) {
-                        //echo("offset value ".$offsetValue." found in instruction ".$instruction."\n");
                         $commonOffsets[$offsetValue] = 0;
                     }
                     $commonOffsets[$offsetValue]++;
@@ -1137,15 +1081,6 @@ class CompiledSpriteBuilder {
 
             $instructionStream->add('moveq.l #'. $copyInstructionIterations . ',d6');
 
-            /*$copyInstructionStream = $this->generateCopyInstructionStream(
-                null,
-                null,
-                'd6',
-                $useFxsr,
-                $useNfsr
-            );
-            $instructionStream->appendStream($copyInstructionStream);*/
-
             $copyInstructionStream = $this->generateCopyInstructionStream(
                 2,
                 2,
@@ -1349,8 +1284,6 @@ class CompiledSpriteBuilder {
             }
         }
 
-        // TODO: reinstate long write for multiple changed endmasks
-
         return $endmaskInstructionStream;
     }
 
@@ -1412,13 +1345,10 @@ class CompiledSpriteBuilder {
             throw new RuntimeException('Invalid endmask index ');
         }
 
-        /*$source = 'd7';
-        if ($endmask != 0xffff && $endmask != 0xffffffff) {*/
-            $source = sprintf(
-                '#%d',
-                $endmask
-            );
-        //}
+        $source = sprintf(
+            '#%d',
+            $endmask
+        );
 
         $destination = $destinations[$endmaskIndex - 1];
 

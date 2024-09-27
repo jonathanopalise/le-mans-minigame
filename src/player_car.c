@@ -191,8 +191,6 @@ void player_car_handle_inputs()
         }
     }
 
-    // TODO: slowdown when on grass
-
     camera_track_position += player_car_speed;
     total_distance_travelled += player_car_speed;
 
@@ -220,7 +218,6 @@ void player_car_handle_inputs()
         }
     }
 
-    // TODO: wrap player_car_track_position when it goes beyond end of track
     player_car_logical_xpos += player_car_steering * player_car_speed;
 
     if (player_car_altitude == 0) {
