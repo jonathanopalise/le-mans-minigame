@@ -143,7 +143,7 @@ src/checkpoints.o: src/checkpoints.c src/checkpoints.h
 src/lookups.o: src/lookups.c src/lookups.h src/sprite_definitions.h src/road_geometry.h src/generated/sprite_definitions_count.h
 	$(CC) $(CFLAGS) -c src/lookups.c -o src/lookups.o
 
-src/stars.o: src/stars.c src/stars.h src/lookups.h src/road_movement.h src/hardware_playfield.h src/star_lookups.h src/lookups.h
+src/stars.o: src/stars.c src/stars.h src/lookups.h src/star_lookups.h
 	$(CC) $(CFLAGS) -c src/stars.c -o src/stars.o
 
 src/speedometer.o: src/speedometer.c src/speedometer.h src/player_car.h src/hardware_playfield.h src/sprite_definitions.h src/lookups.h src/draw_sprite.h

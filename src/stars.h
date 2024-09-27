@@ -5,8 +5,7 @@
 
 #include <inttypes.h>
 
-void draw_stars();
-void erase_stars();
+void init_stars();
 
 extern uint16_t line_background_colours_2[100];
 

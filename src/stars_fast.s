@@ -11,7 +11,7 @@ _draw_stars_fast:
 
     move.l sp,a0
 
-    movem.l d2/a2-a6,-(sp)
+    movem.l d2-d3/a2-a6,-(sp)
 
     ; pass in address of drawing_playfield->star_block_offsets (a4)
     move.l 4(a0),a4
@@ -29,6 +29,8 @@ _draw_stars_fast:
     swap d2 ; normalised_mountains_shift
     add.l d2,d2
 
+    move.w #640,d3
+
     moveq.l #49,d7
     moveq.l #0,d1
 
@@ -38,7 +40,7 @@ _one_star:
     sub.w d2,d0    ; -normalised_mountains_shift
     bge.s _still_on_screen
 
-    add.w #640,d0  ; move star back on screen
+    add.w d3,d0  ; move star back on screen
 
 _still_on_screen:
 
@@ -56,7 +58,7 @@ _still_on_screen:
     move.l (a6)+,(a5)+
 
     dbra d7,_one_star
-    movem.l (sp)+,d2/a2-a6
+    movem.l (sp)+,d2-d3/a2-a6
 
     rts
 
@@ -64,7 +66,7 @@ _erase_stars_fast:
 
     move.l sp,a0
 
-    movem.l d2-d7/a2-a6,-(sp)
+    movem.l a2-a5,-(sp)
 
     ; pass in address of drawing_playfield->star_block_offsets (a1)
     move.l 4(a0),a1
@@ -79,7 +81,6 @@ _erase_stars_fast:
 
 _erase_one_star:
     move.w (a0)+,d0 ; value at current_star_erase_offset
-    add.w d0,d0 ; convert to uint16_t offset (we want to get rid of this later)
     lea (a3,d0),a4 ; plot source
 
     move.w (a1)+,d0 ; get value of current star block offset
@@ -89,6 +90,6 @@ _erase_one_star:
     move.l (a4)+,(a5)+
 
     dbra d7,_erase_one_star
-    movem.l (sp)+,d2-d7/a2-a6
+    movem.l (sp)+,a2-a5
 
     rts

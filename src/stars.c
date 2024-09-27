@@ -1,8 +1,5 @@
 #include "stars.h"
-#include "road_movement.h"
-#include "hardware_playfield.h"
 #include "star_lookups.h"
-#include "lookups.h"
 
 struct StarPosition {
     uint16_t original_xpos;
@@ -11,23 +8,6 @@ struct StarPosition {
 };
 
 uint16_t star_erase_offsets[STAR_COUNT];
-
-uint16_t line_background_colours[100] = {
-    2*64, 2*64, 2*64, 14*64, 2*64, // 15
-    14*64, 14*64, 14*64, 13*64, 14*64, // 14
-    13*64, 13*64, 13*64, 12*64, 13*64, // 13
-    12*64, 12*64, 12*64, 11*64, 12*64, // 12
-    11*64, 11*64, 11*64, 10*64, 11*64, // 11
-    10*64, 10*64, 10*64, 9*64, 10*64, // 10
-    9*64, 9*64, 9*64, 8*64, 9*64, // 9
-    8*64, 8*64, 8*64, 7*64, 8*64, // 8
-    7*64, 7*64, 7*64, 6*64, 7*64, // 7
-    6*64, 6*64, 6*64, 5*64, 6*64, // 6
-    5*64, 5*64, 5*64, 4*64, 5*64, // 5
-    4*64, 4*64, 4*64, 3*64, 4*64, // 4
-    3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, // 3
-    3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64, 3*64
-};
 
 uint16_t line_background_colours_2[100] = {
     2, 2, 2, 14, 2, // 15
@@ -45,7 +25,6 @@ uint16_t line_background_colours_2[100] = {
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 3
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 };
-
 
 struct StarPosition star_positions[STAR_COUNT] = {
     {154, 85},
@@ -104,7 +83,7 @@ void init_stars()
 {
     struct StarPosition *current_star_position = star_positions;
     for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        star_erase_offsets[index] = line_background_colours_2[current_star_position->ypos] << 2;
+        star_erase_offsets[index] = line_background_colours_2[current_star_position->ypos] << 3;
 
         current_star_position->original_xpos = current_star_position->original_xpos * 2;
         current_star_position->background_colour_offset = 128 * line_background_colours_2[current_star_position->ypos];
@@ -114,61 +93,4 @@ void init_stars()
     }
 }
 
-void draw_stars()
-{
-    int16_t shifted_star_xpos;
-    uint32_t *plot_source;
-    uint32_t *plot_dest;
-    uint16_t background_colour;
-    uint16_t normalised_mountains_shift = mountains_shift >> 16;
-    uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
-    uint16_t block_offset;
-    uint16_t ypos;
 
-    struct StarPosition *current_star_position = star_positions;
-    uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
-    for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        shifted_star_xpos = current_star_position->original_xpos - normalised_mountains_shift;
-        if (shifted_star_xpos < 0) {
-            shifted_star_xpos += 320;
-        }
-
-        ypos = current_star_position->ypos;
-        background_colour = line_background_colours[ypos];
-        // TODO: i can preshift these background colour values to save some cycles
-        plot_source = (uint32_t *)(&star_plot_values[(background_colour << 6) + ((shifted_star_xpos & 15) << 2)]);
-
-        block_offset = multiply_160[ypos] + ((shifted_star_xpos >> 1) & 0xf8);
-        *current_star_block_offset++ = block_offset;
-        plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + block_offset);
-
-        *plot_dest++ = *plot_source++;
-        *plot_dest++ = *plot_source++;
-
-        current_star_position++;
-    }
-}
-
-// so we need:
-// -
-
-void erase_stars()
-{
-    uint32_t *plot_source;
-    uint32_t *plot_dest;
-
-    uint8_t *drawing_playfield_buffer = drawing_playfield->buffer;
-    uint16_t *current_star_erase_offset = star_erase_offsets;
-    uint16_t *current_star_block_offset = drawing_playfield->star_block_offsets;
-
-    for (uint16_t index = 0; index < STAR_COUNT; index++) {
-        plot_source = (uint32_t *)(&star_erase_values[*current_star_erase_offset]);
-        plot_dest = (uint32_t *)((uint32_t)drawing_playfield_buffer + *current_star_block_offset);
-
-        *plot_dest++ = *plot_source++;
-        *plot_dest++ = *plot_source++;
-
-        current_star_erase_offset++;
-        current_star_block_offset++;
-    }
-}
