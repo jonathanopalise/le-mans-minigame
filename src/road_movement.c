@@ -94,9 +94,6 @@ void road_corners_update() {
     //}
 
 
-    //player_xpos_shift = current_road_curvature * ((player_car_speed * player_car_speed) / 375);
-    //player_car_logical_xpos += player_xpos_shift;
-
     if (player_car_altitude == 0 && (player_xpos_shift < -500000 || player_xpos_shift > 500000)) {
         // skidding sound
         player_car_speed -= 5;
@@ -115,57 +112,33 @@ void road_corners_update() {
     switch (scenario) {
         case NEGATIVE_SHIFT_REQUIRED:
             movement_update_inner_scenario_1(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_add_values[-shift_required])   // needs to go into a1
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_add_values[-shift_required])
             );
-            /*shift_required =- shift_required;
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }*/
             break;
         case POSITIVE_SHIFT_REQUIRED:
             movement_update_inner_scenario_2(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_add_values[shift_required])   // needs to go into a1
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_add_values[shift_required])
             );
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline++;
-            }*/
             break;
         case NEGATIVE_TOTAL_CHANGE_TO_APPLY:
             movement_update_inner_scenario_1(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply])   // needs to go into a1
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply])
             );
-            /*total_change_to_apply = -total_change_to_apply;
-            for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }*/
             break;
         case POSITIVE_TOTAL_CHANGE_TO_APPLY:
             movement_update_inner_scenario_2(
-                sizeof(struct RoadScanline),                                        // needs to go into a2
-                &(current_road_scanline->current_logical_xpos),                     // needs to go into a0
-                &(current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply])   // needs to go into a1
+                sizeof(struct RoadScanline),
+                &(current_road_scanline->current_logical_xpos),
+                &(current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply])
             );
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }*/
             break;
         case NEGATIVE_SHIFT_REQUIRED|NEGATIVE_TOTAL_CHANGE_TO_APPLY:
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[-shift_required];
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply];
-                current_road_scanline++;
-            }*/
-
             movement_update_inner_scenario_3(
                 sizeof(struct RoadScanline),
                 &(current_road_scanline->current_logical_xpos),
@@ -174,12 +147,6 @@ void road_corners_update() {
             );
             break;
         case NEGATIVE_SHIFT_REQUIRED|POSITIVE_TOTAL_CHANGE_TO_APPLY:
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_add_values[-shift_required];
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }*/
-
             movement_update_inner_scenario_4(
                 sizeof(struct RoadScanline),
                 &(current_road_scanline->current_logical_xpos),
@@ -188,12 +155,6 @@ void road_corners_update() {
             );
             break;
         case POSITIVE_SHIFT_REQUIRED|NEGATIVE_TOTAL_CHANGE_TO_APPLY:
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline->current_logical_xpos += current_road_scanline->logical_xpos_corner_add_values[-total_change_to_apply];
-                current_road_scanline++;
-            }*/
-
             movement_update_inner_scenario_5(
                 sizeof(struct RoadScanline),
                 &(current_road_scanline->current_logical_xpos),
@@ -202,12 +163,6 @@ void road_corners_update() {
             );
             break;
         case POSITIVE_SHIFT_REQUIRED|POSITIVE_TOTAL_CHANGE_TO_APPLY:
-            /*for (uint16_t index = 0; index < 100; index++) {
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_add_values[shift_required];
-                current_road_scanline->current_logical_xpos -= current_road_scanline->logical_xpos_corner_add_values[total_change_to_apply];
-                current_road_scanline++;
-            }*/
-
             movement_update_inner_scenario_6(
                 sizeof(struct RoadScanline),
                 &(current_road_scanline->current_logical_xpos),

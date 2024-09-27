@@ -87,7 +87,7 @@ void init_stars()
 
         current_star_position->original_xpos = current_star_position->original_xpos * 2;
         current_star_position->background_colour_offset = 128 * line_background_colours_2[current_star_position->ypos];
-        current_star_position->ypos *= 160; //= current_star_position->ypos * 160;
+        current_star_position->ypos *= 160;
 
         current_star_position++;
     }

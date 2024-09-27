@@ -57,9 +57,6 @@ void time_of_day_init()
 void time_of_day_update()
 {
     if (race_ticks <= 64) {
-        // 16 gradients
-        // updated every 8 frames
-
         if (race_ticks == 64) {
             time_of_day_offset = 30*80;
         } else {

@@ -318,7 +318,7 @@ struct Speedometer {
     int8_t digits[3];
 };
 
-static uint16_t speedometer_2_words[(8*3*26)/2]; // 10 bytes per 10 pixels
+static uint16_t speedometer_2_words[(8*3*26)/2];
 static struct Speedometer speedometer_1;
 static struct Speedometer speedometer_2;
 static struct Speedometer *visible_speedometer;
@@ -398,9 +398,7 @@ void speedometer_update()
 void speedometer_draw()
 {
     struct SpriteDefinition *sprite_definition;
-    //uint32_t player_car_display_speed = player_car_speed >> 2;
 
-    // xpos = 273
     sprite_definition = sprite_definition_pointers[SPEEDO_DEFINITION_OFFSET];
     draw_compiled_sprite(
         visible_speedometer->words,
@@ -408,45 +406,5 @@ void speedometer_draw()
         &(sprite_definition->compiled_sprite_0),
         1
     );
-
-    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + 1];
-    draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 0);
-    sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + 2];
-    draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 1);*/
-
-    //draw_speedo_digit(sprite_definition->words, visible_speedometer->words, 0);
-
-    //uint8_t *current_digit = &digit_lookup[player_car_display_speed << 2];
-
-    // xpos = 277
-    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
-    draw_compiled_sprite(
-        sprite_definition->words,
-        &drawing_playfield->buffer[160 * 174 + (8 * 17)],
-        &(sprite_definition->compiled_sprite_0),
-        5
-    );*/
-
-    //current_digit++;
-
-    // xpos = 288
-    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
-    draw_compiled_sprite(
-        sprite_definition->words,
-        &drawing_playfield->buffer[160 * 174 + (8 * 18)],
-        &(sprite_definition->compiled_sprite_0),
-        0
-    );*/
-
-    //current_digit++;
-
-    // xpos = 299
-    /*sprite_definition = sprite_definition_pointers[SPEEDO_DIGITS_OFFSET_BASE + *current_digit];
-    draw_compiled_sprite(
-        sprite_definition->words,
-        &drawing_playfield->buffer[160 * 174 + (8 * 18)],
-        &(sprite_definition->compiled_sprite_0),
-        11
-    );*/
 }
 

@@ -33,9 +33,6 @@ void trackside_items_process()
     int16_t sprite_index;
     int16_t screen_xpos;
 
-    // TODO: camera_track_position should be camera_track_position
-    // we'll need to derive camera_track_position for collision calcs
-
     struct TracksideItem *current_trackside_item = current_nearest_trackside_item;
     int32_t current_trackside_item_camera_relative_position = current_trackside_item->track_position - camera_track_position;
 
@@ -62,8 +59,6 @@ void trackside_items_process()
             screen_xpos += 160;
 
             display_list_add_sprite(
-                // TODO: find way to replace multiply with lookup table
-                //&sprite_definitions[sprite_index],
                 sprite_definition_pointers[sprite_index],
                 screen_xpos,
                 (119 + trackside_item_scanline_index)
@@ -72,9 +67,6 @@ void trackside_items_process()
 
         current_trackside_item++;
         current_trackside_item_camera_relative_position = current_trackside_item->track_position - camera_track_position;
-        /*if (current_trackside_item->track_position == 0xffffffff) {
-            break;
-        }*/
     }
 }
 
