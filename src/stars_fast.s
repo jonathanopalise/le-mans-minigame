@@ -31,7 +31,7 @@ _draw_stars_fast:
 
     move.w #640,d3
 
-    moveq.l #49,d7
+    moveq.l #39,d7
     moveq.l #0,d1
 
 _one_star:
@@ -77,7 +77,7 @@ _erase_stars_fast:
     lea _star_erase_offsets,a0
     lea _star_erase_values,a3
 
-    moveq.l #49,d7
+    moveq.l #39,d7
 
 _erase_one_star:
     move.w (a0)+,d0 ; value at current_star_erase_offset
