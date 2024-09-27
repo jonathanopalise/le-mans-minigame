@@ -30,20 +30,19 @@ void mountains_render()
     uint16_t scroll_pixels = mountains_shift >> 16;
 
     if (drawing_playfield->mountains_scroll_pixels == scroll_pixels && drawing_playfield->tallest_sprite_ypos > 90)  {
-        uint16_t lines_to_skip = drawing_playfield->tallest_sprite_ypos - 90;
-        if (lines_to_skip >= 28) {
-#ifdef __NATFEATS_DEBUG
-        //nf_print("No mountains to draw!");
-#endif
+        // then we might be able to skip partial or full drawing of the mountains
+        int16_t lines_to_skip = drawing_playfield->tallest_sprite_ypos - 90;
+        line_count -= lines_to_skip;
+
+        if (line_count < 1) {
+            // nothing to do!
             return;
         }
-
 
         uint16_t source_dest_advance = multiply_160[lines_to_skip];
 
         line_start_source += source_dest_advance;
         line_start_dest += source_dest_advance;
-        line_count -= lines_to_skip;
     }
 
     current_skew = ((-scroll_pixels)-1);
@@ -59,14 +58,19 @@ void mountains_render()
         line_count_pass_1 += 1;
     }
 
-    *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source; // 8a32
-    *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
-    *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_1; // 8a38
-    *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
-    *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_2; // 8a38
-    *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+    if (line_count_pass_1) {
+        *((volatile uint32_t *)BLITTER_SOURCE_ADDRESS) = line_start_source; // 8a32
+        *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
+        *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_1; // 8a38
+        *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
 
-    if (line_count > 1) {
+        if (line_count_pass_2) {
+            *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_2; // 8a38
+            *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+        }
+    }
+
+    if (line_count_pass_1) {
         line_start_source += 2;
         line_start_dest += 2;
 
@@ -74,8 +78,11 @@ void mountains_render()
         *((volatile uint32_t *)BLITTER_DESTINATION_ADDRESS) = line_start_dest; // 8a32
         *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_1; // 8a38
         *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
-        *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_2; // 8a38
-        *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+
+        if (line_count_pass_2) {
+            *((volatile int16_t *)BLITTER_Y_COUNT) = line_count_pass_2; // 8a38
+            *((volatile uint16_t *)BLITTER_CONTROL) = blitter_control_word; // 8a3c
+        }
     }
 
     drawing_playfield->mountains_scroll_pixels = scroll_pixels;
