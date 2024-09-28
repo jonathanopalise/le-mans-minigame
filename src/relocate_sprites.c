@@ -1,4 +1,4 @@
-#define RELOCATION_BUFFER_SIZE_WORDS 32768
+#define RELOCATION_BUFFER_SIZE_WORDS 16384
 
 #include "sprite_definitions.h"
 #include "generated/sprite_definitions_count.h"
@@ -31,9 +31,10 @@ void relocate_sprites()
             snprintf(
                 nf_strbuf,
                 256,
-                "relocating: startaddr: %x, endaddr: %x\n",
+                "relocating: startaddr: %x, endaddr: %x, bytes: %d\n",
                 source_start_address,
-                source_end_address
+                source_end_address,
+                data_size_bytes
             );
 
             nf_print(nf_strbuf);

@@ -5,6 +5,7 @@
 #include "initialise.h"
 #include "road_movement.h"
 #include "mountains_render.h"
+#include "mountains_render_fast.h"
 #include "road_render.h"
 #include "player_car.h"
 #include "sprite_definitions.h"
@@ -254,7 +255,8 @@ static void in_game_loop_core()
     if (time_of_day_is_night) {
         drawing_playfield->mountains_scroll_pixels = -1;
     } else {
-        mountains_render();
+        //mountains_render();
+        mountains_render_fast();
     }
 
     if (drawing_playfield->stars_drawn) {

@@ -15,15 +15,15 @@
 #define SPRITE_COUNT 32
 
 struct HardwarePlayfield {
-    uint8_t *buffer;
+    uint8_t *buffer;                  // offset 0
+    uint16_t tallest_sprite_ypos;     // offset 4
+    int16_t mountains_scroll_pixels;  // offset 6
+    uint16_t hud_redraw_required;
+    uint16_t stars_drawn;
     struct BitplaneDrawRecord bitplane_draw_records[SPRITE_COUNT];
     struct BitplaneDrawRecord *current_bitplane_draw_record;
     uint16_t star_block_offsets[STAR_COUNT];
-    uint16_t stars_drawn;
     struct HudDigits hud_digits;
-    uint16_t tallest_sprite_ypos;
-    int16_t mountains_scroll_pixels;
-    uint16_t hud_redraw_required;
 };
 
 extern struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
