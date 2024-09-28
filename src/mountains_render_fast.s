@@ -6,32 +6,34 @@ _mountains_render_fast:
     lea _mountain_graphics,a0
     move.l a0,d1           ; d1 = line start source (mountain_graphics)
 
-    move.l _drawing_playfield,a1 ; drawing playfield is in a1
-    move.l (a1),d2 ; d2 = drawing_playfield->buffer
+    move.l _drawing_playfield,a3 ; drawing playfield is in a3
+    move.l (a3),d2 ; d2 = drawing_playfield->buffer
     add.w #(160*90),d2     ; d2 = line start dest
 
     move.w #29,d3          ; d3 = line_count
 
     move.w _mountains_shift,d4 ; d4 = scroll_pixels = mountains_shift >> 16
 
-    cmp.w 6(a1),d4               ; compare drawing_playfield->mountains_scroll_pixels with scroll_pixels
+    cmp.w 6(a3),d4               ; compare drawing_playfield->mountains_scroll_pixels with scroll_pixels
     bne.s _render_required
 
     moveq.l #0,d5
-    move.w 4(a1),d5 ; d5 is tallest sprite ypos
-    
-    cmp.w #90,d5 ; compare drawing_playfield->tallest_sprite_ypos with 90
-    ble.s _render_required
+    move.w 4(a3),d5 ; d5 is tallest sprite ypos
+
+    ; is tallest_sprite_ypos <= 90?
+    ; if so, full render required
 
     sub.w #90,d5 ; lines_to_skip = drawing_playfield->tallest_sprite_ypos - 90
+    ble.s _render_required
     sub.w d5,d3  ; line_count -= lines_to_skip
-    blt _all_done ; if line_count < 1, nothing to do
 
-    add.w d5,d5
+    ble _all_done ; if line_count < 1, nothing to do
+
+    add.w d5,d5   ; convert lines to skip into multiply_160 lookup
     lea _multiply_160,a2
     move.w (a2,d5),d5 ; d5 is now source_dest_advance
 
-    add.w d5,d1 ; line_start_source += source_dest_advance
+    add.l d5,d1 ; line_start_source += source_dest_advance
     add.w d5,d2 ; line_start_dest += source_dest_advance
 
 _render_required:
@@ -53,7 +55,7 @@ _render_required:
     move.w #8,(a6)+        ; dest x increment 8a2e
     move.w #8,(a6)+        ; dest y increment 8a30
     move.l a6,a1           ; store 8a32 address in a1
-    ;move.l d4,(a1)        ; not sure why this is here
+    ;move.l d2,(a1)        ; not sure why this is here
     addq.l #4,a6
     move.w #20,(a6)+       ; x count 8a36
     move.l a6,a2           ; store y count address 8a38 in a2
@@ -112,8 +114,8 @@ _render_required:
 
 _skip_pass_2_plane_0:
 
-    add.l #2,d1
-    add.w #2,d2
+    addq.l #2,d1
+    addq.w #2,d2
 
     move.l d1,(a0)
     move.l d2,(a1)
@@ -128,7 +130,7 @@ _skip_pass_2_plane_0:
 
 _all_done:
 
-    cmp.w 6(a1),d4 ; set scroll_pixels on drawing_playfield
+    move.w d4,6(a3) ; set mountains_scroll_pixels on drawing_playfield
 
     movem.l (sp)+,d0-d7/a0-a6
     rts
