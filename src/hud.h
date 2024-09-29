@@ -12,6 +12,7 @@ void hud_game_init();
 void hud_reduce_time();
 void hud_increase_time(uint32_t seconds_to_add);
 void hud_set_score(uint32_t new_score);
+uint16_t hud_score_is_high_score();
 uint16_t hud_is_time_up();
 uint16_t hud_update_score_digits();
 

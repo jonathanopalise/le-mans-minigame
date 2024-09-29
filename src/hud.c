@@ -12,7 +12,6 @@ int8_t wip_score_digits[8];
 
 static int16_t frames_in_current_second_remaining;
 static int16_t current_wip_score_digit;
-static uint16_t high_score_redraw_required;
 
 uint16_t frames_since_game_over;
 
@@ -50,12 +49,11 @@ void hud_game_init()
 
     for (uint16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
         hud_digits.score_digits[index] = 0;
-        //hud_digits.high_score_digits[index] = 0;
     }
 
-    current_wip_score_digit = 7;
-
     hud_update_high_score_digits();
+
+    current_wip_score_digit = 7;
 }
 
 void hud_reduce_time()
@@ -84,10 +82,12 @@ void hud_set_score(uint32_t new_score)
     score = new_score;
     if (score > high_score) {
         high_score = score;
-        high_score_redraw_required = 1;
-    } else {
-        high_score_redraw_required = 0;
     }
+}
+
+uint16_t hud_score_is_high_score()
+{
+    return score == high_score;
 }
 
 uint16_t hud_is_time_up()

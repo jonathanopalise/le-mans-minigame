@@ -373,7 +373,9 @@ void hardware_playfield_update_digits()
         drawing_playfield
     );
 
-    hardware_playfield_copy_score();
+    if (hud_score_is_high_score()) {
+        hardware_playfield_copy_score();
+    }
 }
 
 static void hardware_playfield_error()
