@@ -10,4 +10,6 @@ void hardware_playfield_erase_sprites_fast(
     struct BitplaneDrawRecord *bitplane_draw_records
 );
 
+void hardware_playfield_copy_score_fast();
+
 #endif

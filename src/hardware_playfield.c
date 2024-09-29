@@ -374,7 +374,8 @@ void hardware_playfield_update_digits()
     );
 
     if (hud_score_is_high_score()) {
-        hardware_playfield_copy_score();
+        //hardware_playfield_copy_score();
+        hardware_playfield_copy_score_fast();
     }
 }
 

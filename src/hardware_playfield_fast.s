@@ -1,4 +1,5 @@
     public _hardware_playfield_erase_sprites_fast
+    public _hardware_playfield_copy_score_fast
 
 _hardware_playfield_erase_sprites_fast:
 
@@ -139,3 +140,69 @@ _all_done:
 
     movem.l (sp)+,d2-d7/a2-a6
     rts
+
+_hardware_playfield_copy_score_fast:
+
+    movem.l d2-d7/a2-a6,-(sp)
+
+    move.l _drawing_playfield,a1
+    move.l (a1),a1 ; drawing_playfield->buffer
+
+    lea $ffff8a20.w,a0
+    move.w #8,(a0)+      ; source x increment 8a20
+    move.w #112,(a0)+    ; source y increment 8a22
+    move.l a1,(a0)+      ; source address 8a24
+    move.w #$3,(a0)+     ; endmask1
+    move.w #$ffff,(a0)+  ; endmask2
+    move.w #$fc00,(a0)+  ; endmask3
+    move.w #8,(a0)+      ; destination x increment
+    move.w #120,(a0)+    ; destination y increment
+    move.l a1,(a0)+      ; destination address 8a32
+    move.w #6,(a0)+      ; x count 8a36
+    move.w #$0203,$ffff8a3a.w ; hop/op
+
+    move.l a1,d0
+    add.l #3032,d0      ; source offset
+    move.l a1,d1
+    add.l #3152,d1      ; dest offset
+
+    lea $ffff8a24.w,a0   ; source address + 2 (for word writes)
+    lea $ffff8a32.w,a1   ; destination address +2 (for word writes)
+    lea $ffff8a38.w,a2   ; y count
+    lea $ffff8a3c.w,a3   ; blitter control
+
+    moveq.l #9,d2        ; y count
+    move.w #$c085,d3     ; blitter control word
+
+    move.l d0,(a0)
+    move.l d1,(a1)
+    move.w d2,(a2)
+    move.w d3,(a3)
+
+    addq.l #2,d0
+    addq.l #2,d1
+
+    move.l d0,(a0)
+    move.l d1,(a1)
+    move.w d2,(a2)
+    move.w d3,(a3)
+
+    addq.l #2,d0
+    addq.l #2,d1
+
+    move.l d0,(a0)
+    move.l d1,(a1)
+    move.w d2,(a2)
+    move.w d3,(a3)
+
+    addq.l #2,d0
+    addq.l #2,d1
+
+    move.l d0,(a0)
+    move.l d1,(a1)
+    move.w d2,(a2)
+    move.w d3,(a3)
+
+    movem.l (sp)+,d2-d7/a2-a6
+    rts
+
