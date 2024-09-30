@@ -143,66 +143,61 @@ _all_done:
 
 _hardware_playfield_copy_score_fast:
 
-    movem.l d2-d7/a2-a6,-(sp)
+    movem.l a2-a5,-(sp)
 
     move.l _drawing_playfield,a1
     move.l (a1),a1 ; drawing_playfield->buffer
 
     lea $ffff8a20.w,a0
-    move.w #8,(a0)+      ; source x increment 8a20
-    move.w #112,(a0)+    ; source y increment 8a22
+    move.l #$80070,(a0)+   ; source x increment = 8, source y increment = 112
     move.l a1,(a0)+      ; source address 8a24
-    move.w #$3,(a0)+     ; endmask1
-    move.w #$ffff,(a0)+  ; endmask2
-    move.w #$fc00,(a0)+  ; endmask3
-    move.w #8,(a0)+      ; destination x increment
+    move.l #$3ffff,(a0)+ ; endmask1 + endmask2
+    move.l #$fc000008,(a0)+ ; endmask3 + destination x increment
     move.w #120,(a0)+    ; destination y increment
     move.l a1,(a0)+      ; destination address 8a32
     move.w #6,(a0)+      ; x count 8a36
     move.w #$0203,$ffff8a3a.w ; hop/op
 
-    move.l a1,d0
-    add.l #3032,d0      ; source offset
-    move.l a1,d1
-    add.l #3152,d1      ; dest offset
+    lea 3032(a1),a4
+    lea 3152(a1),a5
 
-    lea $ffff8a24.w,a0   ; source address + 2 (for word writes)
-    lea $ffff8a32.w,a1   ; destination address +2 (for word writes)
+    lea $ffff8a26.w,a0   ; source address + 2 (for word writes)
+    lea $ffff8a34.w,a1   ; destination address +2 (for word writes)
     lea $ffff8a38.w,a2   ; y count
     lea $ffff8a3c.w,a3   ; blitter control
 
-    moveq.l #9,d2        ; y count
-    move.w #$c085,d3     ; blitter control word
+    moveq.l #9,d0        ; y count
+    move.w #$c085,d1     ; blitter control word
 
-    move.l d0,(a0)
-    move.l d1,(a1)
-    move.w d2,(a2)
-    move.w d3,(a3)
+    move.w a4,(a0)
+    move.w a5,(a1)
+    move.w d0,(a2)
+    move.w d1,(a3)
 
-    addq.l #2,d0
-    addq.l #2,d1
+    addq.l #2,a4
+    addq.l #2,a5
 
-    move.l d0,(a0)
-    move.l d1,(a1)
-    move.w d2,(a2)
-    move.w d3,(a3)
+    move.w a4,(a0)
+    move.w a5,(a1)
+    move.w d0,(a2)
+    move.w d1,(a3)
 
-    addq.l #2,d0
-    addq.l #2,d1
+    addq.l #2,a4
+    addq.l #2,a5
 
-    move.l d0,(a0)
-    move.l d1,(a1)
-    move.w d2,(a2)
-    move.w d3,(a3)
+    move.w a4,(a0)
+    move.w a5,(a1)
+    move.w d0,(a2)
+    move.w d1,(a3)
 
-    addq.l #2,d0
-    addq.l #2,d1
+    addq.l #2,a4
+    addq.l #2,a5
 
-    move.l d0,(a0)
-    move.l d1,(a1)
-    move.w d2,(a2)
-    move.w d3,(a3)
+    move.w a4,(a0)
+    move.w a5,(a1)
+    move.w d0,(a2)
+    move.w d1,(a3)
 
-    movem.l (sp)+,d2-d7/a2-a6
+    movem.l (sp)+,a2-a5
     rts
 
