@@ -2,6 +2,7 @@
 #define __PLAYER_CAR_H
 
 #define PLAYER_CAR_DISTANCE 2280
+#define PLAYER_CAR_STATE_NORMAL 0
 #define PLAYER_CAR_STATE_RETURN_TO_TRACK 3
 
 #include<inttypes.h>
@@ -28,6 +29,7 @@ extern uint16_t passed_start_line;
 void player_car_initialise();
 void player_car_handle_inputs();
 void player_car_crash();
+void player_car_flip_crash();
 uint16_t player_car_get_sprite_definition();
 
 #endif

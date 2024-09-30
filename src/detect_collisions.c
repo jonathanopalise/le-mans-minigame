@@ -20,6 +20,10 @@ void detect_collisions()
     int32_t logical_xpos;
     int16_t opponent_car_xpos;
 
+    if (player_car_state != PLAYER_CAR_STATE_NORMAL || player_car_invincible_countdown > 0) {
+        return;
+    }
+
     while (current_trackside_item_player_relative_position < 500) {
         if (current_trackside_item->xpos > 0) {
             current_trackside_item_logical_xpos = -player_scanline->object_xpos_add_values[current_trackside_item->xpos];
@@ -61,10 +65,14 @@ void detect_collisions()
 
             if (logical_xpos > (player_car_logical_xpos - 3000000) && logical_xpos < (player_car_logical_xpos + 3000000)) {
                 play_sound(1);
-                player_car_speed = current_opponent_car->speed - 150;
-                if (player_car_speed < 0) {
-                    player_car_speed = 0;
-                }
+                if ((player_car_speed - current_opponent_car->speed) > 400) {
+                    player_car_flip_crash();
+                } else {
+                    player_car_speed = current_opponent_car->speed - 150;
+                    if (player_car_speed < 0) {
+                        player_car_speed = 0;
+                    }
+                } 
             }
         }
 

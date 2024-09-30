@@ -11,7 +11,6 @@
 #include "game_loop.h"
 #include <stdio.h>
 
-#define PLAYER_CAR_STATE_NORMAL 0
 #define PLAYER_CAR_STATE_SPIN_CRASH 1
 #define PLAYER_CAR_STATE_FLIP_CRASH 2
 
@@ -249,23 +248,28 @@ void player_car_handle_inputs()
 
 void player_car_crash()
 {
-    if (player_car_state != PLAYER_CAR_STATE_NORMAL || player_car_invincible_countdown > 0) {
+    /*if (player_car_state != PLAYER_CAR_STATE_NORMAL || player_car_invincible_countdown > 0) {
         return;
-    }
+    }*/
 
     if (player_car_speed > 600) {
-        player_car_state = PLAYER_CAR_STATE_FLIP_CRASH;
-        player_car_altitude_change = (player_car_speed - 200) * 2;
-        if (player_car_altitude_change > 1500) {
-            player_car_altitude_change = 1500;
-        }
-        player_car_flip_image_tracker = 0;
+        player_car_flip_crash();
     } else if (player_car_speed > 100) {
         player_car_state = PLAYER_CAR_STATE_SPIN_CRASH;
     } else {
         player_car_speed = 0;
         player_car_invincible_countdown = 180;
     }
+}
+
+void player_car_flip_crash()
+{
+    player_car_state = PLAYER_CAR_STATE_FLIP_CRASH;
+    player_car_altitude_change = (player_car_speed - 200) * 2;
+    if (player_car_altitude_change > 1500) {
+        player_car_altitude_change = 1500;
+    }
+    player_car_flip_image_tracker = 0;
 }
 
 uint16_t player_car_get_sprite_definition()
