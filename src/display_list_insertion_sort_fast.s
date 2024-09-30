@@ -3,7 +3,7 @@
 _display_list_insertion_sort_fast:
 
     move.l sp,a0
-    movem.l d2-d5/a2-a3,-(sp)
+    movem.l d2-d4/a2,-(sp)
 
     move.w 6(a0),d2 ; number of items
     lea _display_list,a0
@@ -22,10 +22,6 @@ _i_iteration:
     ; 16 rather than 8 because a1 already advanced by 8
     lea -16(a1),a2 ; j = i - 1
 
-    ; this loop seems to get stuck and stomp through memory
-    ; d5 crashes the machine if it does more than 64 iterations
-    move.w #64,d5
-
 _j_iteration:
     cmp.l a0,a2 ; is j < 0?
     blt.s _j_terminated
@@ -37,9 +33,6 @@ _j_iteration:
     move.l (a2),8(a2)    ; arr[j + 1] = arr[j]
     move.l 4(a2),12(a2)
     subq.l #8,a2         ; j = j - 1
-
-    sub.w #1,d5
-    beq.s _crash
 
     bra.s _j_iteration
 
@@ -55,9 +48,6 @@ _j_terminated:
 
 _exitloop:
 
-    movem.l (sp)+,d2-d5/a2-a3
+    movem.l (sp)+,d2-d4/a2
 
     rts
-
-_crash:
-    move.l #0,1
