@@ -119,8 +119,6 @@ _draw_sprite:
     move.l 12(a0),a0 ; source data pointer
     move.l a0,source_data_address
 
-    move.l #0,(a4)     ; default destination address = 0 (don't try to clear)
-
     moveq     #0,d0
     move.w    d0,leftclipped
     move.w    d0,rightclipped
@@ -234,12 +232,9 @@ label_7a374:
     tst.w     d4
     beq       nothingtodraw
 
-    move.l    a1,(a4)  ; set BitplaneDrawRecord destination_address
-    move.w    final_ypos,10(a4)
  
     ; end of modified lotus code and start of new blitter code
     moveq.l #10,d5
-
 
     ; draw a roadside object
     ; a0 is source address
@@ -252,11 +247,12 @@ label_7a374:
 
     ; d3.w is y_count for BitplaneDrawRecord
 
-    move.w d3,8(a4)           ; set BitplaneDrawRecord y_count
-    move.w d4,6(a4)                     ; set x count for BitplaneDrawRecord
-
     addq.l #8,d6               ; convert to value suitable for blitter
-    move.w d6,4(a4)                     ; set dest y increment for BitplaneDrawRecord
+    move.l a1,(a4)+  ; set BitplaneDrawRecord destination_address
+    move.w d6,(a4)+                     ; set dest y increment for BitplaneDrawRecord
+    move.w d4,(a4)+                     ; set x count for BitplaneDrawRecord
+    move.w d3,(a4)+           ; set BitplaneDrawRecord y_count
+    move.w final_ypos,(a4)+
 
     ; this is where we need to intercept for compiled sprites
 
