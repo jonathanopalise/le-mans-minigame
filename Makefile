@@ -50,6 +50,7 @@ OBJECT_FILES =\
    	src/stars_fast.o\
     src/mountains_render_fast.o\
     src/hardware_playfield_fast.o\
+    src/display_list_insertion_sort_fast.o\
     src/music.o\
 
 ASSETS_GIF = assets/round-tree.gif
@@ -120,7 +121,7 @@ src/player_car.o: src/player_car.c src/player_car.h src/track_segments.h src/ini
 src/opponent_cars.o: src/opponent_cars.c src/opponent_cars.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/display_list.h src/random.h src/lookups.h src/trackside_items.h
 	$(CC) $(CFLAGS) -c src/opponent_cars.c -o src/opponent_cars.o
 
-src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h
+src/display_list.o: src/display_list.c src/display_list.h src/sprite_definitions.h src/hardware_playfield.h src/display_list_insertion_sort_fast.h
 	$(CC) $(CFLAGS) -c src/display_list.c -o src/display_list.o
 
 src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/player_car.h src/trackside_items_process.h src/trackside_items.h src/road_geometry.h src/opponent_cars.h src/play_sound.h src/lookups.h
@@ -230,6 +231,9 @@ src/mountains_render_fast.o: src/mountains_render_fast.s
 
 src/hardware_playfield_fast.o: src/hardware_playfield_fast.s
 	$(VASM) $(VASM_OPTS) src/hardware_playfield_fast.s -Felf -o src/hardware_playfield_fast.o
+
+src/display_list_insertion_sort_fast.o: src/display_list_insertion_sort_fast.s
+	$(VASM) $(VASM_OPTS) src/display_list_insertion_sort_fast.s -Felf -o src/display_list_insertion_sort_fast.o
 
 src/music.o: src/music.s src/music.h src/jracer.snd
 	$(VASM) $(VASM_OPTS) src/music.s -Felf -o src/music.o

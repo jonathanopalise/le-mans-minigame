@@ -2,6 +2,7 @@
 #define __DISPLAY_LIST_H
 
 #include "hardware_playfield.h"
+#include "display_list_insertion_sort_fast.h"
 
 #define DISPLAY_LIST_SIZE 24
 
@@ -67,7 +68,8 @@ void insertionSort(struct DisplayListItem arr[], int n)
 void display_list_execute() {
     struct DisplayListItem *current_display_list_item = next_free_display_list_item - 1;
 
-    insertionSort(display_list, num_visible_objects);
+    //insertionSort(display_list, num_visible_objects);
+    display_list_insertion_sort_fast(num_visible_objects);
 
     //*((volatile uint16_t *)0xffff8240) = 0x222;
     //*((volatile uint16_t *)0xffff8240) = 0x444;
