@@ -3,7 +3,7 @@
 _display_list_insertion_sort_fast:
 
     move.l sp,a0
-    movem.l d2-d7/a2-a6,-(sp)
+    movem.l d2-d4/a2-a3,-(sp)
 
     move.w 6(a0),d2 ; number of items
     lea _display_list,a0
@@ -19,6 +19,7 @@ _i_iteration:
     move.l (a1)+,d3 ; get first longword of key
     move.l (a1)+,d4 ; get second longword of key
 
+    ; 16 rather than 8 because a1 already advanced by 8
     lea -16(a1),a2 ; j = i - 1
 
 _j_iteration:
@@ -41,13 +42,12 @@ _j_terminated:
     move.l d4,12(a2)
     
     ; move i to next element
-    ;addq.l #8,a1
     addq.l #1,d0
 
     bra.s _i_iteration
 
 _exitloop:
 
-    movem.l (sp)+,d2-d7/a2-a6
+    movem.l (sp)+,d2-d4/a2-a3
 
     rts
