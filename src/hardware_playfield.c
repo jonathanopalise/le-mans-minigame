@@ -28,6 +28,8 @@ uint16_t hardware_playfield_shaking = 0;
 
 struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 
+struct HardwarePlayfield *score_source_playfield;
+
 struct ScoreDrawingPosition {
     uint16_t blocks_across;
     uint16_t skew;
@@ -148,33 +150,44 @@ void hardware_playfield_erase_sprites()
     drawing_playfield->tallest_sprite_ypos = 200;
 }
 
-static uint16_t hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
+static void hardware_playfield_update_scoring_digits(struct ScoreDrawingPosition *current_score_drawing_position, uint8_t *desired_score_digits, uint8_t *current_score_digits, struct HardwarePlayfield *hardware_playfield)
 {
-    struct StatusDefinition *status_definition;
-    uint8_t *desired_digit = desired_score_digits;
-    uint8_t *current_digit = current_score_digits;
-    uint16_t changed_digits = 0;
+    if (score_source_playfield) {
+        // copy digits from score source playfield to hardware playfield
+        hardware_playfield_transfer_score_fast(hardware_playfield->buffer);
+        uint8_t *desired_digit = desired_score_digits;
+        uint8_t *current_digit = current_score_digits;
 
-    for (int16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
-        if (*desired_digit != *current_digit) {
-            changed_digits++;
+        for (int16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
             *current_digit = *desired_digit;
-            status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + *desired_digit];
-            draw_status(
-                status_definition->words,
-                &hardware_playfield->buffer[160 * 19 + (current_score_drawing_position->blocks_across * 8)],
-                status_definition->source_data_width_pixels,
-                status_definition->source_data_height_lines,
-                current_score_drawing_position->skew
-            );
-
+            current_digit++;
+            desired_digit++;
         }
-        current_score_drawing_position++;
-        desired_digit++;
-        current_digit++;
-    }
+    } else {
+        struct StatusDefinition *status_definition;
+        uint8_t *desired_digit = desired_score_digits;
+        uint8_t *current_digit = current_score_digits;
 
-    return changed_digits;
+        for (int16_t index = 0; index < SCORE_DIGIT_COUNT; index++) {
+            if (*desired_digit != *current_digit) {
+                *current_digit = *desired_digit;
+                status_definition = &status_definitions[STATUS_DEFS_SMALL_DIGITS_BASE + *desired_digit];
+                draw_status(
+                    status_definition->words,
+                    &hardware_playfield->buffer[160 * 19 + (current_score_drawing_position->blocks_across * 8)],
+                    status_definition->source_data_width_pixels,
+                    status_definition->source_data_height_lines,
+                    current_score_drawing_position->skew
+                );
+
+            }
+            current_score_drawing_position++;
+            desired_digit++;
+            current_digit++;
+        }
+
+        score_source_playfield = hardware_playfield;
+    }
 }
 
 static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware_playfield)
@@ -270,7 +283,11 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         hardware_playfield->hud_digits.high_score_digits[index] = -1;
     }
 
+
     // TODO: i think we need to get rid of hardware_playfield->hud_digits.high_score_digits if possible
+    // this whole area needs a massive tidy up
+    // the only reason we now need high score digits is to set the high score digits at game/demo init
+
     hardware_playfield_update_scoring_digits(
         high_score_drawing_positions,
         hud_digits.high_score_digits,
@@ -278,12 +295,16 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
         hardware_playfield
     );
 
+    score_source_playfield = 0;
+
     hardware_playfield_update_scoring_digits(
         score_drawing_positions,
         hud_digits.score_digits,
         hardware_playfield->hud_digits.score_digits,
         hardware_playfield
     );
+
+    score_source_playfield = 0;
 }
 
 void hardware_playfield_global_init()
@@ -302,6 +323,7 @@ void hardware_playfield_init()
     ready_index = -1;
     drawing_index = 1;
     drawing_playfield = &hardware_playfields[drawing_index];
+    score_source_playfield = 0;
 
     for (uint16_t index = 0; index < HARDWARE_PLAYFIELD_COUNT; index++) {
         hardware_playfield_init_playfield(&hardware_playfields[index]);

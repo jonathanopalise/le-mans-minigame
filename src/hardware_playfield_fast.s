@@ -1,5 +1,6 @@
     public _hardware_playfield_erase_sprites_fast
     public _hardware_playfield_copy_score_fast
+    public _hardware_playfield_transfer_score_fast
 
 _hardware_playfield_erase_sprites_fast:
 
@@ -201,3 +202,37 @@ _hardware_playfield_copy_score_fast:
     movem.l (sp)+,a2-a5
     rts
 
+_hardware_playfield_transfer_score_fast:
+    move.l sp,a0
+
+    movem.l d2-d7/a2-a6,-(sp)
+
+    move.l 4(a0),a2                  ; dest buffer
+    lea 160*19(a2),a2
+
+    move.l _score_source_playfield,a0     ; drawing playfield struct
+    move.l (a0),a0                   ; get buffer
+    lea 160*19(a0),a0
+
+    moveq.l #-1,d0
+
+    lea.l $ffff8a20.w,a1
+    move.w #2,(a1)+                  ; source x increment
+    move.w #(160-48)+2,(a1)+           ; source y increment
+    move.l a0,(a1)+                  ; source address
+    move.l d0,(a1)+                  ; endmask1 and endmask2
+    move.w d0,(a1)+                  ; endmask3
+    move.w #2,(a1)+                  ; destination x increment
+    move.w #(160-48)+2,(a1)+           ; destination y increment
+
+    move.l a2,(a1)+                  ; destination address
+
+    move.w #24,(a1)+                 ; x count
+    move.w #9,(a1)+
+    move.w #$0203,(a1)+              ; hop/op
+
+    move.w #$c000,(a1)
+
+    movem.l (sp)+,d2-d7/a2-a6
+
+    rts

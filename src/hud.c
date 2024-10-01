@@ -1,5 +1,6 @@
 #include "hud.h"
 #include "player_car.h"
+#include "hardware_playfield.h"
 
 static int16_t seconds_remaining;
 static int16_t old_seconds_remaining;
@@ -118,11 +119,10 @@ uint16_t hud_update_score_digits()
         current_wip_score_digit = 7;
         wip_score = score;
         hud_redraw_required = 1;
+        score_source_playfield = 0;
     } else {
         wip_score /= 10;
     }
 
     return hud_redraw_required;
 }
-
-

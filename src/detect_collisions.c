@@ -65,7 +65,7 @@ void detect_collisions()
 
             if (logical_xpos > (player_car_logical_xpos - 3000000) && logical_xpos < (player_car_logical_xpos + 3000000)) {
                 play_sound(1);
-                if ((player_car_speed - current_opponent_car->speed) > 400) {
+                if ((player_car_speed - current_opponent_car->last_advance) > 400) {
                     player_car_flip_crash();
                 } else {
                     player_car_speed = current_opponent_car->speed - 150;

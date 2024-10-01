@@ -2,6 +2,7 @@
 #define __HARDWARE_PLAYFIELD_FAST_H
 
 #include "bitplane_draw_record.h"
+#include "hardware_playfield.h"
 #include <inttypes.h>
 
 void hardware_playfield_erase_sprites_fast(
@@ -11,5 +12,6 @@ void hardware_playfield_erase_sprites_fast(
 );
 
 void hardware_playfield_copy_score_fast();
+void hardware_playfield_transfer_score_fast(struct uint8_t *source_buffer);
 
 #endif

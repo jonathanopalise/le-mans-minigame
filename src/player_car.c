@@ -112,7 +112,7 @@ void player_car_handle_inputs()
         }
     } else {
 
-        if (is_demo()) {
+        /*if (is_demo()) {
             game_state_joy_data = 1;
             if ((race_ticks > 260 && race_ticks < 276) || (race_ticks > 450 && race_ticks < 620)) {
                 game_state_joy_data |= 8;
@@ -127,7 +127,18 @@ void player_car_handle_inputs()
         uint16_t joy_down = game_state_joy_data & 2;
         uint16_t joy_left = game_state_joy_data & 4;
         uint16_t joy_right = game_state_joy_data & 8;
-        uint16_t joy_fire = game_state_joy_data >> 7 & 1;
+        uint16_t joy_fire = game_state_joy_data >> 7 & 1;*/
+
+        uint16_t joy_up = joy_data & 1;
+        uint16_t joy_down = joy_data & 2;
+        uint16_t joy_left = joy_data & 4;
+        uint16_t joy_right = joy_data & 8;
+        uint16_t joy_fire = joy_data >> 7 & 1;
+
+
+        /*if (joy_left && joy_right) {
+            while (1==1) {}
+        }*/
 
         if (joy_fire) {
             /*snprintf(

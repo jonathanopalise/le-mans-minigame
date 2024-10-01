@@ -130,7 +130,7 @@ src/detect_collisions.o: src/detect_collisions.c src/detect_collisions.h src/pla
 src/random.o: src/random.c src/random.h
 	$(CC) $(CFLAGS) -c src/random.c -o src/random.o
 
-src/hud.o: src/hud.c src/hud.h src/hud_digits.h src/player_car.h
+src/hud.o: src/hud.c src/hud.h src/hud_digits.h src/player_car.h src/hardware_playfield.h
 	$(CC) $(CFLAGS) -c src/hud.c -o src/hud.o
 
 src/time_of_day_process.o: src/time_of_day_process.c src/time_of_day_process.h

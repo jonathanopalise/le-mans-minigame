@@ -308,7 +308,8 @@ static void in_demo_loop()
 {
     in_game_loop_core();
 
-    if (race_ticks > 23*50) {
+    uint16_t joy_fire = joy_data >> 7 & 1;
+    if (race_ticks > 23*50 || joy_fire) {
         uint32_t visible_buffer_address = hardware_playfields[0].buffer;
         hardware_playfield_set_visible_address(visible_buffer_address);
 

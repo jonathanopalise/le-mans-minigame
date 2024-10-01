@@ -1,7 +1,6 @@
     public _draw_status
 
 _draw_status:
-
     move.l sp,a0
     movem.l d2-d7/a2-a6,-(sp)    
 

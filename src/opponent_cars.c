@@ -54,7 +54,6 @@ void opponent_cars_init()
     current_opponent_car->lane = 0;
     current_opponent_car->speed = 600;
     current_opponent_car->max_speed = 600;
-    current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -65,7 +64,6 @@ void opponent_cars_init()
     current_opponent_car->lane = 1;
     current_opponent_car->speed = 650;
     current_opponent_car->max_speed = 650;
-    current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -76,7 +74,6 @@ void opponent_cars_init()
     current_opponent_car->lane = 2;
     current_opponent_car->speed = 700;
     current_opponent_car->max_speed = 700;
-    current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -87,7 +84,6 @@ void opponent_cars_init()
     current_opponent_car->lane = 3;
     current_opponent_car->speed = 750;
     current_opponent_car->max_speed = 750;
-    current_opponent_car->active = 1;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -187,6 +183,7 @@ void opponent_cars_update()
     struct OpponentCar *nearest_opponent_car;
     int32_t nearest_opponent_car_distance;
     int32_t opponent_car_distance;
+    uint16_t advance;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
@@ -224,10 +221,12 @@ void opponent_cars_update()
         }
 
         if (current_opponent_car->speed > distance_max_advance) {
-            current_opponent_car->player_relative_track_position += distance_max_advance;
+            advance = distance_max_advance;
         } else {
-            current_opponent_car->player_relative_track_position += current_opponent_car->speed;
+            advance = current_opponent_car->speed;
         }
+        current_opponent_car->player_relative_track_position += advance;
+        current_opponent_car->last_advance = advance;
 
         if (current_opponent_car->player_relative_track_position < 0) {
             current_opponent_car->player_relative_track_position -= 100;
@@ -422,7 +421,7 @@ void opponent_cars_process()
 
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         camera_relative_track_position = current_opponent_car->player_relative_track_position + PLAYER_CAR_DISTANCE;
-        if (current_opponent_car->active && camera_relative_track_position > 0 && camera_relative_track_position < 45000) {
+        if (camera_relative_track_position > 0 && camera_relative_track_position < 45000) {
             scanline_index = distance_to_scanline_lookup[camera_relative_track_position];
             if (scanline_index != -1) {
                 road_scanline = road_scanline_pointers[scanline_index];
