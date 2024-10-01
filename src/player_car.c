@@ -193,7 +193,9 @@ void player_car_handle_inputs()
     camera_track_position += player_car_speed;
     total_distance_travelled += player_car_speed;
 
-    hud_set_score(total_distance_travelled);
+    if (!is_demo()) {
+        hud_set_score(total_distance_travelled);
+    }
 
     old_player_car_track_position = player_car_track_position;
     player_car_track_position = camera_track_position + PLAYER_CAR_DISTANCE;
