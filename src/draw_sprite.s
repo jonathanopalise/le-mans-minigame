@@ -125,7 +125,7 @@ _draw_sprite:
     move.l    d0,leftclipped           ; long write - set both leftclipped and rightclipped
 
     move.l a3,d0                       ; get desired xpos of scenery object
-    and.l #$e,d0                       ; convert to skew value for blitter
+    and.w #$e,d0                       ; convert to skew value for blitter
 
     beq.s zeroskew
 
