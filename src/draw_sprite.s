@@ -26,10 +26,10 @@ _draw_compiled_sprite:
     ; d0 needs to be skew
     ; a2 needs to be address of compiled sprite table
 
+    move.l 4(a0),source_data_address  ; source data
     move.l 8(a0),a1  ; destination
     move.l 12(a0),a2 ; address of compiled sprite table
     move.w 18(a0),d0 ; skew
-    move.l 4(a0),source_data_address  ; source data
 
     bra _draw_compiled_sprite_entry
 
@@ -87,8 +87,10 @@ _draw_sprite:
     move.l sp,a0
     movem.l d2-d7/a2-a6,-(sp)
 
+    move.l 12(a0),a2
+
     moveq.l #0,d1
-    move.w 18(a0),d1 ; source_data_width
+    move.w 4(a2),d1 ; source_data_width NEEDS TO COME FROM SPRITE DEFINITION
     asr.w #4,d1
     move.l d1,d4
 
@@ -98,7 +100,7 @@ _draw_sprite:
     asr.w #4,d2
 
     moveq.l #0,d3
-    move.w 22(a0),d3 ; source_data_height
+    move.w 6(a2),d3 ; source_data_height NEEDS TO COME FROM SPRITE DEFINITION
     move.w d3,original_height_in_lines
 
     moveq.l #0,d5
@@ -110,18 +112,17 @@ _draw_sprite:
     move.l d5,d7
     add.l d3,d7
 
-    move.l 32(a0),a1 ; compiled sprites pointer
+    lea 14(a2),a1 ; compiled sprites pointer NEEDS TO COME FROM SPRITE DEFINITION:
     move.l a1,usp
 
-    move.l 24(a0),a1 ; screen buffer
-    move.l 28(a0),a4 ; bitplane draw record address
+    move.l 16(a0),a1 ; screen buffer CORRECTED
+    move.l 20(a0),a4 ; bitplane draw record address CORRECTED
 
-    move.l 12(a0),a0 ; source data pointer
+    move.l 10(a2),a0 ; source data pointer NEEDS TO COME FROM SPRITE DEFIITION
     move.l a0,source_data_address
 
     moveq     #0,d0
-    move.w    d0,leftclipped
-    move.w    d0,rightclipped
+    move.l    d0,leftclipped           ; long write - set both leftclipped and rightclipped
 
     move.l a3,d0                       ; get desired xpos of scenery object
     and.l #$e,d0                       ; convert to skew value for blitter

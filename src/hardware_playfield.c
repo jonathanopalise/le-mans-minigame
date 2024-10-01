@@ -106,12 +106,13 @@ void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, 
     uint16_t sprite_drawn = draw_sprite(
         normalised_xpos,
         normalised_ypos,
-        sprite_definition->words,
-        sprite_definition->source_data_width,
-        sprite_definition->source_data_height,
+        sprite_definition,
+        //sprite_definition->words,
+        //sprite_definition->source_data_width,
+        //sprite_definition->source_data_height,
         drawing_playfield->buffer,
-        current_bitplane_draw_record,
-        &(sprite_definition->compiled_sprite_0)
+        current_bitplane_draw_record
+        //&(sprite_definition->compiled_sprite_0)
     );
 
     if (sprite_drawn) {

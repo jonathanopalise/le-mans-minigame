@@ -4,13 +4,13 @@
 #include <inttypes.h>
 
 struct SpriteDefinition {
-    uint16_t origin_x;
-    uint16_t origin_y;
-    uint16_t source_data_width;
-    uint16_t source_data_height;
-    uint16_t longest_right_end;
-    uint16_t *words;
-    uint8_t *compiled_sprite_0;
+    uint16_t origin_x;             // offset 0
+    uint16_t origin_y;             // offset 2
+    uint16_t source_data_width;    // offset 4
+    uint16_t source_data_height;   // offset 6
+    uint16_t longest_right_end;    // offset 8
+    uint16_t *words;               // offset 10
+    uint8_t *compiled_sprite_0;    // offset 14
     uint8_t *compiled_sprite_1;
     uint8_t *compiled_sprite_2;
     uint8_t *compiled_sprite_3;
