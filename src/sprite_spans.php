@@ -50,12 +50,6 @@ class Span
 
     public function splitIntoSpanCollection(SpanCollection $spanCollection): void
     {
-        // TODO
-        // try different combinations of splits to find two "blitter good" spans
-        // if this fails, try different combinations of splits to find three "blitter good" spans
-        // etc etc
-
-
         $startOffset = $this->startOffset;
         $endOffset = $this->endOffset;
 
@@ -70,13 +64,6 @@ class Span
             $startOffset + 3,
             $endOffset
         );
-
-        /*foreach ($spanCollection->getSpans() as $span) {
-            if (!$span->isBlitterGood()) {
-                echo("split didn't give blitter good spans!\n");
-                exit(1);
-            }
-        }*/
     }
 
     public function getBlockCollection(): SixteenPixelBlockCollection
@@ -482,37 +469,29 @@ class CompiledSpriteBuilder {
                     'startOffset' => $lineActiveOffsetStart,
                     'endOffset' => null,
                 ];
-
-                if ((($lineActiveOffsetEnd - $lineActiveOffsetStart) + 1) <= 3) {
-                    $spans[] = [
-                        'startOffset' => $lineActiveOffsetStart,
-                        'endOffset' => $lineActiveOffsetEnd,
-                    ];
-                } else {
-                    $spanCurrentlyActive = true;
-                    //echo("scanning from ".$lineActiveOffsetStart." to ".$lineActiveOffsetEnd."\n");
-                    for ($offset = $lineActiveOffsetStart; $offset <= $lineActiveOffsetEnd; $offset++) {
-                        $maskWord = $this->sixteenPixelBlockCollection->getBlockByOffset($offset)->getMaskWord();
-                        if ($spanCurrentlyActive) {
-                            if ($maskWord == 0xffff) { 
-                                $spanCurrentlyActive = false;
-                                $currentSpan['endOffset'] = $offset - 1;
-                                $spans[] = $currentSpan;
-                            }
-                        } else {
-                            if ($maskWord != 0xffff) {
-                                $spanCurrentlyActive = true;
-                                $currentSpan = [
-                                    'startOffset' => $offset,
-                                    'endOffset' => null,
-                                ];
-                            }
+                $spanCurrentlyActive = true;
+                //echo("scanning from ".$lineActiveOffsetStart." to ".$lineActiveOffsetEnd."\n");
+                for ($offset = $lineActiveOffsetStart; $offset <= $lineActiveOffsetEnd; $offset++) {
+                    $maskWord = $this->sixteenPixelBlockCollection->getBlockByOffset($offset)->getMaskWord();
+                    if ($spanCurrentlyActive) {
+                        if ($maskWord == 0xffff) { 
+                            $spanCurrentlyActive = false;
+                            $currentSpan['endOffset'] = $offset - 1;
+                            $spans[] = $currentSpan;
+                        }
+                    } else {
+                        if ($maskWord != 0xffff) {
+                            $spanCurrentlyActive = true;
+                            $currentSpan = [
+                                'startOffset' => $offset,
+                                'endOffset' => null,
+                            ];
                         }
                     }
-                    if ($spanCurrentlyActive) {
-                        $currentSpan['endOffset'] = $lineActiveOffsetEnd;
-                        $spans[] = $currentSpan;
-                    }
+                }
+                if ($spanCurrentlyActive) {
+                    $currentSpan['endOffset'] = $lineActiveOffsetEnd;
+                    $spans[] = $currentSpan;
                 }
 
             }
