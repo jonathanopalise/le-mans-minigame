@@ -147,7 +147,7 @@ void player_car_handle_inputs()
         }
 
         if (race_ticks > 200) {
-            if (joy_up && !hud_is_time_up()) {
+            if ((joy_up || joy_fire) && !hud_is_time_up()) {
                 player_car_speed += 3;
                 if (player_car_speed > 1199) {
                     player_car_speed = 1199;
@@ -165,12 +165,12 @@ void player_car_handle_inputs()
             }
 
             if (joy_left) {
-                player_car_steering += 125;
+                player_car_steering += 50;
                 if (player_car_steering > 500) {
                     player_car_steering = 500;
                 }
             } else if (joy_right) {
-                player_car_steering -= 125;
+                player_car_steering -= 50;
                 if (player_car_steering < -500) {
                     player_car_steering = -500;
                 }
