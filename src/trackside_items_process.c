@@ -59,7 +59,7 @@ void trackside_items_process()
             screen_xpos += 160;
 
             display_list_add_sprite(
-                sprite_definition_pointers[sprite_index],
+                sprite_index,
                 screen_xpos,
                 (119 + trackside_item_scanline_index)
             );

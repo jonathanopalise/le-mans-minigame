@@ -280,13 +280,13 @@ static void in_game_loop_core()
     if (player_car_visible) {
         if (player_car_altitude > 0) {
             display_list_add_sprite(
-                &sprite_definitions[SHADOW_DEFINITION_OFFSET],
+                SHADOW_DEFINITION_OFFSET,
                 160,
                 194
             );
         } else {
             display_list_add_sprite(
-                &sprite_definitions[player_car_sprite_definition_offset],
+                player_car_sprite_definition_offset,
                 160,
                 194 - ((player_car_altitude >> 8) + (player_car_speed > 1190 ? race_ticks & 1 : 0))
             );
@@ -297,7 +297,7 @@ static void in_game_loop_core()
 
     if (player_car_visible && player_car_altitude > 0) {
         hardware_playfield_draw_sprite(
-            &sprite_definitions[player_car_sprite_definition_offset],
+            player_car_sprite_definition_offset,
             160,
             194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
         );
@@ -318,7 +318,7 @@ static void in_demo_loop()
         game_state = GAME_STATE_GAME_OVER_EXIT_TRANSITION;
     } else {
         hardware_playfield_draw_sprite(
-            &sprite_definitions[DEMO_DEFINITION_OFFSET],
+            DEMO_DEFINITION_OFFSET,
             160,
             106
         );
@@ -341,7 +341,7 @@ static void in_game_loop()
     if (frames_since_game_over) {
         {
             hardware_playfield_draw_sprite(
-                &sprite_definitions[GAME_OVER_DEFINITION_OFFSET],
+                GAME_OVER_DEFINITION_OFFSET,
                 160,
                 127
             );
@@ -349,20 +349,20 @@ static void in_game_loop()
     } else {
         if (race_ticks > 30 && race_ticks < 150) {
             hardware_playfield_draw_sprite(
-                &sprite_definitions[GET_READY_DEFINITION_OFFSET],
+                GET_READY_DEFINITION_OFFSET,
                 160,
                 127
             );
         } else if (race_ticks > 200 && race_ticks < 320) {
             hardware_playfield_draw_sprite(
-                &sprite_definitions[GO_DEFINITION_OFFSET],
+                GO_DEFINITION_OFFSET,
                 160,
                 119
             );
         } else if (time_extend_countdown > 0) {
             if (time_extend_countdown & 8) {
                 hardware_playfield_draw_sprite(
-                    &sprite_definitions[TIME_EXTEND_DEFINITION_OFFSET],
+                    TIME_EXTEND_DEFINITION_OFFSET,
                     160,
                     109
                 );

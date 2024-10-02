@@ -97,24 +97,20 @@ void hardware_playfield_handle_vbl()
     }
 }
 
-void hardware_playfield_draw_sprite(struct SpriteDefinition *sprite_definition, int16_t xpos, int16_t ypos)
+void hardware_playfield_draw_sprite(uint16_t sprite_index, int16_t xpos, int16_t ypos)
 {
+    struct SpriteDefinition *sprite_definition = sprite_definition_pointers[sprite_index];
     int16_t normalised_xpos = xpos - sprite_definition->origin_x;
     int16_t normalised_ypos = ypos - sprite_definition->origin_y;
     struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->current_bitplane_draw_record;
     uint16_t skew;
     
-    // TODO: simplify this interface so we're not pushing so much on the stack!
     uint16_t sprite_drawn = draw_sprite(
         normalised_xpos,
         normalised_ypos,
         sprite_definition,
-        //sprite_definition->words,
-        //sprite_definition->source_data_width,
-        //sprite_definition->source_data_height,
         drawing_playfield->buffer,
         current_bitplane_draw_record
-        //&(sprite_definition->compiled_sprite_0)
     );
 
     if (sprite_drawn) {

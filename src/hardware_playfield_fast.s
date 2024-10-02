@@ -205,7 +205,7 @@ _hardware_playfield_copy_score_fast:
 _hardware_playfield_transfer_score_fast:
     move.l sp,a0
 
-    movem.l d2-d7/a2-a6,-(sp)
+    move.l a2,-(sp)
 
     move.l 4(a0),a2                  ; dest buffer
     lea 160*19(a2),a2
@@ -233,6 +233,6 @@ _hardware_playfield_transfer_score_fast:
 
     move.w #$c000,(a1)
 
-    movem.l (sp)+,d2-d7/a2-a6
+    move.l (sp)+,a2
 
     rts
