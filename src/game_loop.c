@@ -296,11 +296,13 @@ static void in_game_loop_core()
     display_list_execute();
 
     if (player_car_visible && player_car_altitude > 0) {
-        hardware_playfield_draw_sprite(
+        struct SpritePlacement player_car_sprite_placement = {
             player_car_sprite_definition_offset,
             160,
             194 - ((player_car_altitude >> 8) + (player_car_speed == 1200 ? race_ticks & 1 : 0))
-        );
+        };
+
+        hardware_playfield_draw_sprite(&player_car_sprite_placement);
     }
 }
 
@@ -317,11 +319,8 @@ static void in_demo_loop()
         transition_offset = 0;
         game_state = GAME_STATE_GAME_OVER_EXIT_TRANSITION;
     } else {
-        hardware_playfield_draw_sprite(
-            DEMO_DEFINITION_OFFSET,
-            160,
-            106
-        );
+        struct SpritePlacement demo_sprite_placement = {DEMO_DEFINITION_OFFSET, 160, 106};
+        hardware_playfield_draw_sprite(&demo_sprite_placement);
 
         hardware_playfield_frame_complete();
     }
@@ -340,32 +339,20 @@ static void in_game_loop()
 
     if (frames_since_game_over) {
         {
-            hardware_playfield_draw_sprite(
-                GAME_OVER_DEFINITION_OFFSET,
-                160,
-                127
-            );
+            struct SpritePlacement game_over_sprite_placement = {GAME_OVER_DEFINITION_OFFSET, 160, 127};
+            hardware_playfield_draw_sprite(&game_over_sprite_placement);
         }
     } else {
         if (race_ticks > 30 && race_ticks < 150) {
-            hardware_playfield_draw_sprite(
-                GET_READY_DEFINITION_OFFSET,
-                160,
-                127
-            );
+            struct SpritePlacement get_ready_sprite_placement = {GET_READY_DEFINITION_OFFSET, 160, 127};
+            hardware_playfield_draw_sprite(&get_ready_sprite_placement);
         } else if (race_ticks > 200 && race_ticks < 320) {
-            hardware_playfield_draw_sprite(
-                GO_DEFINITION_OFFSET,
-                160,
-                119
-            );
+            struct SpritePlacement go_sprite_placement = {GO_DEFINITION_OFFSET, 160, 119};
+            hardware_playfield_draw_sprite(&go_sprite_placement);
         } else if (time_extend_countdown > 0) {
             if (time_extend_countdown & 8) {
-                hardware_playfield_draw_sprite(
-                    TIME_EXTEND_DEFINITION_OFFSET,
-                    160,
-                    109
-                );
+                struct SpritePlacement time_extend_sprite_placement = {TIME_EXTEND_DEFINITION_OFFSET, 160, 109};
+                hardware_playfield_draw_sprite(&time_extend_sprite_placement);
             }
             time_extend_countdown--;
         }

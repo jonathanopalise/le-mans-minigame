@@ -26,6 +26,12 @@ struct HardwarePlayfield {
     struct HudDigits hud_digits;
 };
 
+struct SpritePlacement {
+    uint16_t sprite_index;
+    int16_t xpos;
+    int16_t ypos;
+};
+
 extern struct HardwarePlayfield hardware_playfields[HARDWARE_PLAYFIELD_COUNT];
 extern uint16_t hardware_playfield_shaking;
 extern struct HardwarePlayfield *drawing_playfield;
@@ -33,7 +39,7 @@ extern struct HardwarePlayfield *score_source_playfield;
 
 void hardware_playfield_set_visible_address(uint32_t visible_buffer_address);
 void hardware_playfield_handle_vbl();
-void hardware_playfield_draw_sprite(uint16_t sprite_index, int16_t xpos, int16_t ypos);
+void hardware_playfield_draw_sprite(struct SpritePlacement *sprite_placement);
 void hardware_playfield_erase_sprites();
 void hardware_playfield_global_init();
 void hardware_playfield_init();

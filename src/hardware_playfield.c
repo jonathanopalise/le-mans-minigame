@@ -97,11 +97,11 @@ void hardware_playfield_handle_vbl()
     }
 }
 
-void hardware_playfield_draw_sprite(uint16_t sprite_index, int16_t xpos, int16_t ypos)
+void hardware_playfield_draw_sprite(struct SpritePlacement *sprite_placement)
 {
-    struct SpriteDefinition *sprite_definition = sprite_definition_pointers[sprite_index];
-    int16_t normalised_xpos = xpos - sprite_definition->origin_x;
-    int16_t normalised_ypos = ypos - sprite_definition->origin_y;
+    struct SpriteDefinition *sprite_definition = sprite_definition_pointers[sprite_placement->sprite_index];
+    int16_t normalised_xpos = sprite_placement->xpos - sprite_definition->origin_x;
+    int16_t normalised_ypos = sprite_placement->ypos - sprite_definition->origin_y;
     struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->current_bitplane_draw_record;
     uint16_t skew;
     
