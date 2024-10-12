@@ -1,5 +1,5 @@
 CC = m68k-atarimegabrowner-elf-gcc
-CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBUG -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
+CFLAGS = -nostdlib -D__ATARI__ -D__M68000__ -D__NATFEATS_DEBU -DELF_CONFIG_STACK=1024 -flto -fleading-underscore -O3 -fomit-frame-pointer -m68000 -Wall
 VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
@@ -55,7 +55,7 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
-release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin
+release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin diskcontent/credits.bin
 	rm release/lemans.st || true
 	cp bin/lemans.prg diskcontent/AUTO/ || true
 	zip -r release/lemans.zip diskcontent/
@@ -74,7 +74,7 @@ bin/lemans.prg: $(OBJECT_FILES)
 	chmod +x bin/lemans.prg
 
 diskcontent/title.bin: src/generate_new_title_screen_graphics.php src/library.php
-	$(PHP) src/generate_new_title_screen_graphics.php
+	$(PHP) src/generate_new_title_screen_graphics.php title diskcontent/title.bin
 
 src/boot_sector.bin: src/boot_sector.s
 	$(VASM) $< -Fbin -o $@

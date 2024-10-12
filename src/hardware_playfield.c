@@ -104,7 +104,7 @@ void hardware_playfield_draw_sprite(struct SpritePlacement *sprite_placement)
     int16_t normalised_ypos = sprite_placement->ypos - sprite_definition->origin_y;
     struct BitplaneDrawRecord *current_bitplane_draw_record = drawing_playfield->current_bitplane_draw_record;
     uint16_t skew;
-    
+   
     uint16_t sprite_drawn = draw_sprite(
         normalised_xpos,
         normalised_ypos,
