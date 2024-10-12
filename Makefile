@@ -4,6 +4,7 @@ VASM = vasmm68k_mot
 VASM_OPTS =
 VLINK = vlink
 PHP = php
+UPX = upx
 
 OBJECT_FILES =\
 	src/lemans.o\
@@ -70,11 +71,14 @@ bin/lemans.prg: $(OBJECT_FILES)
 	$(CC)  -o src/lemans.elf libcxx/vsnprint.o libcxx/brownboot.o libcxx/zerolibc.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerocrtfini.o $(OBJECT_FILES)  -O3 -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -flto -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
 	brownout -i src/lemans.elf -o bin/lemans.prg
 	cp bin/lemans.prg bin/lemans.uncompressed.prg
-	upx bin/lemans.prg
+	$(UPX) bin/lemans.prg
 	chmod +x bin/lemans.prg
 
 diskcontent/title.bin: src/generate_new_title_screen_graphics.php src/library.php
 	$(PHP) src/generate_new_title_screen_graphics.php title diskcontent/title.bin
+
+diskcontent/credits.bin: src/generate_new_title_screen_graphics.php src/library.php
+	$(PHP) src/generate_new_title_screen_graphics.php credits diskcontent/credits.bin
 
 src/boot_sector.bin: src/boot_sector.s
 	$(VASM) $< -Fbin -o $@

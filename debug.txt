@@ -1,0 +1,5 @@
+history on 10000
+b pc = 0xe0003002
+b pc = 0x02e00ca2
+b pc = 0x03e00ca2
+b pc = 0x04e00ca2
