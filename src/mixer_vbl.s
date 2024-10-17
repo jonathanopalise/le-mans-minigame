@@ -30,13 +30,13 @@ _mixer_vbl:
 	move.l		tableSoundEvents,a0															; first entry in table contains base address of engine sound effect
 	lea.l		(a0,d0.w),a0																; offset current engine effect position into engine sound effect base address
 
-    move.w      _player_car_speed,d0
-	lsl.w		#4,d0																		; multiply revs by 4 to get scaler table offset
-	lea.l		table12517HzScaler,a1														; scaler table base address
-	move.l		(a1,d0.w),d1																; fetch value from scaler table offset
+	moveq		#0,d1																		; just makes sure there's no cruft in d1 before it's swapped - maybe not needed
+    move.w      _player_car_speed,d1														; fetch current speed
+	lsl.w		#5,d1																		; multiply speed by 128
+	add.w		#27163,d1																	; add base scaler to speed (max value with 299mph should end up being 65535)
+	swap		d1																			; d1 is now frequency scaler
 
 	moveq		#0,d0																		; clear it for use as engine offset
-	swap		d1
 
 	rept		250
 	move.b		(a0,d0.w),(a2)+
@@ -65,9 +65,9 @@ _mixer_vbl:
 labelFinishedSoundMixing
 
 	add.w		d0,variableEngineEffectPosition												; store current position of engine sound effect
-	cmp.w		#3116,variableEngineEffectPosition											; compare engine sound effect length with current position
+	cmp.w		#1324,variableEngineEffectPosition											; compare engine sound effect length with current position
 	blo.s		labelFinishedAudio															; if current position is less than length then nothing to do
-	sub.w		#3116,variableEngineEffectPosition											; otherwise adjust position
+	sub.w		#1324,variableEngineEffectPosition											; otherwise adjust position
 
 labelFinishedAudio
 

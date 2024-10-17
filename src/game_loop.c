@@ -27,6 +27,7 @@
 #include "random.h"
 #include "speedometer.h"
 #include "screen_transition.h"
+#include "play_sound.h"
 
 #define GAME_OVER_DEFINITION_OFFSET 234
 #define GET_READY_DEFINITION_OFFSET 235
@@ -109,7 +110,9 @@ static void title_screen_init()
 
 static void title_screen_loop()
 {
-    joy_fire = joy_data >> 7 & 1;
+    //update_joy();
+
+    joy_fire = joy1 >> 7 & 1;
     if (joy_fire == 1) {
         transition_offset = 0;
         game_state = GAME_STATE_TITLE_SCREEN_EXIT_TO_GAME_TRANSITION;
@@ -244,6 +247,7 @@ static void in_demo_init()
 
 static void in_game_loop_core()
 {
+
     time_of_day_update();
     player_car_handle_inputs();
     opponent_cars_update();
@@ -310,7 +314,7 @@ static void in_demo_loop()
 {
     in_game_loop_core();
 
-    uint16_t joy_fire = joy_data >> 7 & 1;
+    uint16_t joy_fire = joy1 >> 7 & 1;
     if (race_ticks > 23*50 || joy_fire) {
         uint32_t visible_buffer_address = hardware_playfields[0].buffer;
         hardware_playfield_set_visible_address(visible_buffer_address);
@@ -328,6 +332,8 @@ static void in_demo_loop()
 
 static void in_game_loop()
 {
+    //update_joy();
+
     speedometer_update();
 
     hud_reduce_time();
@@ -343,6 +349,17 @@ static void in_game_loop()
             hardware_playfield_draw_sprite(&game_over_sprite_placement);
         }
     } else {
+        if (race_ticks <= 200) {
+            switch (race_ticks) {
+                case 200:
+                    play_sound(SOUND_ID_START_BEEP_HIGH);
+                    break;
+                case 150:
+                case 100:
+                    play_sound(SOUND_ID_START_BEEP_LOW);
+            }
+        }
+
         if (race_ticks > 30 && race_ticks < 150) {
             struct SpritePlacement get_ready_sprite_placement = {GET_READY_DEFINITION_OFFSET, 160, 127};
             hardware_playfield_draw_sprite(&get_ready_sprite_placement);
@@ -351,6 +368,9 @@ static void in_game_loop()
             hardware_playfield_draw_sprite(&go_sprite_placement);
         } else if (time_extend_countdown > 0) {
             if (time_extend_countdown & 8) {
+                if (((time_extend_countdown + 1) & 8) == 0) {
+                    play_sound(SOUND_ID_CHECKPOINT_BEEP);
+                }
                 struct SpritePlacement time_extend_sprite_placement = {TIME_EXTEND_DEFINITION_OFFSET, 160, 109};
                 hardware_playfield_draw_sprite(&time_extend_sprite_placement);
             }

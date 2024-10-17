@@ -36,6 +36,7 @@ void detect_collisions()
             current_trackside_item_logical_xpos > (player_car_logical_xpos - 4000000) && 
             current_trackside_item_logical_xpos < (player_car_logical_xpos + 4000000)
         ) {
+            play_sound(SOUND_ID_CRASH); // crash sound
             player_car_crash();
         }
 
@@ -64,7 +65,7 @@ void detect_collisions()
             logical_xpos =- logical_xpos;
 
             if (logical_xpos > (player_car_logical_xpos - 3000000) && logical_xpos < (player_car_logical_xpos + 3000000)) {
-                play_sound(1);
+                play_sound(SOUND_ID_CRASH); // crash sound
                 if ((player_car_speed - current_opponent_car->last_advance) > 400) {
                     player_car_flip_crash();
                 } else {

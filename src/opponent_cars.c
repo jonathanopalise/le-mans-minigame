@@ -8,6 +8,7 @@
 #include "natfeats.h"
 #include "lookups.h"
 #include "trackside_items.h"
+#include "play_sound.h"
 #include <stdio.h>
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
@@ -52,8 +53,8 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 30000;
     current_opponent_car->max_player_relative_track_position = 65001;
     current_opponent_car->lane = 0;
-    current_opponent_car->speed = 600;
-    current_opponent_car->max_speed = 600;
+    current_opponent_car->speed = 700;
+    current_opponent_car->max_speed = 700;
     current_opponent_car->base_sprite_index = RED_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -62,8 +63,8 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 25000;
     current_opponent_car->max_player_relative_track_position = 85001;
     current_opponent_car->lane = 1;
-    current_opponent_car->speed = 650;
-    current_opponent_car->max_speed = 650;
+    current_opponent_car->speed = 750;
+    current_opponent_car->max_speed = 750;
     current_opponent_car->base_sprite_index = YELLOW_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -72,8 +73,8 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 20000;
     current_opponent_car->max_player_relative_track_position = 1055001;
     current_opponent_car->lane = 2;
-    current_opponent_car->speed = 700;
-    current_opponent_car->max_speed = 700;
+    current_opponent_car->speed = 800;
+    current_opponent_car->max_speed = 800;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -82,8 +83,8 @@ void opponent_cars_init()
     current_opponent_car->player_relative_track_position = 15000;
     current_opponent_car->max_player_relative_track_position = 125001;
     current_opponent_car->lane = 3;
-    current_opponent_car->speed = 750;
-    current_opponent_car->max_speed = 750;
+    current_opponent_car->speed = 850;
+    current_opponent_car->max_speed = 850;
     current_opponent_car->base_sprite_index = BLUE_CAR_BASE_INDEX;
     current_opponent_car->lane_change_countdown = 0;
 
@@ -184,6 +185,8 @@ void opponent_cars_update()
     int32_t nearest_opponent_car_distance;
     int32_t opponent_car_distance;
     uint16_t advance;
+    uint16_t opponent_was_ahead_of_player;
+    uint16_t play_whoosh = 0;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
@@ -192,12 +195,15 @@ void opponent_cars_update()
     }
 
     current_opponent_car = opponent_cars;
+
     for (uint16_t index = 0; index < OPPONENT_CAR_COUNT; index++) {
         if ((index + 1) > active_opponent_cars) {
             current_opponent_car->player_relative_track_position = current_opponent_car->max_player_relative_track_position;
             current_opponent_car++;
             continue;
         }
+
+        opponent_was_ahead_of_player = current_opponent_car->player_relative_track_position > 0;
 
         if (current_opponent_car->player_relative_track_position < 10000) {
             distance_max_advance = current_opponent_car->max_speed;
@@ -234,6 +240,10 @@ void opponent_cars_update()
 
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
+        if (opponent_was_ahead_of_player && current_opponent_car->player_relative_track_position < 0) {
+            play_whoosh = 1;
+        }
+
         if (current_opponent_car->lane_change_countdown > 0) {
             current_opponent_car->lane_change_countdown--;
             if (current_opponent_car->lane_change_countdown == 0) {
@@ -255,6 +265,10 @@ void opponent_cars_update()
         }
 
         current_opponent_car++;
+    }
+
+    if (play_whoosh) {
+        play_sound(SOUND_ID_WHOOSH);
     }
 
     current_opponent_car = opponent_cars;

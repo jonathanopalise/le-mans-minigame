@@ -6,6 +6,7 @@
 #include "trackside_items_process.h"
 #include "movement_update_inner.h"
 #include "lookups.h"
+#include "play_sound.h"
 
 // TODO: this should be a generated value
 #define PLAYER_CAR_SCANLINE 75
@@ -94,10 +95,11 @@ void road_corners_update() {
     //}
 
 
-    if (player_car_altitude == 0 && (player_xpos_shift < -500000 || player_xpos_shift > 500000)) {
+    if (player_car_altitude == 0 && (player_xpos_shift < -400000 || player_xpos_shift > 400000)) {
         // skidding sound
-        player_car_speed -= 5;
-        play_sound(7);
+        player_car_speed -= 3;
+        player_car_logical_xpos += player_xpos_shift >> 2;
+        play_sound(SOUND_ID_SKID);
     }
 
     // mulsi and divsi

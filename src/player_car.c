@@ -75,6 +75,7 @@ void player_car_handle_inputs()
         player_car_altitude_change -= 60;
         player_car_altitude += player_car_altitude_change;
         if (player_car_altitude < 0) {
+            play_sound(SOUND_ID_BOUNCE);
             player_car_altitude = 0;
             player_car_altitude_change =- (player_car_altitude_change >> 1);
         }
@@ -129,12 +130,12 @@ void player_car_handle_inputs()
         uint16_t joy_right = game_state_joy_data & 8;
         uint16_t joy_fire = game_state_joy_data >> 7 & 1;*/
 
-        uint16_t game_state_joy_data = joy_data;
-        uint16_t joy_up = game_state_joy_data & 1;
-        uint16_t joy_down = game_state_joy_data & 2;
-        uint16_t joy_left = game_state_joy_data & 4;
-        uint16_t joy_right = game_state_joy_data & 8;
-        uint16_t joy_fire = game_state_joy_data >> 7 & 1;
+        uint8_t game_state_joy_data = joy1;
+        uint8_t joy_up = game_state_joy_data & 1;
+        uint8_t joy_down = game_state_joy_data & 2;
+        uint8_t joy_left = game_state_joy_data & 4;
+        uint8_t joy_right = game_state_joy_data & 8;
+        uint8_t joy_fire = game_state_joy_data >> 7 & 1;
 
 
         /*if (joy_left && joy_right) {
@@ -178,15 +179,15 @@ void player_car_handle_inputs()
 
             if (joy_left) {
                 player_car_steering += 50;
-                if (player_car_steering > 500) {
-                    player_car_steering = 500;
+                if (player_car_steering > 600) {
+                    player_car_steering = 600;
                 }
             }
 
             if (joy_right) {
                 player_car_steering -= 50;
-                if (player_car_steering < -500) {
-                    player_car_steering = -500;
+                if (player_car_steering < -600) {
+                    player_car_steering = -600;
                 }
             }
 
@@ -218,7 +219,7 @@ void player_car_handle_inputs()
 
     for (uint16_t index = 0; index < CHECKPOINTS_COUNT; index++) {
         if (old_player_car_track_position <= checkpoints[index] && player_car_track_position > checkpoints[index]) {
-            play_sound(3);
+            //play_sound(3);
             hud_increase_time(28);
             if (passed_start_line) {
                 time_extend_countdown = 128;
