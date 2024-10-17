@@ -21,7 +21,7 @@ _initialise:
     move.l #timer_2,$120.w	; Install our own Timer B
     move.l #dummy,$114.w    ; Install our own Timer C (dummy)
     move.l #dummy,$110.w    ; Install our own Timer D (dummy)
-	move.l #key_interrupt,$118.w  ; Install our own ACIA (dummy)
+	move.l #alt_key_interrupt,$118.w  ; Install our own ACIA (dummy)
     clr.b $fffffa07.w       ; Interrupt enable A (Timer-A & B)
     clr.b $fffffa13.w       ; Interrupt mask A (Timer-A & B)
 	move.b #$12,$fffffc02.w ; Kill mouse
@@ -416,6 +416,20 @@ joy2:     dc.b   0     ;  volatile byte joy2; /* cursor joystick */
 last_key: dc.b   0     ;  volatile byte last_key;
 
 .even
+
+alt_key_interrupt:
+     move.l    d0,-(sp)          ;
+     moveq     #0,d0             ; clear register
+     move.b    $fffffc02.w,d0    ; get scancode
+
+     cmp.b #$ff,d0
+     beq _ignore
+
+     move.b d0,_joy1
+
+_ignore:
+     move.l    (sp)+,d0          ; restore registers
+     rte                         ; done
 
 key_interrupt:
      move.l    d0,-(sp)          ;
