@@ -75,7 +75,11 @@ void player_car_handle_inputs()
         player_car_altitude_change -= 60;
         player_car_altitude += player_car_altitude_change;
         if (player_car_altitude < 0) {
-            play_sound(SOUND_ID_BOUNCE);
+            if (player_car_altitude_change < -800) {
+                play_sound(SOUND_ID_BOUNCE_LOUD);
+            } else {
+                play_sound(SOUND_ID_BOUNCE_QUIET);
+            }
             player_car_altitude = 0;
             player_car_altitude_change =- (player_car_altitude_change >> 1);
         }

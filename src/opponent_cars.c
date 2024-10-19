@@ -9,6 +9,7 @@
 #include "lookups.h"
 #include "trackside_items.h"
 #include "play_sound.h"
+#include "detect_collisions.h"
 #include <stdio.h>
 
 struct OpponentCar opponent_cars[OPPONENT_CAR_COUNT];
@@ -186,7 +187,10 @@ void opponent_cars_update()
     int32_t opponent_car_distance;
     uint16_t advance;
     uint16_t opponent_was_ahead_of_player;
-    uint16_t play_whoosh = 0;
+    uint16_t existing_whoosh = 0;
+    uint16_t new_whoosh;
+    int32_t opponent_car_logical_xpos;
+    int32_t logical_xpos_diff;
 
     int32_t corner_sharpness = current_road_curvature > 0 ? current_road_curvature : -current_road_curvature;
     int32_t curvature_max_speed = 900 - ((corner_sharpness * corner_sharpness) >> 8);
@@ -241,7 +245,21 @@ void opponent_cars_update()
         current_opponent_car->player_relative_track_position -= player_car_speed;
 
         if (opponent_was_ahead_of_player && current_opponent_car->player_relative_track_position < 0) {
-            play_whoosh = 1;
+            opponent_car_logical_xpos = get_opponent_car_logical_xpos(current_opponent_car, road_scanline_pointers[PLAYER_SCANLINE_INDEX]);
+            logical_xpos_diff = opponent_car_logical_xpos - player_car_logical_xpos;
+
+            if (logical_xpos_diff < 0) {
+                logical_xpos_diff =- logical_xpos_diff;
+            }
+
+            new_whoosh = 1;
+            if (logical_xpos_diff < 8000000) {
+                new_whoosh = 2;
+            }
+
+            if (new_whoosh > existing_whoosh) {
+                existing_whoosh = new_whoosh;
+            }
         }
 
         if (current_opponent_car->lane_change_countdown > 0) {
@@ -267,8 +285,8 @@ void opponent_cars_update()
         current_opponent_car++;
     }
 
-    if (play_whoosh) {
-        play_sound(SOUND_ID_WHOOSH);
+    if (existing_whoosh) {
+        play_sound(existing_whoosh == 2 ? SOUND_ID_WHOOSH_LOUD : SOUND_ID_WHOOSH_QUIET);
     }
 
     current_opponent_car = opponent_cars;
