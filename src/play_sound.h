@@ -13,6 +13,7 @@ void play_sound(uint16_t index);
 #define SOUND_ID_BOUNCE_QUIET 6
 #define SOUND_ID_SKID 7
 #define SOUND_ID_WHOOSH_LOUD 8
-#define SOUND_ID_WHOOSH_QUIET 9
+#define SOUND_ID_WHOOSH_MEDIUM 9
+#define SOUND_ID_WHOOSH_QUIET 10
 
 #endif

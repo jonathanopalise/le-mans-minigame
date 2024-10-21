@@ -58,7 +58,7 @@ _mixer_vbl:
 	add.l		d2,(a2)+																	; add it to sample data already in buffer
 	endr
 	move.w		(a1)+,d2																	; fetch the last two bytes as a word
-	add.w		d2,(a2)+																	; add it to sample data already in buffer
+	add.w		d2,(a2)																		; add it to sample data already in buffer
 
 	add.w		#250,28(a3)																	; variableSoundEventPosition - store current position of sound event effect
 	move.w		24(a3),d1																	; variableSoundEventLength - fetch sound event length

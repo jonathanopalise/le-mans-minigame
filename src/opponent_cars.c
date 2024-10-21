@@ -252,9 +252,11 @@ void opponent_cars_update()
                 logical_xpos_diff =- logical_xpos_diff;
             }
 
-            new_whoosh = 1;
-            if (logical_xpos_diff < 8000000) {
-                new_whoosh = 2;
+            new_whoosh = 1; // quiet
+            if (logical_xpos_diff < 6000000) {
+                new_whoosh = 3; // loud
+            } else if (logical_xpos_diff < 12000000) {
+                new_whoosh = 2; // medium
             }
 
             if (new_whoosh > existing_whoosh) {
@@ -286,7 +288,14 @@ void opponent_cars_update()
     }
 
     if (existing_whoosh) {
-        play_sound(existing_whoosh == 2 ? SOUND_ID_WHOOSH_LOUD : SOUND_ID_WHOOSH_QUIET);
+            snprintf(
+                nf_strbuf,
+                256,
+                "play_sound: %d\n",
+                11 - existing_whoosh
+            );
+            nf_print(nf_strbuf);
+        play_sound(11 - existing_whoosh);
     }
 
     current_opponent_car = opponent_cars;

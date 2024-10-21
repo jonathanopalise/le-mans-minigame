@@ -4,16 +4,18 @@
 ; --- data and table
 dataSounds							incbin		samples/faster-sounds.snd								
 
-; 0	engine				1574
-; 1	start beep low		6258
-; 2 start beep high		6258
-; 3 checkpoint beep		626
-; 4 crash				8282
-; 5	bounce loud			5132
-; 6 bounce quiet		5132
-; 7	skid				10620
-; 8	pass opponent loud	12792
-; 9 pass opponent quiet	12792
+; ID	name					size
+; 0		engine					1574
+; 1		start beep low			6258
+; 2 	start beep high			6258
+; 3 	checkpoint beep			626
+; 4 	crash					8282
+; 5		bounce loud				5132
+; 6 	bounce quiet			5132
+; 7		skid					10620
+; 8		pass opponent loud		12792
+; 9 	pass opponent medium	12792
+; 10 	pass opponent quiet		12792
 
     align 1
 tableSoundEvents					;		engine (always needs to be first in list!)
@@ -61,7 +63,12 @@ tableSoundEvents					;		engine (always needs to be first in list!)
 									dc.w	12792															; length
 									dc.w	6250															; retrig time * sample frame
 
- 									;		pass opponent car (low volume)
+ 									;		pass opponent car (medium volume)
                                     dc.l	dataSounds+$e532
+									dc.w	12792															; length
+									dc.w	6250															; retrig time * sample frame
+
+									;		pass opponent car (low volume)
+                                    dc.l	dataSounds+$11824
 									dc.w	12792															; length
 									dc.w	6250															; retrig time * sample frame
