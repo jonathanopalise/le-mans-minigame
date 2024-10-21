@@ -79,7 +79,7 @@ void detect_collisions()
                     player_car_flip_crash();
                 } else {
                     int16_t speed_difference = player_car_speed - current_opponent_car->last_advance;
-                    player_car_speed = current_opponent_car->last_advance - 100;
+                    player_car_speed = current_opponent_car->last_advance - 135;
                     /*player_car_speed -= speed_difference << 1;
                     if (player_car_speed < 0) {
                         player_car_speed = 0;
