@@ -57,11 +57,11 @@ uint16_t player_car_visible;
 
 static void global_init()
 {
-    FILE *f;
+    /*FILE *f;
     music_data_address = 1048576;
     f = fopen("a:\\jracer.snd", "rb");
     fread(music_data_address, 262144, 1, f);
-    fclose(f);
+    fclose(f);*/
 
 #ifdef __NATFEATS_DEBUG
     if (!nf_init()) {

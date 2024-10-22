@@ -288,13 +288,13 @@ void opponent_cars_update()
     }
 
     if (existing_whoosh) {
-            snprintf(
+            /*snprintf(
                 nf_strbuf,
                 256,
                 "play_sound: %d\n",
                 11 - existing_whoosh
             );
-            nf_print(nf_strbuf);
+            nf_print(nf_strbuf);*/
         play_sound(11 - existing_whoosh);
     }
 
