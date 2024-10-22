@@ -24,6 +24,7 @@ int32_t old_player_car_track_position;
 int32_t player_car_track_position;
 int32_t player_car_logical_xpos;
 int16_t player_car_speed;
+int16_t engine_pitch;
 int16_t player_car_steering;
 uint16_t player_car_state;
 uint16_t player_car_crash_countdown;
@@ -50,6 +51,7 @@ void player_car_initialise()
     total_distance_travelled = 0;
     player_car_logical_xpos = 0;
     player_car_speed = 400;
+    engine_pitch = player_car_speed;
     player_car_steering = 0;
     player_car_track_position = 0;
     old_player_car_track_position = 0;
@@ -211,6 +213,14 @@ void player_car_handle_inputs()
         }
     }
 
+    if (player_car_altitude > 0) {
+        engine_pitch += 6;
+        if (engine_pitch > 1199) {
+            engine_pitch = 1199;
+        }
+    } else {
+        engine_pitch = player_car_speed;
+    }
     camera_track_position += player_car_speed;
     total_distance_travelled += player_car_speed;
 

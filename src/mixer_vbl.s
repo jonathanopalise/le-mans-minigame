@@ -33,7 +33,7 @@ _mixer_vbl:
 	lea.l		(a0,d0.w),a0																; offset current engine effect position into engine sound effect base address
 
 	moveq		#0,d1																		; makes sure there's no cruft in d1 before it's swapped
-    move.w      _player_car_speed,d1														; fetch current speed
+    move.w      _engine_pitch,d1														; fetch current speed
 	lsl.w		#5,d1																		; multiply speed by 32
 	add.w		#27167,d1																	; add "idle speed / 0rpm" scaler value to current speed (max value at 299mph should end up totalling 65535)
 	swap		d1																			; d1 is now frequency scaler
