@@ -68,6 +68,9 @@ void player_car_handle_inputs()
 
     if (player_car_state == PLAYER_CAR_STATE_SPIN_CRASH) {
         player_car_speed -= 4;
+        if (player_car_flip_image_tracker < 23) {
+            player_car_flip_image_tracker++;
+        }
         if (player_car_speed < 0) {
             player_car_speed = 0;
             player_car_state = PLAYER_CAR_STATE_NORMAL;
@@ -289,6 +292,7 @@ void player_car_crash()
         player_car_flip_crash();
     } else if (player_car_speed > 100) {
         player_car_state = PLAYER_CAR_STATE_SPIN_CRASH;
+        player_car_flip_image_tracker = 0;
     } else {
         player_car_speed = 0;
         player_car_invincible_countdown = 180;
@@ -309,6 +313,8 @@ uint16_t player_car_get_sprite_definition()
 {
     if (player_car_state == PLAYER_CAR_STATE_FLIP_CRASH) {
         return 210 + player_car_flip_image_tracker / 4;
+    } else if (player_car_state == PLAYER_CAR_STATE_SPIN_CRASH) {
+        return 269 + player_car_flip_image_tracker / 8;
     }
 
     uint16_t player_car_sprite_definition_offset = 9;

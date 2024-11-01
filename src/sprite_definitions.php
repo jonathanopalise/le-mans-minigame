@@ -2120,5 +2120,37 @@ $definitions = [
         'permittedSkews' => [14],
         'includeMaskWords' => false,
     ],
+
+    // low speed spin 269-
+
+    [
+        'label' => 'red-car-spin-1',
+        'left' => 3,
+        'top' => 1658,
+        'width' => 80,
+        'height' => 28,
+        //'permittedSkews' => [12],
+        //'includeMaskWords' => false,
+    ],
+    [
+        'label' => 'red-car-spin-2',
+        'left' => 87,
+        'top' => 1658,
+        'width' => 124,
+        'height' => 25,
+        //'permittedSkews' => [12],
+        //'includeMaskWords' => false,
+    ],
+    [
+        'label' => 'red-car-spin-3',
+        'left' => 3,
+        'top' => 1688,
+        'width' => 108,
+        'height' => 32,
+        //'permittedSkews' => [12],
+        //'includeMaskWords' => false,
+    ],
+
+
 ];
 
