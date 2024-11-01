@@ -2129,8 +2129,8 @@ $definitions = [
         'top' => 1658,
         'width' => 80,
         'height' => 28,
-        //'permittedSkews' => [12],
-        //'includeMaskWords' => false,
+        'permittedSkews' => [8],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-spin-2',
@@ -2138,8 +2138,8 @@ $definitions = [
         'top' => 1658,
         'width' => 124,
         'height' => 25,
-        //'permittedSkews' => [12],
-        //'includeMaskWords' => false,
+        'permittedSkews' => [2],
+        'includeMaskWords' => false,
     ],
     [
         'label' => 'red-car-spin-3',
@@ -2147,8 +2147,8 @@ $definitions = [
         'top' => 1688,
         'width' => 108,
         'height' => 32,
-        //'permittedSkews' => [12],
-        //'includeMaskWords' => false,
+        'permittedSkews' => [10],
+        'includeMaskWords' => false,
     ],
 
 
