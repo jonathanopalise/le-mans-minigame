@@ -64,7 +64,7 @@ void player_car_initialise()
 
 void player_car_handle_inputs()
 {
-    volatile uint16_t game_state_joy_data;
+    volatile uint8_t game_state_joy_data;
 
     if (player_car_state == PLAYER_CAR_STATE_SPIN_CRASH) {
         player_car_speed -= 4;
@@ -119,7 +119,7 @@ void player_car_handle_inputs()
         }
     } else {
 
-        /*if (is_demo()) {
+        if (is_demo()) {
             game_state_joy_data = 1;
             if ((race_ticks > 260 && race_ticks < 276) || (race_ticks > 450 && race_ticks < 620)) {
                 game_state_joy_data |= 8;
@@ -127,16 +127,16 @@ void player_car_handle_inputs()
                 game_state_joy_data |= 4;
             }
         } else {
-            game_state_joy_data = joy_data;
+            game_state_joy_data = joy1;
         }
 
-        uint16_t joy_up = game_state_joy_data & 1;
+        /*uint16_t joy_up = game_state_joy_data & 1;
         uint16_t joy_down = game_state_joy_data & 2;
         uint16_t joy_left = game_state_joy_data & 4;
         uint16_t joy_right = game_state_joy_data & 8;
         uint16_t joy_fire = game_state_joy_data >> 7 & 1;*/
 
-        uint8_t game_state_joy_data = joy1;
+        //uint8_t game_state_joy_data = joy1;
         uint8_t joy_up = game_state_joy_data & 1;
         uint8_t joy_down = game_state_joy_data & 2;
         uint8_t joy_left = game_state_joy_data & 4;
