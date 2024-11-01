@@ -12,6 +12,7 @@ _initialise:
     move.l ($118),a0
     move.l a0,(oldikbd)
 
+    move.l $70,old_vbl
     move.l #vbl,$70.w       ; Install our own VBL
     move.l #dummy,$68.w     ; Install our own HBL (dummy)
     move.l #dummy,$134.w    ; Install our own Timer A (dummy)
@@ -63,10 +64,6 @@ vbl:
     beq _title_screen_vbl
     rte
 
-_vanilla_vbl:
-
-    rte
-
 game_over_exit_transition_vbl:
 
     move.w	#$2700,sr			; Stop all interrupts
@@ -90,6 +87,16 @@ in_game_vbl:
     jsr _trigger_in_game_colours
     
     movem.l (sp)+,d0-d1/a0-a1
+
+    cmp.l  #200,_race_ticks
+    bgt.s  _in_game_no_vbl_call
+
+    move.l old_vbl,-(sp)
+    rts
+
+_in_game_no_vbl_call:
+    move.w	#$2300,sr			; Interrupts back on
+
     rte
 
     ; timer 1 - top of mountains
@@ -256,6 +263,16 @@ _title_screen_vbl:
     move.b	#8,$fffffa1b.w		; Timer B control (event mode (HBL))
 
     movem.l (sp)+,a0-a1
+
+    cmp.l  #200,_race_ticks
+    bgt.s  _title_screen_no_vbl_call
+
+    move.l old_vbl,-(sp)
+    rts
+
+_title_screen_no_vbl_call:
+    move.w	#$2300,sr			; Interrupts back on
+
     move.w	#$2300,sr			; Interrupts back on
 
     rte
@@ -354,6 +371,9 @@ newikbd:
     dc.w $4ef9
 
 oldikbd:
+    dc.l 0
+
+old_vbl:
     dc.l 0
 
 joy_on:
