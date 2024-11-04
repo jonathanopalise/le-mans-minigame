@@ -88,7 +88,7 @@ static void title_screen_init()
 {
     FILE *f;
 
-    f = fopen("a:\\title.bin", "rb");
+    f = fopen("\\title.bin", "rb");
     fread(hardware_playfields[2].buffer, 32800, 1, f);
     fclose(f);
 

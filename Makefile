@@ -56,11 +56,16 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
-release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin diskcontent/credits.bin
+release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin bin/credits.prg
 	rm release/lemans.st || true
+	cp bin/credits.prg diskcontent/AUTO/ || true
 	cp bin/lemans.prg diskcontent/AUTO/ || true
-	zip -r release/lemans.zip diskcontent/
-	zip2st release/lemans.zip release/lemans.st
+	zip -r release/lemans.zip diskcontent/ -x diskcontent/AUTO/.gitkeep -x diskcontent/.gitkeep
+	zip2st release/lemans.zip release/lemans.st    
+	MTOOLS_NO_VFAT=1 mdel -i release/lemans.st AUTO/credits.prg
+	MTOOLS_NO_VFAT=1 mdel -i release/lemans.st AUTO/lemans.prg
+	MTOOLS_NO_VFAT=1 mcopy -i release/lemans.st -spmv bin/credits.prg ::/AUTO
+	MTOOLS_NO_VFAT=1 mcopy -i release/lemans.st -spmv bin/lemans.prg ::/AUTO
 	rm release/lemans.zip || true
 	$(PHP) src/apply_boot_sector.php src/boot_sector.bin $@
 	@echo "*************************************************************"
@@ -73,6 +78,22 @@ bin/lemans.prg: $(OBJECT_FILES)
 	cp bin/lemans.prg bin/lemans.uncompressed.prg
 	$(UPX) bin/lemans.prg
 	chmod +x bin/lemans.prg
+
+bin/credits.prg: src/credits.o src/generated/credits_screen_data.o
+	$(CC)  -o src/credits.elf libcxx/vsnprint.o libcxx/brownboot.o libcxx/zerolibc.o libcxx/browncrti.o libcxx/browncrtn.o libcxx/browncrt++.o libcxx/zerocrtfini.o src/credits.o src/generated/credits_screen_data.o  -O3 -Wl,--emit-relocs -Wl,-e_start -Ttext=0 -nostartfiles -m68000 -fomit-frame-pointer -flto -D__ATARI__ -D__M68000__ -DELF_CONFIG_STACK=1024 -fstrict-aliasing -fcaller-saves -ffunction-sections -fdata-sections -fleading-underscore
+	brownout -i src/credits.elf -o bin/credits.prg
+	cp bin/credits.prg bin/credits.uncompressed.prg
+	$(UPX) bin/credits.prg
+	chmod +x bin/credits.prg
+
+src/generated/credits.o: src/generated/credits.c src/credits.h src/credits_screen_data.h
+	$(CC) $(CFLAGS) -c src/generated/credits.c -o src/generated/credits.o
+
+src/generated/credits_screen_data.c: src/generate_credits_screen_data.php src/library.php assets/credits.gif
+	$(PHP) src/generate_credits_screen_data.php assets/credits.gif src/generated/credits_screen_data.c
+
+src/generated/credits_screen_data.o: src/generated/credits_screen_data.c src/credits_screen_data.h
+	$(CC) $(CFLAGS) -c src/generated/credits_screen_data.c -o src/generated/credits_screen_data.o
 
 diskcontent/title.bin: src/generate_new_title_screen_graphics.php src/library.php
 	$(PHP) src/generate_new_title_screen_graphics.php title diskcontent/title.bin
