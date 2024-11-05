@@ -1,0 +1,66 @@
+    _________   _____________________ 
+   / ____/   | / ___/_  __/ ____/ __ \
+  / /_  / /| | \__ \ / / / __/ / /_/ /
+ / __/ / ___ |___/ // / / /___/ _, _/ 
+/_/   /_/  |_/____//_/ /_____/_/ |_|  
+version 1.0 for Atari STE
+released at Sillyventure 2024 WE, 5-8 December 2024
+
+Introduction
+------------
+This is FASTER, a new silky-smooth 2.5D racing game built from the ground up
+for the Atari STE using modern tools, techniques and knowledge.
+
+Features:
+- 50 frames per second racing action on a stock 8MHz Atari STE
+- Up to 20 large, full-colour sprites on screen drawn by Blitter chip
+- 30+ colours on screen from enhanced STE palette
+- Full 24 hour day/night cycle
+- Simultaneous digital engine noise, sound effects and YM soundtrack
+- Screen shaking effect courtesy of STE hardware scrolling
+
+This game is freeware - the only thing I ask is that you tell the world about
+it through tweets, blog posts, YouTube reviews, word of mouth etc, so that
+everybody knows that the Atari STE is actually quite good after all!
+
+Source code is coming soon - please follow @RetroRacing on Twitter/X for
+further updates.
+
+System Requirements
+-------------------
+- Atari STE (not compatible with STFM)
+- 1 Megabyte RAM or more
+- Double-sided floppy drive (or equivalent - e.g. Gotek)
+- Joystick in port 1
+
+Note: not currently compatible with NTSC/60Hz.
+
+How to play
+-----------
+
+- Plug digital joystick into port 1 (note: Jagpad currently not supported)
+- Insert FASTER disk (or disk image), reset STE and wait for title screen (with
+  'Press Fire') prompt
+- Press fire to start game
+- Controls are up/fire to accelerate, down to brake, left and right to steer
+- Drive for as long as possible before running out of time.
+
+Credits
+-------
+
+- Code: Chicane
+- Music: Dma-sc
+- SFX/Mixer enhancement: Junosix
+- Additional art: Karl Morris, Scott Elkington
+- YM playback: Zerkman
+- Original PCM mixer: Masteries
+
+Random technical buzzwords :)
+-----------------------------
+
+- Mix of C and hand-optimised 68k code
+- Compiled blitter sprites
+- Dirty rectangles
+- Bitplane tricks
+- Software audio mixing
+- Ruthless elimination of MULs and DIVs

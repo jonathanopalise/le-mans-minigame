@@ -28,6 +28,8 @@
 #include "speedometer.h"
 #include "screen_transition.h"
 #include "play_sound.h"
+#include <mint/osbind.h>
+#include <mint/sysbind.h>
 
 #define GAME_OVER_DEFINITION_OFFSET 234
 #define GET_READY_DEFINITION_OFFSET 235
@@ -69,7 +71,18 @@ static void global_init()
     }
 
     nf_print("hello from lemans!");
+
+    uint32_t bob = malloc(-1);
+            snprintf(
+                nf_strbuf,
+                256,
+                "free memory starts at: %d, physbase is: %d\n",
+                bob,
+                Physbase()
+            );
+    nf_print(nf_strbuf);
 #endif
+
 
     init_stars();
     lookups_init();
