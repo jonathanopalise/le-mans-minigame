@@ -48,6 +48,7 @@ OBJECT_FILES =\
 	src/mixer_variables.o\
 	src/mixer_vbl.o\
 	src/play_sound.o\
+    src/title_sound.o\
    	src/stars_fast.o\
     src/mountains_render_fast.o\
     src/hardware_playfield_fast.o\
@@ -107,7 +108,7 @@ src/boot_sector.bin: src/boot_sector.s
 src/lemans.o: src/lemans.c $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -c src/lemans.c -o src/lemans.o
 
-src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/road_movement.h src/mountains_render.h src/mountains_render_fast.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/random.h src/screen_transition.h src/play_sound.h src/natfeats.h
+src/game_loop.o: src/game_loop.c src/game_loop.h src/hardware_playfield.h src/initialise.h src/road_movement.h src/mountains_render.h src/mountains_render_fast.h src/road_render.h src/player_car.h src/sprite_definitions.h src/road_geometry.h src/trackside_items.h src/display_list.h src/detect_collisions.h src/opponent_cars.h src/time_of_day_process.h src/detect_collisions.h src/mixer_init.h src/hud.h src/music.h src/relocate_sprites.h src/lookups.h src/stars.h src/random.h src/screen_transition.h src/play_sound.h src/title_sound.h src/natfeats.h
 	$(CC) $(CFLAGS) -c src/game_loop.c -o src/game_loop.o
 
 src/hardware_playfield.o: src/hardware_playfield.c src/hardware_playfield.h src/blitter.h src/draw_sprite.h src/draw_status.h src/status_definitions.h src/bitplane_draw_record.h src/natfeats.h src/initialise.h src/hud.h src/hud_digits.h src/lookups.h src/player_car.h src/time_of_day_process.h src/stars.h src/hardware_playfield_fast.h
@@ -247,6 +248,9 @@ src/mixer_vbl.o: src/mixer_vbl.s
 
 src/play_sound.o: src/play_sound.s
 	$(VASM) $(VASM_OPTS) src/play_sound.s -Felf -o src/play_sound.o
+
+src/title_sound.o: src/title_sound.s
+	$(VASM) $(VASM_OPTS) src/title_sound.s -Felf -o src/title_sound.o
 
 src/stars_fast.o: src/stars_fast.s
 	$(VASM) $(VASM_OPTS) src/stars_fast.s -Felf -o src/stars_fast.o

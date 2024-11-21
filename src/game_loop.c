@@ -28,6 +28,7 @@
 #include "speedometer.h"
 #include "screen_transition.h"
 #include "play_sound.h"
+#include "title_sound.h"
 #include <mint/osbind.h>
 #include <mint/sysbind.h>
 
@@ -184,6 +185,10 @@ static void exit_transition_loop(uint16_t next_game_state)
 static void title_screen_entry_transition_loop()
 {
     entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[2].buffer);
+
+    if (transition_offset == 260) {
+        title_sound_play();
+    }
 }
 
 static void title_screen_exit_to_game_transition_loop()
