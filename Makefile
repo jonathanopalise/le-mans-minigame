@@ -37,6 +37,7 @@ OBJECT_FILES =\
  	src/generated/road_geometry.o\
 	src/generated/road_graphics.o\
     src/generated/mountain_graphics.o\
+    src/generated/new_title_screen_graphics.o\
     src/generated/sprite_definitions.o\
     src/generated/status_definitions.o\
     src/generated/time_of_day.o\
@@ -57,7 +58,7 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
-release/lemans.st: bin/lemans.prg src/boot_sector.bin diskcontent/title.bin bin/credits.prg
+release/lemans.st: bin/lemans.prg src/boot_sector.bin bin/credits.prg
 	rm release/lemans.st || true
 	cp bin/credits.prg diskcontent/AUTO/ || true
 	cp bin/lemans.prg diskcontent/AUTO/ || true
@@ -95,9 +96,6 @@ src/generated/credits_screen_data.c: src/generate_credits_screen_data.php src/li
 
 src/generated/credits_screen_data.o: src/generated/credits_screen_data.c src/credits_screen_data.h
 	$(CC) $(CFLAGS) -c src/generated/credits_screen_data.c -o src/generated/credits_screen_data.o
-
-diskcontent/title.bin: src/generate_new_title_screen_graphics.php src/library.php
-	$(PHP) src/generate_new_title_screen_graphics.php title diskcontent/title.bin
 
 diskcontent/credits.bin: src/generate_new_title_screen_graphics.php src/library.php
 	$(PHP) src/generate_new_title_screen_graphics.php credits diskcontent/credits.bin
@@ -206,6 +204,12 @@ src/generated/mountain_graphics.o: src/generated/mountain_graphics.c src/mountai
 
 src/generated/mountain_graphics.c: src/generate_mountain_graphics.php src/library.php assets/mountains.gif
 	$(PHP) src/generate_mountain_graphics.php assets/mountains.gif src/generated/mountain_graphics.c
+
+src/generated/new_title_screen_graphics.o: src/generated/new_title_screen_graphics.c src/new_title_screen_graphics.h
+	$(CC) $(CFLAGS) -c src/generated/new_title_screen_graphics.c -o src/generated/new_title_screen_graphics.o
+
+src/generated/new_title_screen_graphics.c: src/generate_new_title_screen_graphics.php src/library.php
+	$(PHP) src/generate_new_title_screen_graphics.php
 
 src/generated/sprite_definitions.o: src/generated/sprite_definitions.c src/sprite_definitions.h
 	$(CC) $(CFLAGS) -c src/generated/sprite_definitions.c -o src/generated/sprite_definitions.o

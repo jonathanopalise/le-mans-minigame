@@ -1,13 +1,5 @@
 <?php
 
-if ($argc < 2) {
-    echo("Usage: php generate_new_title_screen_graphics.php [slicePrefix] [outputFile]\n");
-    exit(1);
-}
-
-$slicePrefix = $argv[1];
-$outputFilename = $argv[2];
-
 function generateSteNibble($value)
 {
     $amigaNibble = ($value >> 4);
@@ -19,7 +11,7 @@ include('library.php');
 $outputWords = [];
 
 for ($slice = 0; $slice <= 24; $slice++) {
-    $indexedBitmap = IndexedBitmap::loadGif('assets/'.$slicePrefix.'-slice-'.$slice.'.gif');
+    $indexedBitmap = IndexedBitmap::loadGif('assets/title-slice-'.$slice.'.gif');
 
     for ($lineIndex = 0; $lineIndex < $indexedBitmap->getHeight(); $lineIndex++) {
         $indexedBitmapLine = $indexedBitmap->getLineAt($lineIndex);
@@ -46,7 +38,7 @@ while (count($outputWords) < 16000) {
 
 $outputPaletteWords = [];
 for ($slice = 0; $slice <= 24 ; $slice++) {
-    $image = imagecreatefromgif('assets/'.$slicePrefix.'-slice-'. $slice . '.gif');
+    $image = imagecreatefromgif('assets/title-slice-'. $slice . '.gif');
 
     $imagePaletteWords = [];
     $colourCount = imagecolorstotal($image);
@@ -69,28 +61,45 @@ for ($slice = 0; $slice <= 24 ; $slice++) {
         $imagePaletteWords[] = 0;
     }
 
-    /*echo("slice ".$slice.": ".$slice."\n");
+    echo("slice ".$slice.": ".$slice."\n");
     foreach ($imagePaletteWords as $word) {
         echo(dechex($word)." ");
     }
-    echo("\n");*/
+    echo("\n");
 
     $outputWords = array_merge($outputWords, $imagePaletteWords);
 }
 
+$lines = [
+    '#include "../new_title_screen_graphics.h"',
+    '#include <inttypes.h>',
+    '',
+    'uint16_t new_title_screen_graphics[] = {',
+];
 
-$outputBin = '';
-foreach ($outputWords as $outputWord) {
-    $outputBin .= chr($outputWord >> 8);
-    $outputBin .= chr($outputWord & 255);
+foreach ($outputWords as $key => $outputWord) {
+    $line = (string)$outputWord;
+
+    if ($key !== array_key_last($outputWords)) {
+        $line .= ',';
+    }
+
+    $lines[] = $line;
 }
 
-echo("title screen binary length is ".strlen($outputBin). "\n");
+$lines = array_merge(
+    $lines,
+    [
+        '};',
+    ]
+);
 
-$result = file_put_contents($outputFilename, $outputBin);
+$output = implode("\n", $lines);
+
+$result = file_put_contents('src/generated/new_title_screen_graphics.c', $output);
 if ($result === false) {
-    echo("Unable to write generated new title screen graphics data with prefix ".$slicePrefix." to ".$outputFilename);
+    echo("Unable to write generated new title screen graphics data");
     exit(1);
 }
 
-echo("Wrote generated new title screen graphics data with prefix ".$slicePrefix." to ".$outputFilename."\n"); 
+echo("Wrote generated new title screen graphics data to src/generated/new_title_screen_graphics.c\n"); 

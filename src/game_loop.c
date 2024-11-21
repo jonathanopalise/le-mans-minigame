@@ -29,6 +29,7 @@
 #include "screen_transition.h"
 #include "play_sound.h"
 #include "title_sound.h"
+#include "new_title_screen_graphics.h"
 #include <mint/osbind.h>
 #include <mint/sysbind.h>
 
@@ -100,13 +101,13 @@ static void global_init()
 
 static void title_screen_init()
 {
-    FILE *f;
+    /*FILE *f;
 
     f = fopen("\\title.bin", "rb");
     fread(hardware_playfields[2].buffer, 32800, 1, f);
-    fclose(f);
+    fclose(f);*/
 
-    vbl_title_screen_palette_source = hardware_playfields[2].buffer+32000;
+    vbl_title_screen_palette_source = new_title_screen_graphics+16000;
     //memcpy((void *)0xffff8240, title_screen_palette, 32);
 
     waiting_for_vbl = 1;
@@ -184,7 +185,7 @@ static void exit_transition_loop(uint16_t next_game_state)
 
 static void title_screen_entry_transition_loop()
 {
-    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, hardware_playfields[2].buffer);
+    entry_transition_loop(GAME_STATE_TITLE_SCREEN_LOOP, new_title_screen_graphics);
 
     if (transition_offset == 260) {
         title_sound_play();
