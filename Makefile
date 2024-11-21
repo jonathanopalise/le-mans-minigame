@@ -97,9 +97,6 @@ src/generated/credits_screen_data.c: src/generate_credits_screen_data.php src/li
 src/generated/credits_screen_data.o: src/generated/credits_screen_data.c src/credits_screen_data.h
 	$(CC) $(CFLAGS) -c src/generated/credits_screen_data.c -o src/generated/credits_screen_data.o
 
-diskcontent/credits.bin: src/generate_new_title_screen_graphics.php src/library.php
-	$(PHP) src/generate_new_title_screen_graphics.php credits diskcontent/credits.bin
-
 src/boot_sector.bin: src/boot_sector.s
 	$(VASM) $< -Fbin -o $@
 

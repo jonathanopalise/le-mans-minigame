@@ -2,6 +2,12 @@ dbasell     equ $ffff820d   ; addr of low byte of this reg
 dbasel      equ $ffff8203   ; display base low
 color0      equ $ffff8240   ; color palette #0
 
+    move.b $ffff820a.w,d0
+    or #2,d0
+    move.b d0,$ffff820a.w
+
+    move.b #0,$ffff8260.w
+
     move.l  $42e.w,d0
     swap    d0
     lsr.w   #3,d0 ; d2 = double counts of 512 blocks (so 512k = 1, 1 meg = 2...)

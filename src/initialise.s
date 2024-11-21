@@ -8,6 +8,10 @@
 
 _initialise:
 
+    ;move.b $ffff820a.w,d0
+    ;or #2,d0
+    ;move.b d0,$ffff820a.w
+
     move.w	#$2700,sr       ; Stop all interrupts
     move.l ($118),a0
     move.l a0,(oldikbd)

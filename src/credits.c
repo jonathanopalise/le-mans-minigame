@@ -3,6 +3,8 @@
 #include "credits_screen_data.h"
 
 void main_supervisor() {
+
+    //*((uint8_t *)0xffff820a) = *((uint8_t *)0xffff820a) | 2;
     *((uint8_t *)0xfffffc02) = 0x12;
 
     uint16_t *src = credits_screen_palette;
