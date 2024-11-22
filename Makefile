@@ -58,7 +58,7 @@ OBJECT_FILES =\
 
 ASSETS_GIF = assets/round-tree.gif
 
-release/lemans.st: bin/lemans.prg src/boot_sector.bin bin/credits.prg
+release/lemans.st: bin/lemans.prg src/boot_sector.bin bin/credits.prg diskcontent/titlefx.raw
 	rm release/lemans.st || true
 	cp bin/credits.prg diskcontent/AUTO/ || true
 	cp bin/lemans.prg diskcontent/AUTO/ || true

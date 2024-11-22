@@ -101,11 +101,16 @@ static void global_init()
 
 static void title_screen_init()
 {
-    /*FILE *f;
+    FILE *f;
+    uint32_t bytes_read;
 
-    f = fopen("\\title.bin", "rb");
-    fread(hardware_playfields[2].buffer, 32800, 1, f);
-    fclose(f);*/
+    title_sound_address = hardware_playfields[2].buffer;
+
+    f = fopen("\\titlefx.raw", "rb");
+    bytes_read = fread(title_sound_address, 65536, 1, f);
+    fclose(f);
+
+    title_sound_length = 57573;
 
     vbl_title_screen_palette_source = new_title_screen_graphics+16000;
     //memcpy((void *)0xffff8240, title_screen_palette, 32);
@@ -129,6 +134,7 @@ static void title_screen_loop()
 
     joy_fire = joy1 >> 7 & 1;
     if (joy_fire == 1) {
+        *((uint8_t *)0xffff8901) = 0;
         transition_offset = 0;
         game_state = GAME_STATE_TITLE_SCREEN_EXIT_TO_GAME_TRANSITION;
     }
@@ -137,7 +143,7 @@ static void title_screen_loop()
     while (waiting_for_vbl) {}
 
     race_ticks++;
-    if (race_ticks > 50*10) {
+    if (race_ticks > 50*6) {
         transition_offset = 0;
         game_state = GAME_STATE_TITLE_SCREEN_EXIT_TO_DEMO_TRANSITION;
     }
