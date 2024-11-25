@@ -306,6 +306,15 @@ static void hardware_playfield_init_playfield(struct HardwarePlayfield *hardware
 void hardware_playfield_global_init()
 {
     uint16_t *phys_base = Physbase();
+
+    uint32_t adjusted_phys_base = (uint32_t)phys_base;
+    if ((adjusted_phys_base & 0xffff) >= 0x8000) {
+        adjusted_phys_base &= 0xffff8000;
+    } else {
+        adjusted_phys_base &= 0xffff0000;
+    }
+    phys_base = adjusted_phys_base;
+
     hardware_playfields[0].buffer = phys_base;
     hardware_playfields[1].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES / 2;
     hardware_playfields[2].buffer = phys_base - HARDWARE_PLAYFIELD_BUFFER_SIZE_BYTES;
