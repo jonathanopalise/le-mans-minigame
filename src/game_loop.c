@@ -85,6 +85,7 @@ static void global_init()
     nf_print(nf_strbuf);
 #endif
 
+    *((volatile uint8_t *)0xffff8260) = 0;
 
     init_stars();
     lookups_init();
@@ -110,7 +111,7 @@ static void title_screen_init()
     bytes_read = fread(title_sound_address, 65536, 1, f);
     fclose(f);
 
-    title_sound_length = 57573;
+    title_sound_length = bytes_read;
 
     vbl_title_screen_palette_source = new_title_screen_graphics+16000;
     //memcpy((void *)0xffff8240, title_screen_palette, 32);

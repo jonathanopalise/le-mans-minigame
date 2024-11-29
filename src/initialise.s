@@ -6,7 +6,27 @@
     public _vertical_shift
     public _vbl_title_screen_palette_source
 
+_old_illegal_handler:
+    ds.l 1
+
+_illegal_handler:
+    move.l 2(a7),d0
+    addq.l #4,d0
+    move.l d0,2(a7)
+    rte
+                
 _initialise:
+
+    move.l $10,_old_illegal_handler
+
+    move.l #_illegal_handler,$10
+
+    move.l #$0,d0
+    movec d0,cacr
+
+    move.l _old_illegal_handler,$10
+
+    ;move.b #0,$ffff8007
 
     ;move.b $ffff820a.w,d0
     ;or #2,d0

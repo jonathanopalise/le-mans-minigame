@@ -233,7 +233,7 @@ src/generated/star_lookups.c: src/generate_star_lookups.php
 	$(PHP) src/generate_star_lookups.php src/generated/star_lookups.c
 
 src/initialise.o: src/initialise.s
-	$(VASM) $(VASM_OPTS) src/initialise.s -Felf -o src/initialise.o
+	$(VASM) $(VASM_OPTS) -m68030 -no-opt src/initialise.s -Felf -o src/initialise.o
 
 src/mixer_init.o: src/mixer_init.s src/mixer_init.h
 	$(VASM) $(VASM_OPTS) src/mixer_init.s -Felf -o src/mixer_init.o

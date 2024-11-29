@@ -13,7 +13,7 @@ for the Atari STE using modern tools, techniques and knowledge.
 
 Features:
 - 50 frames per second racing action on a stock 8MHz Atari STE
-- Up to 20 large, full-colour sprites on screen drawn by Blitter chip
+- 15+ large, full-colour sprites on screen drawn by Blitter chip
 - 30+ colours on screen from enhanced STE palette
 - Full 24 hour day/night cycle
 - Simultaneous digital engine noise, sound effects and YM soundtrack
@@ -28,19 +28,21 @@ further updates.
 
 System Requirements
 -------------------
-- Atari STE (not compatible with STFM)
+- Atari STE (not compatible with STFM, even if a Blitter is installed)
 - 1 Megabyte RAM or more
+- Atari TOS or EmuTOS (note that TOS 2.* requires 2 megabytes RAM)
 - Double-sided floppy drive (or equivalent - e.g. Gotek)
 - Joystick in port 1
 
-Note: not currently compatible with NTSC/60Hz.
+Note: not currently compatible with Falcon, but might be compatible in a future
+version. Unlikely ever to be compatible with TT as it has no blitter :)
 
 How to play
 -----------
 
 - Plug digital joystick into port 1 (note: Jagpad currently not supported)
-- Insert FASTER disk (or disk image), reset STE and wait for title screen (with
-  'Press Fire') prompt
+- Insert FASTER disk (or disk image), switch on/reset STE and wait for title
+  screen (with 'Press Fire' prompt)
 - Press fire to start game
 - Controls are up/fire to accelerate, down to brake, left and right to steer
 - Drive for as long as possible before running out of time.
@@ -48,7 +50,7 @@ How to play
 Credits
 -------
 
-- Code: Chicane
+- Code: Chicane (aka @RetroRacing, aka Jonathan Thomas)
 - Music: Dma-sc
 - SFX/Mixer enhancement: Junosix
 - Additional art: Karl Morris, Scott Elkington
@@ -59,6 +61,9 @@ Thanks
 ------
 
 - Ataricrypt/Steve
+- The clever people on Atari-Forum - Anima, DML, Cyprian etc...
+- All the commenters and likers on YouTube and Twitter for the feedback and
+  encouragement :)
 
 Random technical buzzwords :)
 -----------------------------
