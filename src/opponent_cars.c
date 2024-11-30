@@ -239,7 +239,7 @@ void opponent_cars_update()
         current_opponent_car->last_advance = advance;
 
         if (current_opponent_car->player_relative_track_position < 0) {
-            current_opponent_car->player_relative_track_position -= 100;
+            current_opponent_car->player_relative_track_position -= 150;
         }
 
         current_opponent_car->player_relative_track_position -= player_car_speed;
