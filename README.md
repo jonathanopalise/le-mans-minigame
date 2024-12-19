@@ -1,6 +1,6 @@
 # FASTER
 
-_This is FASTER, a new silky-smooth 2.5D racing game built from the ground up for the Atari STE using modern tools, techniques and knowledge.
+_This is FASTER, a new silky-smooth 2.5D racing game built from the ground up for the Atari STE using modern tools, techniques and knowledge._
 
 ![Screenshot of current progress](https://github.com/jonathanopalise/le-mans-minigame/blob/main/screenshot.png)
 
