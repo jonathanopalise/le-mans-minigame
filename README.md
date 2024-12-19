@@ -7,8 +7,8 @@ _This is FASTER, a new silky-smooth 2.5D racing game built from the ground up fo
 ## Credits
 
 * **Design and programming**: Chicane (Jonathan Thomas)
-* **Addition
-* **SFX/Mixer enhancement**: Junosix/AF (Jamie Hamshere)
+* **Music**: Dma-sc
+* **SFX/Mixer enhancement**: Junosix (Jamie Hamshere)
 * **Additional art**: Karl Morris, Scott Elkington
 * **YM playback**: Zerkman
 * **Original PCM mixer**: Masteries 
